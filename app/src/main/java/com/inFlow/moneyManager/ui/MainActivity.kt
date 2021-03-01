@@ -1,7 +1,8 @@
-package com.inFlow.moneyManager
+package com.inFlow.moneyManager.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.inFlow.moneyManager.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

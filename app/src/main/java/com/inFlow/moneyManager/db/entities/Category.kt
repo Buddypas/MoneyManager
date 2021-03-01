@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
     )]
 )
 data class Category(
-    @PrimaryKey val categoryId: Int,
+    @PrimaryKey(autoGenerate = true) val categoryId: Int,
     val name: String,
     val type: String, // will be either income or expense
     val iconUrl: String? = null
