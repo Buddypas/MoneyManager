@@ -3,6 +3,7 @@ package com.inFlow.moneyManager.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.db.entities.TransactionsDao
@@ -11,4 +12,5 @@ import com.inFlow.moneyManager.db.entities.TransactionsDao
 @TypeConverters(Converters::class)
 abstract class AppDatabase(): RoomDatabase() {
     abstract fun transactionsDao() : TransactionsDao
+    abstract fun categoriesDao() : CategoriesDao
 }
