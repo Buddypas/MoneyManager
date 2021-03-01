@@ -27,6 +27,7 @@ ext {
 
     lifecycle_version = "2.2.0"
     livedata_version = "2.3.0"
+    room_version = "2.2.6"
     timber_version = "4.7.1"
 //    paging_version = "3.0.0-beta01"
 //    okhttp_version = "4.9.0"
