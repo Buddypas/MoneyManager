@@ -5,15 +5,15 @@ import java.util.*
 
 @Entity(
     tableName = "categories", indices = [Index(
-        value = ["name"],
+        value = ["categoryName"],
         unique = true
     )]
 )
 data class Category(
     @PrimaryKey(autoGenerate = true) val categoryId: Int,
-    val name: String,
-    val type: String, // will be either income or expense
-    val iconUrl: String? = null
+    val categoryName: String,
+    val categoryType: String, // will be either income or expense
+    val categoryIconUrl: String? = null
 )
 
 @Dao

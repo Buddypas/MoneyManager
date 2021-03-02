@@ -9,12 +9,12 @@ import java.util.*
 @Entity(tableName = "transactions")
 data class Transaction(
     @PrimaryKey(autoGenerate = true) val transactionId: Int,
-    val amount: Double,
-    val date: Date,
+    val transactionAmount: Double,
+    val transactionDate: Date,
     // category id
     val transactionCategoryId: Int,
     // balance after this transaction
-    val balance: Double
+    val transactionBalanceAfter: Double
 )
 
 @Dao
@@ -31,14 +31,23 @@ interface TransactionsDao {
     /**
      * Month is zero based
      */
-    @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate")
+    @Query("SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate")
     fun getTransactionsInRange(startDate: Date, endDate: Date): List<Transaction>
 
-    @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate AND amount < 0")
+    @Query("SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate AND transactionAmount < 0")
     fun getExpensesInRange(startDate: Date, endDate: Date): List<Transaction>
 
-    @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate AND amount > 0")
+    @Query("SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate AND transactionAmount > 0")
     fun getIncomesInRange(startDate: Date, endDate: Date): List<Transaction>
+
+    @Query("SELECT * FROM transactions WHERE transactionCategoryId=:catId")
+    fun getByCategoryId(catId: Int): List<Transaction>
+
+    @Query("SELECT * FROM transactions ORDER BY transactionDate DESC")
+    fun getAllDescending(): List<Transaction>
+
+    @Query("SELECT * FROM transactions ORDER BY transactionDate DESC LIMIT 1")
+    fun getMostRecentTransaction(): Transaction
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg transactions: Transaction)

@@ -1,6 +1,8 @@
 package com.inFlow.moneyManager.db.relations
 
+import androidx.room.Dao
 import androidx.room.Embedded
+import androidx.room.Query
 import androidx.room.Relation
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
@@ -13,3 +15,9 @@ data class CategoriesWithTransactions(
     )
     val transactions: List<Transaction>
 )
+
+//@Dao
+//interface CategoriesTransactionsDao {
+//
+//
+//}
