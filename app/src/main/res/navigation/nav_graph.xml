@@ -10,4 +10,9 @@
         android:name="com.inFlow.moneyManager.ui.dashboard.DashboardFragment"
         android:label="Dashboard"
         tools:layout="@layout/fragment_dashboard" />
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.inFlow.moneyManager.ui.categories.CategoriesFragment"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" />
 </navigation>
