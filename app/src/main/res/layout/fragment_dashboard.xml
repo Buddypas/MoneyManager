@@ -6,52 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.DashboardFragment">
 
-    <TextView
-        android:id="@+id/title_txt"
-        style="?attr/textAppearanceHeadline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Dashboard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/wallet_txt"-->
-    <!--        style="?attr/textAppearanceHeadline4"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="24dp"-->
-    <!--        android:text="Wallet name"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/title_txt" />-->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/wallet_dropdown_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="64dp"
-        android:hint="Wallet name"
-        app:boxBackgroundColor="@color/white"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:maxWidth="124dp"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
-        app:hintAnimationEnabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:hintEnabled="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_txt">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/wallet_dropdown"
-            style="?attr/textAppearanceHeadline4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:inputType="none"
-            android:textAlignment="center"
-            android:textColor="@color/white" />
+            android:textAppearance="?attr/textAppearanceHeadline3"
+            android:textColor="@color/black" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,16 +43,18 @@
 
     <TextView
         android:id="@+id/income_lbl"
-        style="?attr/textAppearanceHeadline6"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:paddingHorizontal="8dp"
         android:paddingTop="8dp"
-        android:drawableTint="@color/green"
         android:text="Income"
         app:drawableEndCompat="@drawable/arrow_down_right"
+        app:drawableTint="@color/green"
+        app:layout_constraintEnd_toStartOf="@id/expense_lbl"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/wallet_dropdown_layout" />
 
@@ -104,18 +82,19 @@
 
     <TextView
         android:id="@+id/expense_lbl"
-        style="?attr/textAppearanceHeadline6"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
         android:paddingHorizontal="8dp"
+        android:layout_marginHorizontal="8dp"
         android:paddingTop="8dp"
         android:text="Expense"
-        android:drawableTint="@color/red"
         app:drawableEndCompat="@drawable/arrow_up_left"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/wallet_dropdown_layout" />
+        app:drawableTint="@color/red"
+        app:layout_constraintBottom_toBottomOf="@id/income_lbl"
+        app:layout_constraintEnd_toStartOf="@id/balance_lbl"
+        app:layout_constraintStart_toEndOf="@id/income_lbl"
+        app:layout_constraintTop_toTopOf="@id/income_lbl" />
 
     <TextView
         android:id="@+id/expense_txt"
@@ -129,20 +108,32 @@
         app:layout_constraintStart_toStartOf="@id/expense_lbl"
         app:layout_constraintTop_toBottomOf="@id/expense_lbl" />
 
+    <View
+        android:id="@+id/balance_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toBottomOf="@id/balance_txt"
+        app:layout_constraintEnd_toEndOf="@id/balance_lbl"
+        app:layout_constraintStart_toStartOf="@id/balance_lbl"
+        app:layout_constraintTop_toTopOf="@id/balance_lbl" />
+
     <TextView
         android:id="@+id/balance_lbl"
-        style="?attr/textAppearanceHeadline6"
+        style="?attr/textAppearanceBody1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:drawablePadding="8dp"
+        android:layout_marginEnd="12dp"
+        android:drawablePadding="4dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
         android:text="Balance"
-        android:drawableTint="@color/purple_500"
-        android:textSize="28sp"
         app:drawableEndCompat="@drawable/ic_balance"
-        app:layout_constraintEnd_toStartOf="@id/expense_txt"
-        app:layout_constraintStart_toEndOf="@id/income_txt"
-        app:layout_constraintTop_toBottomOf="@id/income_txt" />
+        app:drawableTint="@color/purple_500"
+        app:layout_constraintBottom_toBottomOf="@id/income_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/expense_lbl"
+        app:layout_constraintTop_toTopOf="@id/income_lbl" />
 
     <TextView
         android:id="@+id/balance_txt"
@@ -150,8 +141,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:paddingBottom="8dp"
         android:text="150"
-        android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="@id/balance_lbl"
         app:layout_constraintStart_toStartOf="@id/balance_lbl"
         app:layout_constraintTop_toBottomOf="@id/balance_lbl" />
