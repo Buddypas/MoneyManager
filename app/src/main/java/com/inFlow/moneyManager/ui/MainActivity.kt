@@ -12,7 +12,6 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-
 // TODO: Think about bottom navigation or bottom drawer
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,9 +25,9 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(navController.graph,binding.drawerLayout)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
 
-        binding.bottomAppBar.setupWithNavController(navController,appBarConfiguration)
+        binding.bottomAppBar.setupWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
     }
 }
