@@ -4,14 +4,14 @@
     <item
         android:id="@+id/search"
         android:contentDescription="Search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search"
         android:title="Search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/more"
         android:contentDescription="More"
-        android:icon="@android:drawable/ic_menu_more"
         android:title="More"
         app:showAsAction="ifRoom" />
 </menu>

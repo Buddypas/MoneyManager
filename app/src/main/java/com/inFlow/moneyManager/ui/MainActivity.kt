@@ -13,8 +13,6 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Think about bottom navigation or bottom drawer
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
