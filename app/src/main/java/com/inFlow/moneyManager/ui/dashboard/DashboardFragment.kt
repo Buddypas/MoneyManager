@@ -1,18 +1,16 @@
 package com.inFlow.moneyManager.ui.dashboard
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
-import com.inFlow.moneyManager.shared.kotlin.getContextDrawable
-import dagger.hilt.android.AndroidEntryPoint
+import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class DashboardFragment : Fragment() {
@@ -20,7 +18,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DashboardViewModel by viewModels()
+    private val viewModel: DashboardViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,32 +26,6 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.dashboard_menu, menu)
-
-        val searchItem = menu.findItem(R.id.search).apply {
-            setIcon(R.drawable.ic_search)
-        }
-
-        val searchView = (searchItem.actionView as SearchView)
-        searchView.apply {
-            imeOptions = EditorInfo.IME_ACTION_DONE
-            queryHint = "Search entries"
-            isSubmitButtonEnabled = true
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.searchQuery.value = newText
-                    return true
-                }
-            })
-        }
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,6 +38,14 @@ class DashboardFragment : Fragment() {
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
         binding.walletDropdown.setAdapter(walletAdapter)
         binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
+
+        val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.onQueryTextChanged {
+            Timber.e("text changed: $it")
+        }
+//        setHasOptionsMenu(true)
 
 //        val months = listOf(
 //            "Jan",

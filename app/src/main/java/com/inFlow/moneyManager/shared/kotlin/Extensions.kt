@@ -34,6 +34,19 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
 
+inline fun SearchView.onQueryTextChanged(crossinline listener:(String) -> Unit) {
+    setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            listener(newText.orEmpty())
+            return true
+        }
+    })
+}
+
 fun String?.isValidPassword() = this?.length in 4..30
 
 fun String?.isValidEmail(): Boolean {
