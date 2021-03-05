@@ -10,8 +10,9 @@
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:id="@+id/more"
-        android:contentDescription="More"
-        android:title="More"
+        android:id="@+id/action_filter"
+        android:contentDescription="Filters"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Filters"
         app:showAsAction="ifRoom" />
 </menu>

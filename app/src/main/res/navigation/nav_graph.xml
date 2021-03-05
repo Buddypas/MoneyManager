@@ -9,10 +9,19 @@
         android:id="@+id/dashboardFragment"
         android:name="com.inFlow.moneyManager.ui.dashboard.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboard_to_filters"
+            app:destination="@id/filtersDialog" />
+    </fragment>
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.inFlow.moneyManager.ui.categories.CategoriesFragment"
-        android:label="fragment_categories"
+        android:label="Categories"
         tools:layout="@layout/fragment_categories" />
+    <fragment
+        android:id="@+id/filtersDialog"
+        android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
+        android:label="Filters"
+        tools:layout="@layout/dialog_filters" />
 </navigation>

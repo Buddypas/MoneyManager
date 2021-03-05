@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
@@ -44,6 +45,15 @@ class DashboardFragment : Fragment() {
 
         searchView.onQueryTextChanged {
             Timber.e("text changed: $it")
+        }
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.action_filter -> {
+                    findNavController().navigate(DashboardFragmentDirections.actionDashboardToFilters())
+                    true
+                }
+                else -> false
+            }
         }
 //        setHasOptionsMenu(true)
 
