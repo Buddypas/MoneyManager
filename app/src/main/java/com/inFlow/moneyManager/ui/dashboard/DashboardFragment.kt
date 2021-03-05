@@ -26,10 +26,37 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val items = listOf("Material", "Design", "Components", "Android")
-        val adapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, items)
-        binding.walletDropdown.setAdapter(adapter)
-        binding.walletDropdown.setText(adapter.getItem(0).toString(), false)
+        val wallets = listOf("Material", "Design", "Components", "Android")
+        val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
+        binding.walletDropdown.setAdapter(walletAdapter)
+        binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
+
+        val months = listOf(
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        )
+        val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, months)
+        binding.monthDropdown.setAdapter(monthAdapter)
+        binding.monthDropdown.setText(monthAdapter.getItem(0).toString(), false)
+
+        val sortOptions = listOf(
+            "Date",
+            "Category",
+            "Amount",
+        )
+        val sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
+        binding.monthDropdown.setAdapter(sortAdapter)
+        binding.monthDropdown.setText(sortAdapter.getItem(0).toString(), false)
     }
 
     override fun onDestroyView() {
