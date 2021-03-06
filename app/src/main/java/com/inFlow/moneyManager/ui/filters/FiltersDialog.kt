@@ -77,30 +77,6 @@ class FiltersDialog : DialogFragment() {
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
 
         binding.periodRadioGroup.check(R.id.whole_month_btn)
-
-        val datePicker = MaterialDatePicker.Builder.dateRangePicker().apply {
-            setCalendarConstraints(
-                CalendarConstraints.Builder()
-                    .setStart(today.minusYears(2).toEpochDay())
-                    .setEnd(today.toEpochDay())
-                    .build()
-            )
-                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
-
-        }.build()
-        datePicker.addOnPositiveButtonClickListener {
-            val startDate =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
-                    .toLocalDate()
-            val endDate =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
-                    .toLocalDate()
-            Timber.e("$startDate - $endDate")
-        }
-
-        binding.chooseRangeBtn.setOnClickListener {
-            datePicker.show(parentFragmentManager, "DATEPICKER")
-        }
     }
 
 

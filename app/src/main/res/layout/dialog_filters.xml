@@ -54,7 +54,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:text="Month"
         app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
         app:layout_constraintHorizontal_bias="0"
@@ -113,29 +113,76 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    Month section-->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/choose_range_btn"
-        style="?attr/buttonStyle"
+    <!--    Range section-->
+    <TextView
+        android:id="@+id/from_lbl"
+        style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Pick Range"
-        app:icon="@drawable/ic_date_range"
+        android:layout_marginTop="40dp"
+        android:text="From"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
         app:layout_constraintTop_toBottomOf="@id/month_lbl" />
 
-    <TextView
-        android:id="@+id/range_txt"
-        style="?attr/textAppearanceBody1"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/from_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="1 Dec 2020 - 31 Jan 2021"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/choose_range_btn"
-        app:layout_constraintStart_toEndOf="@id/choose_range_btn"
-        app:layout_constraintTop_toTopOf="@id/choose_range_btn" />
+        android:hint="dd/mm/yyyy"
+        android:minWidth="144dp"
+        android:textColorHint="@color/gray"
+        app:hintEnabled="true"
+        app:hintTextAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintBottom_toBottomOf="@id/from_lbl"
+        app:layout_constraintStart_toEndOf="@id/from_lbl"
+        app:layout_constraintTop_toTopOf="@id/from_lbl">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/from_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    To section-->
+    <TextView
+        android:id="@+id/to_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="To"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toBottomOf="@id/from_lbl" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/to_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="dd/mm/yyyy"
+        android:minWidth="144dp"
+        android:textColorHint="@color/gray"
+        app:hintEnabled="true"
+        app:hintTextAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintBottom_toBottomOf="@id/to_lbl"
+        app:layout_constraintStart_toStartOf="@id/from_layout"
+        app:layout_constraintTop_toTopOf="@id/to_lbl">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/to_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!--    Sort section-->
     <TextView
@@ -143,10 +190,10 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:text="Sort by"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toBottomOf="@id/choose_range_btn" />
+        app:layout_constraintTop_toBottomOf="@id/to_lbl" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sort_dropdown_layout"
@@ -178,7 +225,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:text="Order"
         app:layout_constraintStart_toStartOf="@id/sort_lbl"
         app:layout_constraintTop_toBottomOf="@id/sort_lbl" />
