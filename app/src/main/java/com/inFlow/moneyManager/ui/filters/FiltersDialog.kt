@@ -7,7 +7,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
+import com.inFlow.moneyManager.shared.kotlin.MONTHS
 import com.inFlow.moneyManager.shared.kotlin.setFullWidth
+import java.time.LocalDate
 
 
 class FiltersDialog : DialogFragment() {
@@ -29,41 +31,41 @@ class FiltersDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpUI()
+    }
+
+    private fun setUpUI() {
         val sortOptions = listOf(
             "Date",
             "Category",
-            "Amount",
+            "Amount"
         )
         val sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
         binding.sortDropdown.setText(sortAdapter.getItem(0).toString(), false)
 
-        val months = listOf(
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
+        val months = MONTHS
+        val today = LocalDate.now()
+        val monthPosition = today.month.ordinal
+
+        /**
+         * Contains the last 3 years starting from the current year
+         */
+        val years = listOf(
+            today.year.toString(),
+            today.minusYears(1).year.toString(),
+            today.minusYears(2).year.toString()
         )
+
         val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, months)
         binding.monthDropdown.setAdapter(monthAdapter)
-        binding.monthDropdown.setText(monthAdapter.getItem(0).toString(), false)
+        binding.monthDropdown.setText(monthAdapter.getItem(monthPosition).toString(), false)
 
-        val years = listOf(
-            "2021",
-            "2020",
-            "2019"
-        )
         val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, years)
         binding.yearDropdown.setAdapter(yearAdapter)
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
+
+        binding.periodRadioGroup.check(R.id.whole_month_btn)
     }
 
     override fun onDestroyView() {
