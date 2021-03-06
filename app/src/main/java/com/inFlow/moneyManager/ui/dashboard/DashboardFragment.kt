@@ -75,14 +75,7 @@ class DashboardFragment : Fragment() {
 //        binding.monthDropdown.setAdapter(monthAdapter)
 //        binding.monthDropdown.setText(monthAdapter.getItem(0).toString(), false)
 //
-//        val sortOptions = listOf(
-//            "Date",
-//            "Category",
-//            "Amount",
-//        )
-//        val sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
-//        binding.monthDropdown.setAdapter(sortAdapter)
-//        binding.monthDropdown.setText(sortAdapter.getItem(0).toString(), false)
+
     }
 
     override fun onDestroyView() {
