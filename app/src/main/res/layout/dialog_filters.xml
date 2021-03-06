@@ -113,6 +113,30 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--    Month section-->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/choose_range_btn"
+        style="?attr/buttonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Pick Range"
+        app:icon="@drawable/ic_date_range"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toBottomOf="@id/month_lbl" />
+
+    <TextView
+        android:id="@+id/range_txt"
+        style="?attr/textAppearanceBody1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="1 Dec 2020 - 31 Jan 2021"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/choose_range_btn"
+        app:layout_constraintStart_toEndOf="@id/choose_range_btn"
+        app:layout_constraintTop_toTopOf="@id/choose_range_btn" />
+
     <!--    Sort section-->
     <TextView
         android:id="@+id/sort_lbl"
@@ -122,7 +146,7 @@
         android:layout_marginTop="32dp"
         android:text="Sort by"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toBottomOf="@id/month_lbl" />
+        app:layout_constraintTop_toBottomOf="@id/choose_range_btn" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sort_dropdown_layout"

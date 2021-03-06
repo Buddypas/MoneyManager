@@ -5,16 +5,26 @@ import android.view.*
 import android.widget.ArrayAdapter
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.MONTHS
 import com.inFlow.moneyManager.shared.kotlin.setFullWidth
+import timber.log.Timber
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
+
+    companion object {
+        const val WHOLE_MONTH = 1
+        const val CUSTOM_RANGE = 2
+    }
 
     override fun onResume() {
         setFullWidth()
@@ -66,7 +76,22 @@ class FiltersDialog : DialogFragment() {
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
 
         binding.periodRadioGroup.check(R.id.whole_month_btn)
+
+        val datePicker = MaterialDatePicker.Builder.dateRangePicker().build()
+        datePicker.addOnPositiveButtonClickListener {
+            val startDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
+                .toLocalDate()
+            val endDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
+                .toLocalDate()
+            Timber.e("$startDate - $endDate")
+        }
+
+        binding.chooseRangeBtn.setOnClickListener {
+            datePicker.show(parentFragmentManager, "DATEPICKER")
+        }
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
