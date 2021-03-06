@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="24dp"
     tools:context=".ui.filters.FiltersDialog">
 
     <TextView
@@ -11,7 +14,6 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="Period"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +23,7 @@
         android:id="@+id/period_radio_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginStart="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@id/period_lbl"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +57,8 @@
         android:layout_marginTop="32dp"
         android:text="Month"
         app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
         app:layout_constraintTop_toBottomOf="@id/period_lbl" />
 
@@ -64,13 +68,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:maxWidth="24dp"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
         app:hintEnabled="false"
         app:layout_constraintBottom_toBottomOf="@id/month_lbl"
-        app:layout_constraintEnd_toStartOf="@id/year_lbl"
+        app:layout_constraintEnd_toStartOf="@id/year_dropdown_layout"
         app:layout_constraintStart_toEndOf="@id/month_lbl"
         app:layout_constraintTop_toTopOf="@id/month_lbl">
 
@@ -84,35 +87,21 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    Year section-->
-    <TextView
-        android:id="@+id/year_lbl"
-        style="?attr/textAppearanceHeadline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Year"
-        app:layout_constraintBottom_toBottomOf="@id/month_lbl"
-        app:layout_constraintEnd_toStartOf="@id/year_dropdown_layout"
-        app:layout_constraintStart_toEndOf="@id/month_dropdown_layout"
-        app:layout_constraintTop_toTopOf="@id/month_lbl" />
-
     <!--    TODO: Align to end-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/year_dropdown_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:maxWidth="64dp"
+        android:layout_marginStart="8dp"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
         app:hintEnabled="false"
-        app:layout_constraintBottom_toBottomOf="@id/year_lbl"
+        app:layout_constraintBottom_toBottomOf="@id/month_dropdown_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/year_lbl"
-        app:layout_constraintTop_toTopOf="@id/year_lbl">
+        app:layout_constraintStart_toEndOf="@id/month_dropdown_layout"
+        app:layout_constraintTop_toTopOf="@id/month_dropdown_layout">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/year_dropdown"

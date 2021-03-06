@@ -9,10 +9,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
@@ -21,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -33,6 +36,21 @@ import java.io.FileOutputStream
 import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
+
+/**
+ * Call this method (in onActivityCreated or later) to set
+ * the width of the dialog to a percentage of the current
+ * screen width.
+ */
+fun DialogFragment.setFullWidth() {
+    if(dialog != null && dialog?.window != null) {
+        val params = dialog!!.window!!.attributes.apply {
+            width = ViewGroup.LayoutParams.MATCH_PARENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        dialog!!.window!!.attributes = params as WindowManager.LayoutParams
+    }
+}
 
 inline fun SearchView.onQueryTextChanged(crossinline listener:(String) -> Unit) {
     setOnQueryTextListener(object: SearchView.OnQueryTextListener {
