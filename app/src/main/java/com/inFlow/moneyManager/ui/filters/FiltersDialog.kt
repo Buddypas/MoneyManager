@@ -3,8 +3,8 @@ package com.inFlow.moneyManager.ui.filters
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
@@ -15,6 +15,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 
 class FiltersDialog : DialogFragment() {
@@ -77,12 +78,23 @@ class FiltersDialog : DialogFragment() {
 
         binding.periodRadioGroup.check(R.id.whole_month_btn)
 
-        val datePicker = MaterialDatePicker.Builder.dateRangePicker().build()
+        val datePicker = MaterialDatePicker.Builder.dateRangePicker().apply {
+            setCalendarConstraints(
+                CalendarConstraints.Builder()
+                    .setStart(today.minusYears(2).toEpochDay())
+                    .setEnd(today.toEpochDay())
+                    .build()
+            )
+                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+
+        }.build()
         datePicker.addOnPositiveButtonClickListener {
-            val startDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
-                .toLocalDate()
-            val endDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
-                .toLocalDate()
+            val startDate =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
+                    .toLocalDate()
+            val endDate =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.first!!), ZoneId.systemDefault())
+                    .toLocalDate()
             Timber.e("$startDate - $endDate")
         }
 
@@ -90,7 +102,6 @@ class FiltersDialog : DialogFragment() {
             datePicker.show(parentFragmentManager, "DATEPICKER")
         }
     }
-
 
 
     override fun onDestroyView() {
