@@ -21,18 +21,110 @@
         android:id="@+id/period_radio_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@id/period_lbl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/period_lbl"
         app:layout_constraintTop_toTopOf="@id/period_lbl">
 
         <RadioButton
-            android:layout_width="wrap_content"
+            android:id="@+id/whole_month_btn"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Whole month"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <RadioButton
+            android:id="@+id/custom_range_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Custom range"
+            android:textAppearance="?attr/textAppearanceBody1" />
 
     </RadioGroup>
 
+    <!--    Month section-->
+    <TextView
+        android:id="@+id/month_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Month"
+        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toBottomOf="@id/period_lbl" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/month_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:maxWidth="24dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/arrow_down"
+        app:hintEnabled="false"
+        app:layout_constraintBottom_toBottomOf="@id/month_lbl"
+        app:layout_constraintEnd_toStartOf="@id/year_lbl"
+        app:layout_constraintStart_toEndOf="@id/month_lbl"
+        app:layout_constraintTop_toTopOf="@id/month_lbl">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/month_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    Year section-->
+    <TextView
+        android:id="@+id/year_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Year"
+        app:layout_constraintBottom_toBottomOf="@id/month_lbl"
+        app:layout_constraintEnd_toStartOf="@id/year_dropdown_layout"
+        app:layout_constraintStart_toEndOf="@id/month_dropdown_layout"
+        app:layout_constraintTop_toTopOf="@id/month_lbl" />
+
+    <!--    TODO: Align to end-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/year_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:maxWidth="64dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/arrow_down"
+        app:hintEnabled="false"
+        app:layout_constraintBottom_toBottomOf="@id/year_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/year_lbl"
+        app:layout_constraintTop_toTopOf="@id/year_lbl">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/year_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    Sort section-->
     <TextView
         android:id="@+id/sort_lbl"
         style="?attr/textAppearanceHeadline6"
@@ -41,7 +133,7 @@
         android:layout_marginTop="32dp"
         android:text="Sort by"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toBottomOf="@id/period_lbl" />
+        app:layout_constraintTop_toBottomOf="@id/month_lbl" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sort_dropdown_layout"

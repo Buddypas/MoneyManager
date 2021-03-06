@@ -55,26 +55,6 @@ class DashboardFragment : Fragment() {
                 else -> false
             }
         }
-//        setHasOptionsMenu(true)
-
-//        val months = listOf(
-//            "Jan",
-//            "Feb",
-//            "Mar",
-//            "Apr",
-//            "May",
-//            "Jun",
-//            "Jul",
-//            "Aug",
-//            "Sep",
-//            "Oct",
-//            "Nov",
-//            "Dec"
-//        )
-//        val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, months)
-//        binding.monthDropdown.setAdapter(monthAdapter)
-//        binding.monthDropdown.setText(monthAdapter.getItem(0).toString(), false)
-//
 
     }
 

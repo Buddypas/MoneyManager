@@ -31,6 +31,33 @@ class FiltersDialog : DialogFragment() {
         val sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
         binding.sortDropdown.setText(sortAdapter.getItem(0).toString(), false)
+
+        val months = listOf(
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        )
+        val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, months)
+        binding.monthDropdown.setAdapter(monthAdapter)
+        binding.monthDropdown.setText(monthAdapter.getItem(0).toString(), false)
+
+        val years = listOf(
+            "2021",
+            "2020",
+            "2019"
+        )
+        val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, years)
+        binding.yearDropdown.setAdapter(yearAdapter)
+        binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
     }
 
     override fun onDestroyView() {
