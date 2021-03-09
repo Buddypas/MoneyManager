@@ -10,6 +10,7 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.MONTHS
 import com.inFlow.moneyManager.shared.kotlin.setFullWidth
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDate
@@ -21,6 +22,8 @@ import java.util.*
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: FiltersViewModel by viewModel()
 
     companion object {
         const val WHOLE_MONTH = 1
@@ -77,6 +80,16 @@ class FiltersDialog : DialogFragment() {
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
 
         binding.periodRadioGroup.check(R.id.whole_month_btn)
+
+        binding.periodRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == R.id.whole_month_btn) {
+                Timber.e("checked whole_month_btn")
+                viewModel.currentPeriodMode.postValue(WHOLE_MONTH)
+            } else {
+                Timber.e("checked custom_range")
+                viewModel.currentPeriodMode.postValue(CUSTOM_RANGE)
+            }
+        }
     }
 
 

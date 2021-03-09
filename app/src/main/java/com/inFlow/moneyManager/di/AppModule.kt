@@ -6,6 +6,7 @@ import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
+import com.inFlow.moneyManager.ui.filters.FiltersViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -33,4 +34,5 @@ val dataModule = module {
 
 val viewModelModule = module {
     factory { DashboardViewModel() }
+    factory { FiltersViewModel() }
 }
