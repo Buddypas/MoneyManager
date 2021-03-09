@@ -83,7 +83,7 @@ class FiltersDialog : DialogFragment() {
         binding.yearDropdown.setAdapter(yearAdapter)
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
 
-        binding.periodRadioGroup.check(R.id.whole_month_btn)
+//        binding.periodRadioGroup.check(R.id.whole_month_btn)
 
         binding.periodRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             with(viewModel) {
@@ -95,6 +95,13 @@ class FiltersDialog : DialogFragment() {
         }
 
         binding.orderToggleGroup.check(R.id.desc_btn)
+
+        binding.orderToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            when(checkedId) {
+                R.id.desc_btn -> if(isChecked) viewModel.isDescending.value = true
+                R.id.asc_btn -> if(isChecked) viewModel.isDescending.value = false
+            }
+        }
     }
 
     private fun manageFields(periodMode: PeriodMode) {
