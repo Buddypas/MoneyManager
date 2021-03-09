@@ -1,9 +1,10 @@
 package com.inFlow.moneyManager.ui.filters
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.inFlow.moneyManager.ui.filters.FiltersDialog.Companion.WHOLE_MONTH
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class FiltersViewModel: ViewModel() {
-    val currentPeriodMode = MutableLiveData(WHOLE_MONTH)
+    val currentPeriodMode = MutableStateFlow(PeriodMode.WHOLE_MONTH)
 }
+
+enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }

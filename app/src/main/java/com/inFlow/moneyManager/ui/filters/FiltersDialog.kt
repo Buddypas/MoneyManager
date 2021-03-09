@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.MONTHS
+import com.inFlow.moneyManager.shared.kotlin.getContextColor
 import com.inFlow.moneyManager.shared.kotlin.setFullWidth
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.Instant
@@ -24,11 +28,6 @@ class FiltersDialog : DialogFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FiltersViewModel by viewModel()
-
-    companion object {
-        const val WHOLE_MONTH = 1
-        const val CUSTOM_RANGE = 2
-    }
 
     override fun onResume() {
         setFullWidth()
@@ -49,6 +48,11 @@ class FiltersDialog : DialogFragment() {
     }
 
     private fun setUpUI() {
+        lifecycleScope.launch {
+            viewModel.currentPeriodMode.collectLatest { value ->
+                manageFields(value)
+            }
+        }
         val sortOptions = listOf(
             "Date",
             "Category",
@@ -82,16 +86,38 @@ class FiltersDialog : DialogFragment() {
         binding.periodRadioGroup.check(R.id.whole_month_btn)
 
         binding.periodRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == R.id.whole_month_btn) {
-                Timber.e("checked whole_month_btn")
-                viewModel.currentPeriodMode.postValue(WHOLE_MONTH)
-            } else {
-                Timber.e("checked custom_range")
-                viewModel.currentPeriodMode.postValue(CUSTOM_RANGE)
+            with(viewModel) {
+                currentPeriodMode.value =
+                    if (checkedId == R.id.whole_month_btn)
+                        PeriodMode.WHOLE_MONTH
+                    else PeriodMode.CUSTOM_RANGE
             }
         }
+
+        binding.orderToggleGroup.check(R.id.desc_btn)
     }
 
+    private fun manageFields(periodMode: PeriodMode) {
+        if (periodMode == PeriodMode.WHOLE_MONTH)
+            binding.apply {
+                fromLbl.setTextColor(requireContext().getContextColor(R.color.gray))
+                toLbl.setTextColor(requireContext().getContextColor(R.color.gray))
+                fromLayout.isEnabled = false
+                toLayout.isEnabled = false
+                monthLbl.setTextColor(requireContext().getContextColor(R.color.black))
+                monthDropdownLayout.isEnabled = true
+                yearDropdownLayout.isEnabled = true
+            }
+        else binding.apply {
+            fromLbl.setTextColor(requireContext().getContextColor(R.color.black))
+            toLbl.setTextColor(requireContext().getContextColor(R.color.black))
+            fromLayout.isEnabled = true
+            toLayout.isEnabled = true
+            monthLbl.setTextColor(requireContext().getContextColor(R.color.gray))
+            monthDropdownLayout.isEnabled = false
+            yearDropdownLayout.isEnabled = false
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
