@@ -22,7 +22,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!

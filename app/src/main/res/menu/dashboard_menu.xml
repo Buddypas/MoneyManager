@@ -12,7 +12,7 @@
     <item
         android:id="@+id/action_filter"
         android:contentDescription="Filters"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:icon="@drawable/ic_filter"
         android:title="Filters"
         app:showAsAction="ifRoom" />
 </menu>
