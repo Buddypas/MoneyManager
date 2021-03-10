@@ -49,6 +49,20 @@
 
     </RadioGroup>
 
+    <!--    Income or expense section-->
+    <TextView
+        android:id="@+id/type_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Show"
+        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toBottomOf="@id/period_lbl" />
+
     <!--    Month section-->
     <TextView
         android:id="@+id/month_lbl"
@@ -61,7 +75,31 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toBottomOf="@id/period_lbl" />
+        app:layout_constraintTop_toBottomOf="@id/type_lbl" />
+
+    <CheckBox
+        android:id="@+id/incomes_cbx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:checked="true"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:text="Incomes"
+        app:layout_constraintBottom_toBottomOf="@id/type_lbl"
+        app:layout_constraintStart_toEndOf="@id/type_lbl"
+        app:layout_constraintTop_toTopOf="@id/type_lbl" />
+
+    <CheckBox
+        android:id="@+id/expenses_cbx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:checked="true"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:text="Expenses"
+        app:layout_constraintBottom_toBottomOf="@id/type_lbl"
+        app:layout_constraintStart_toEndOf="@id/incomes_cbx"
+        app:layout_constraintTop_toTopOf="@id/type_lbl" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/month_dropdown_layout"

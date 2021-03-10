@@ -32,9 +32,6 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.searchQuery.observe(viewLifecycleOwner, {
-            Timber.e(it)
-        })
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
         binding.walletDropdown.setAdapter(walletAdapter)
@@ -44,7 +41,7 @@ class DashboardFragment : Fragment() {
         val searchView = searchItem.actionView as SearchView
 
         searchView.onQueryTextChanged {
-            Timber.e("text changed: $it")
+            viewModel.searchQuery.value = it
         }
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId) {
