@@ -9,9 +9,7 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
-import com.inFlow.moneyManager.shared.kotlin.MONTHS
-import com.inFlow.moneyManager.shared.kotlin.getContextColor
-import com.inFlow.moneyManager.shared.kotlin.setFullWidth
+import com.inFlow.moneyManager.shared.kotlin.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -53,9 +51,9 @@ class FiltersDialog : DialogFragment() {
             }
         }
         val sortOptions = listOf(
-            "Date",
-            "Category",
-            "Amount"
+            SORT_BY_DATE,
+            SORT_BY_CATEGORY,
+            SORT_BY_AMOUNT
         )
         val sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
@@ -81,8 +79,6 @@ class FiltersDialog : DialogFragment() {
         val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, years)
         binding.yearDropdown.setAdapter(yearAdapter)
         binding.yearDropdown.setText(yearAdapter.getItem(0).toString(), false)
-
-//        binding.periodRadioGroup.check(R.id.whole_month_btn)
 
         binding.periodRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             with(viewModel) {

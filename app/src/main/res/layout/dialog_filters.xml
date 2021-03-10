@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="8dp"
-    android:paddingBottom="24dp"
+    android:paddingBottom="16dp"
     tools:context=".ui.filters.FiltersDialog">
 
     <TextView
@@ -83,8 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:checked="true"
-        android:textAppearance="?attr/textAppearanceBody1"
         android:text="Incomes"
+        android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintBottom_toBottomOf="@id/type_lbl"
         app:layout_constraintStart_toEndOf="@id/type_lbl"
         app:layout_constraintTop_toTopOf="@id/type_lbl" />
@@ -95,8 +95,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:checked="true"
-        android:textAppearance="?attr/textAppearanceBody1"
         android:text="Expenses"
+        android:textAppearance="?attr/textAppearanceBody1"
         app:layout_constraintBottom_toBottomOf="@id/type_lbl"
         app:layout_constraintStart_toEndOf="@id/incomes_cbx"
         app:layout_constraintTop_toTopOf="@id/type_lbl" />
@@ -294,6 +294,43 @@
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_sort_asc" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apply_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="apply"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/order_toggle_group" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="cancel"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintEnd_toStartOf="@id/apply_btn"
+        app:layout_constraintTop_toTopOf="@id/apply_btn" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/clear_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:strokeColor="@color/red"
+        app:strokeWidth="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear"
+        android:textAllCaps="true"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/apply_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
