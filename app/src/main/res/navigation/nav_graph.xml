@@ -23,5 +23,9 @@
         android:id="@+id/filtersDialog"
         android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
         android:label="Filters"
-        tools:layout="@layout/dialog_filters" />
+        tools:layout="@layout/dialog_filters" >
+        <argument
+            android:name="filterData"
+            app:argType="com.inFlow.moneyManager.vo.FiltersDto" />
+    </dialog>
 </navigation>

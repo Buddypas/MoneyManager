@@ -46,7 +46,7 @@ class DashboardFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId) {
                 R.id.action_filter -> {
-                    findNavController().navigate(DashboardFragmentDirections.actionDashboardToFilters())
+                    findNavController().navigate(DashboardFragmentDirections.actionDashboardToFilters(viewModel.activeFilters.value))
                     true
                 }
                 else -> false
