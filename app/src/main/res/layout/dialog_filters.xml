@@ -183,6 +183,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="date"
+            android:maxLength="10"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black" />
 
@@ -218,6 +219,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="date"
+            android:maxLength="10"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black" />
 
@@ -321,8 +323,6 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clear_btn"
         style="@style/Widget.MaterialComponents.Button.TextButton"
-        app:strokeColor="@color/red"
-        app:strokeWidth="1dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="clear"
@@ -330,7 +330,9 @@
         android:textColor="@color/red"
         app:layout_constraintBottom_toBottomOf="@id/apply_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/apply_btn" />
+        app:layout_constraintTop_toTopOf="@id/apply_btn"
+        app:strokeColor="@color/red"
+        app:strokeWidth="1dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

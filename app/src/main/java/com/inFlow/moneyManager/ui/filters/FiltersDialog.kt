@@ -1,15 +1,21 @@
 package com.inFlow.moneyManager.ui.filters
 
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.*
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -23,6 +29,7 @@ class FiltersDialog : DialogFragment() {
 
     private lateinit var sortAdapter: ArrayAdapter<String>
     private lateinit var monthAdapter: ArrayAdapter<String>
+    private lateinit var yearAdapter: ArrayAdapter<String>
 
     override fun onResume() {
         setFullWidth()
@@ -33,58 +40,116 @@ class FiltersDialog : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.initialFilters = args.filterData
-        viewModel.activeFilters = args.filterData
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.setFilters(args.filterData)
         setUpUI()
     }
 
     private fun setUpUI() {
-        manageFields(viewModel.initialFilters)
-        val sortOptions = listOf(
-            SORT_BY_DATE,
-            SORT_BY_CATEGORY,
-            SORT_BY_AMOUNT
-        )
-        sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, sortOptions)
+        sortAdapter =
+            ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
         binding.sortDropdown.setText(sortAdapter.getItem(0).toString(), false)
 
-        val months = MONTHS
-        val today = LocalDate.now()
-
-        /**
-         * Contains the last 3 years starting from the current year
-         */
-        val years = listOf(
-            today.year.toString(),
-            today.minusYears(1).year.toString(),
-            today.minusYears(2).year.toString()
-        )
-
-        monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, months)
+        monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, MONTHS)
         binding.monthDropdown.setAdapter(monthAdapter)
 
-        val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, years)
+        yearAdapter =
+            ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.years)
         binding.yearDropdown.setAdapter(yearAdapter)
+
+        binding.yearDropdown.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onYearSelected(position)
+            }
+
+        binding.monthDropdown.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onMonthSelected(position)
+            }
 
         binding.periodRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.onPeriodSelected(checkedId)
         }
 
         binding.orderToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            viewModel.onSortOrderChecked(checkedId,isChecked)
+            viewModel.onSortOrderChecked(checkedId, isChecked)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.fromDateString.collectLatest { text ->
+                var newText = text
+                if (newText.length == 2 || newText.length == 5) {
+                    newText += '/'
+                    viewModel.fromDateString.value = newText
+                } else {
+                    binding.fromInput.text = SpannableStringBuilder(newText)
+                    binding.fromInput.setSelection(newText.length)
+                }
+            }
+            viewModel.toDateString.collectLatest { text ->
+                var newText = text
+                if (newText.length == 2 || newText.length == 5) {
+                    newText += '/'
+                    viewModel.fromDateString.value = newText
+                }
+                else {
+                    binding.toInput.text = SpannableStringBuilder(newText)
+                    binding.toInput.setSelection(newText.length)
+                }
+            }
+            viewModel.period.collectLatest { manageFields(it) }
+        }
+
+        binding.fromInput.doOnTextChanged { text, start, before, count ->
+            viewModel.fromDateString.value = text.toString()
+        }
+
+        binding.toInput.doOnTextChanged { text, start, before, count ->
+            viewModel.toDateString.value = text.toString()
+        }
+
+        populateFilters()
+    }
+
+    private fun populateFilters() {
+        if (viewModel.period.value == PeriodMode.WHOLE_MONTH)
+            binding.apply {
+                monthDropdown.setText(
+                    monthAdapter.getItem(viewModel.month),
+                    false
+                )
+                yearDropdown.setText(viewModel.year.toString(), false)
+            }
+        else {
+            val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+            val fromString = viewModel.fromDate?.format(formatter).orEmpty()
+            val toString = viewModel.toDate?.format(formatter).orEmpty()
+
+            viewModel.fromDateString.value = fromString
+            viewModel.toDateString.value = toString
+        }
+        binding.apply {
+            if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
+            else orderToggleGroup.check(R.id.asc_btn)
+            if (viewModel.showIncomes) incomesCbx.isChecked = true
+            if (viewModel.showExpenses) expensesCbx.isChecked = true
+            when (viewModel.sortBy) {
+                SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
+                SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
+                else -> sortDropdown.setText(sortAdapter.getItem(2), false)
+            }
         }
     }
 
-    private fun manageFields(filterData: FiltersDto) {
+    private fun manageFields(period: PeriodMode) {
         binding.apply {
-            if (filterData.period == PeriodMode.WHOLE_MONTH) {
+            if (period == PeriodMode.WHOLE_MONTH) {
                 fromLbl.setTextColor(requireContext().getContextColor(R.color.gray))
                 toLbl.setTextColor(requireContext().getContextColor(R.color.gray))
                 fromLayout.isEnabled = false
@@ -92,9 +157,6 @@ class FiltersDialog : DialogFragment() {
                 monthLbl.setTextColor(requireContext().getContextColor(R.color.black))
                 monthDropdownLayout.isEnabled = true
                 yearDropdownLayout.isEnabled = true
-
-                monthDropdown.setText(monthAdapter.getItem(filterData.monthAndYear.month.ordinal), false)
-                yearDropdown.setText(monthAdapter.getItem(filterData.monthAndYear.year), false)
             } else {
                 fromLbl.setTextColor(requireContext().getContextColor(R.color.black))
                 toLbl.setTextColor(requireContext().getContextColor(R.color.black))
@@ -103,23 +165,8 @@ class FiltersDialog : DialogFragment() {
                 monthLbl.setTextColor(requireContext().getContextColor(R.color.gray))
                 monthDropdownLayout.isEnabled = false
                 yearDropdownLayout.isEnabled = false
-
-                val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
-                val fromString = filterData.fromDate?.format(formatter).orEmpty()
-                val toString = filterData.toDate?.format(formatter).orEmpty()
-
-                fromInput.text = SpannableStringBuilder(fromString)
-                toInput.text = SpannableStringBuilder(toString)
             }
-            if(filterData.isDescending) orderToggleGroup.check(R.id.desc_btn)
-            else orderToggleGroup.check(R.id.asc_btn)
-            if(filterData.showIncomes) incomesCbx.isChecked = true
-            if(filterData.showExpenses) expensesCbx.isChecked = true
-            when(filterData.sortBy) {
-                SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
-                SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
-                else -> sortDropdown.setText(sortAdapter.getItem(2), false)
-            }
+
         }
     }
 
