@@ -14,7 +14,7 @@ class FiltersDto(
     var showExpenses: Boolean = true,
     var isDescending: Boolean = true,
     var sortBy: String = SORT_BY_DATE,
-    var monthAndYear: LocalDate? = LocalDate.now(),
+    var monthAndYear: LocalDate = LocalDate.now(),
     var fromDate: LocalDate? = null,
     var toDate: LocalDate? = null
-): Parcelable
+) : Parcelable

@@ -37,13 +37,34 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
 
+
+/**
+ * This method is zero based, i.e. January returns 0, December returns 11
+ */
+fun String.getMonthPosition(): Int {
+    return when (this) {
+        "Jan" -> 0
+        "Feb" -> 1
+        "Mar" -> 2
+        "Apr" -> 3
+        "May" -> 4
+        "Jun" -> 5
+        "Jul" -> 6
+        "Aug" -> 7
+        "Sep" -> 8
+        "Oct" -> 9
+        "Nov" -> 10
+        else -> 11
+    }
+}
+
 /**
  * Call this method (in onActivityCreated or later) to set
  * the width of the dialog to a percentage of the current
  * screen width.
  */
 fun DialogFragment.setFullWidth() {
-    if(dialog != null && dialog?.window != null) {
+    if (dialog != null && dialog?.window != null) {
         val params = dialog!!.window!!.attributes.apply {
             width = ViewGroup.LayoutParams.MATCH_PARENT
             height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -52,8 +73,8 @@ fun DialogFragment.setFullWidth() {
     }
 }
 
-inline fun SearchView.onQueryTextChanged(crossinline listener:(String) -> Unit) {
-    setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit) {
+    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
             return true
         }
