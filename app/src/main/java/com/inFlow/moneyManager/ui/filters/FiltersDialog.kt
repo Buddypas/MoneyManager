@@ -1,18 +1,14 @@
 package com.inFlow.moneyManager.ui.filters
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.TextWatcher
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
@@ -23,7 +19,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.time.*
 import java.time.format.DateTimeFormatter
 
 class FiltersDialog : DialogFragment() {
@@ -78,6 +73,14 @@ class FiltersDialog : DialogFragment() {
                 viewModel.onMonthSelected(position)
             }
 
+        binding.cancelBtn.setOnClickListener {
+            dismiss()
+        }
+
+        binding.clearBtn.setOnClickListener {
+            viewModel.onClearClicked()
+        }
+
         binding.periodRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.onPeriodSelected(checkedId)
         }
@@ -125,7 +128,12 @@ class FiltersDialog : DialogFragment() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
                 when(it) {
-                    is FiltersEvent.PeriodEvent -> manageFields(it.newPeriodMode)
+                    is FiltersEvent.ChangePeriodMode -> manageFields(it.newPeriodMode)
+                    is FiltersEvent.ApplyFilters -> {
+                        findNavController().previousBackStackEntry?.savedStateHandle?.set(KEY_FILTERS, it.filtersData)
+                        dismiss()
+                    }
+                    FiltersEvent.ClearFilters -> populateFilters()
                 }
             }
         }

@@ -31,9 +31,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDate
+import java.time.Month
+import java.time.Year
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -57,6 +62,23 @@ fun String.getMonthPosition(): Int {
         else -> 11
     }
 }
+
+//fun Int.getMonthByPosition(): Month {
+//    return when (this) {
+//        1 -> Month.JANUARY
+//        2 -> Month.FEBRUARY
+//        3 -> Month.MARCH
+//        4 -> Month.APRIL
+//        5 -> Month.MAY
+//        6 -> Month.JUNE
+//        "Jul" -> Month.JULY
+//        "Aug" -> Month.AUGUST
+//        "Sep" -> 8
+//        "Oct" -> 9
+//        "Nov" -> 10
+//        else -> 11
+//    }
+//}
 
 /**
  * Call this method (in onActivityCreated or later) to set
@@ -91,6 +113,26 @@ fun String?.isValidPassword() = this?.length in 4..30
 fun String?.isValidEmail(): Boolean {
     return if (this.isNullOrEmpty()) false
     else android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
+
+/**
+ * Returns null if string is not a valid date
+ */
+fun String?.toLocalDate(): LocalDate? {
+    if (this == null) return null
+    else {
+        val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+        val date: LocalDate
+        try {
+            date = LocalDate.parse(this, formatter)
+        } catch (e: DateTimeParseException) {
+            Timber.e(e)
+            return null
+        }
+        val today = LocalDate.now()
+        if(date.isAfter(today)) return null
+        return date
+    }
 }
 
 fun Context.getContextColor(colorId: Int) = ContextCompat.getColor(this, colorId)

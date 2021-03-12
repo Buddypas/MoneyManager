@@ -3,16 +3,12 @@ package com.inFlow.moneyManager.ui.filters
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.shared.kotlin.MONTHS
-import com.inFlow.moneyManager.shared.kotlin.SORT_BY_AMOUNT
-import com.inFlow.moneyManager.shared.kotlin.SORT_BY_CATEGORY
-import com.inFlow.moneyManager.shared.kotlin.SORT_BY_DATE
+import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDate
 
 class FiltersViewModel : ViewModel() {
@@ -48,8 +44,8 @@ class FiltersViewModel : ViewModel() {
 
     fun setFilters(data: FiltersDto) {
         period.value = data.period
-//        period.value = PeriodMode.CUSTOM_RANGE
-        if(data.period == PeriodMode.WHOLE_MONTH) monthAndYear = data.monthAndYear
+        if (data.period == PeriodMode.WHOLE_MONTH)
+            monthAndYear = data.monthAndYear
         else {
             fromDate = data.fromDate
             toDate = data.toDate
@@ -59,6 +55,8 @@ class FiltersViewModel : ViewModel() {
         showExpenses = data.showExpenses
     }
 
+    private fun clear() = setFilters(FiltersDto())
+
     fun onSortOrderChecked(checkedId: Int, isChecked: Boolean) {
         if (isChecked)
             isDescending = when (checkedId) {
@@ -67,12 +65,12 @@ class FiltersViewModel : ViewModel() {
             }
     }
 
-    fun onPeriodSelected(checkedId: Int) {
+    fun onPeriodSelected(checkedId: Int) = viewModelScope.launch {
         when (checkedId) {
             R.id.custom_range_btn -> period.value = PeriodMode.CUSTOM_RANGE
             else -> period.value = PeriodMode.WHOLE_MONTH
         }
-        viewModelScope.launch { filtersEventChannel.send(FiltersEvent.PeriodEvent(period.value)) }
+        filtersEventChannel.send(FiltersEvent.ChangePeriodMode(period.value))
     }
 
     fun onYearSelected(position: Int) {
@@ -82,10 +80,72 @@ class FiltersViewModel : ViewModel() {
     fun onMonthSelected(position: Int) {
         month = MONTHS[position].toInt()
     }
+
+    fun onClearClicked() = viewModelScope.launch {
+        clear()
+        filtersEventChannel.send(FiltersEvent.ClearFilters)
+    }
+
+    fun onApplyClicked() = viewModelScope.launch {
+        if (period.value == PeriodMode.CUSTOM_RANGE) {
+            fromDate = fromDateString.value.toLocalDate()
+            toDate = toDateString.value.toLocalDate()
+            when {
+                fromDate == null -> filtersEventChannel.send(
+                    FiltersEvent.ShowFieldError(
+                        "Date is not valid",
+                        "fromDate"
+                    )
+                )
+                toDate == null -> filtersEventChannel.send(
+                    FiltersEvent.ShowFieldError(
+                        "Date is not valid",
+                        "toDate"
+                    )
+                )
+                else -> {
+                    val filtersData = FiltersDto(
+                        period.value, showIncomes, showExpenses, isDescending, sortBy, null,fromDate,toDate
+                    )
+                    filtersEventChannel.send(
+                        FiltersEvent.ApplyFilters(filtersData)
+                    )
+                }
+            }
+        }
+
+    }
+
+    fun validateFilters(): Boolean {
+        if (period.value == PeriodMode.CUSTOM_RANGE) {
+            val today = LocalDate.now()
+            fromDate = fromDateString.value.toLocalDate()
+            toDate = toDateString.value.toLocalDate()
+            when {
+                fromDate == null || fromDate!!.isAfter(today) -> filtersEventChannel.send(
+                    FiltersEvent.ShowFieldError(
+                        "Date is not valid",
+                        "fromDate"
+                    )
+                )
+                toDate == null || toDate!!.isAfter(today) -> filtersEventChannel.send(
+                    FiltersEvent.ShowFieldError(
+                        "Date is not valid",
+                        "toDate"
+                    )
+                )
+            }
+        }
+    }
 }
+// TODO: Continue with valiadtion
+data class FieldError(val msg: String, val field:)
 
 sealed class FiltersEvent {
-    data class PeriodEvent(val newPeriodMode: PeriodMode) : FiltersEvent()
+    object ClearFilters : FiltersEvent()
+    data class ApplyFilters(val filtersData: FiltersDto) : FiltersEvent()
+    data class ChangePeriodMode(val newPeriodMode: PeriodMode) : FiltersEvent()
+    data class ShowFieldError(val message: String, val field: String) : FiltersEvent()
 }
 
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
