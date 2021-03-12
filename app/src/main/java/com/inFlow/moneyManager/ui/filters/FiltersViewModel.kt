@@ -1,21 +1,26 @@
 package com.inFlow.moneyManager.ui.filters
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.shared.kotlin.MONTHS
 import com.inFlow.moneyManager.shared.kotlin.SORT_BY_AMOUNT
 import com.inFlow.moneyManager.shared.kotlin.SORT_BY_CATEGORY
 import com.inFlow.moneyManager.shared.kotlin.SORT_BY_DATE
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 
 class FiltersViewModel : ViewModel() {
     var year: Int = LocalDate.now().year
     var month: Int = LocalDate.now().monthValue - 1
+
+    private val filtersEventChannel = Channel<FiltersEvent>()
+    val filtersEvent = filtersEventChannel.receiveAsFlow()
 
     var period = MutableStateFlow(PeriodMode.WHOLE_MONTH)
     var isDescending = true
@@ -43,6 +48,7 @@ class FiltersViewModel : ViewModel() {
 
     fun setFilters(data: FiltersDto) {
         period.value = data.period
+//        period.value = PeriodMode.CUSTOM_RANGE
         if(data.period == PeriodMode.WHOLE_MONTH) monthAndYear = data.monthAndYear
         else {
             fromDate = data.fromDate
@@ -62,10 +68,11 @@ class FiltersViewModel : ViewModel() {
     }
 
     fun onPeriodSelected(checkedId: Int) {
-        period.value = when (checkedId) {
-            R.id.custom_range_btn -> PeriodMode.CUSTOM_RANGE
-            else -> PeriodMode.WHOLE_MONTH
+        when (checkedId) {
+            R.id.custom_range_btn -> period.value = PeriodMode.CUSTOM_RANGE
+            else -> period.value = PeriodMode.WHOLE_MONTH
         }
+        viewModelScope.launch { filtersEventChannel.send(FiltersEvent.PeriodEvent(period.value)) }
     }
 
     fun onYearSelected(position: Int) {
@@ -75,6 +82,10 @@ class FiltersViewModel : ViewModel() {
     fun onMonthSelected(position: Int) {
         month = MONTHS[position].toInt()
     }
+}
+
+sealed class FiltersEvent {
+    data class PeriodEvent(val newPeriodMode: PeriodMode) : FiltersEvent()
 }
 
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }

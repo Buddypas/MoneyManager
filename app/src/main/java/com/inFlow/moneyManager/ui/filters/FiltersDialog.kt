@@ -1,11 +1,14 @@
 package com.inFlow.moneyManager.ui.filters
 
 import android.os.Bundle
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -15,8 +18,11 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.*
 import java.time.format.DateTimeFormatter
 
@@ -40,6 +46,7 @@ class FiltersDialog : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        isCancelable = true
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,10 +58,8 @@ class FiltersDialog : DialogFragment() {
     }
 
     private fun setUpUI() {
-        sortAdapter =
-            ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
+        sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
-        binding.sortDropdown.setText(sortAdapter.getItem(0).toString(), false)
 
         monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, MONTHS)
         binding.monthDropdown.setAdapter(monthAdapter)
@@ -81,40 +86,52 @@ class FiltersDialog : DialogFragment() {
             viewModel.onSortOrderChecked(checkedId, isChecked)
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.fromDateString.collectLatest { text ->
-                var newText = text
-                if (newText.length == 2 || newText.length == 5) {
-                    newText += '/'
-                    viewModel.fromDateString.value = newText
-                } else {
-                    binding.fromInput.text = SpannableStringBuilder(newText)
-                    binding.fromInput.setSelection(newText.length)
-                }
-            }
-            viewModel.toDateString.collectLatest { text ->
-                var newText = text
-                if (newText.length == 2 || newText.length == 5) {
-                    newText += '/'
-                    viewModel.fromDateString.value = newText
-                }
-                else {
-                    binding.toInput.text = SpannableStringBuilder(newText)
-                    binding.toInput.setSelection(newText.length)
-                }
-            }
-            viewModel.period.collectLatest { manageFields(it) }
-        }
-
+        /**
+         * This method is called to notify you that, within 'text', the 'count' characters beginning at 'start'
+         * have just replaced old text that had length 'before'.
+         */
         binding.fromInput.doOnTextChanged { text, start, before, count ->
-            viewModel.fromDateString.value = text.toString()
+//            if before > count -> char deleted
+            text?.let {
+                var newText = it.toString()
+                if (before < count) {
+                    if (newText.length == 2 || newText.length == 5) {
+                        newText += '/'
+                        binding.fromInput.text = SpannableStringBuilder(newText)
+                        binding.fromInput.setSelection(binding.fromInput.text!!.length)
+                    }
+                }
+            }
+            viewModel.fromDateString.value = binding.fromInput.text.toString()
         }
-
         binding.toInput.doOnTextChanged { text, start, before, count ->
-            viewModel.toDateString.value = text.toString()
+            text?.let {
+                var newText = it.toString()
+                if (before < count) {
+                    if (newText.length == 2 || newText.length == 5) {
+                        newText += '/'
+                        binding.toInput.text = SpannableStringBuilder(newText)
+                        binding.toInput.setSelection(binding.toInput.text!!.length)
+                    }
+                }
+            }
+            viewModel.toDateString.value = binding.toInput.text.toString()
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.fromDateString.collectLatest { text ->
+                Timber.e(text)
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.filtersEvent.collect {
+                when(it) {
+                    is FiltersEvent.PeriodEvent -> manageFields(it.newPeriodMode)
+                }
+            }
         }
 
         populateFilters()
+        manageFields(viewModel.period.value)
     }
 
     private fun populateFilters() {
@@ -166,7 +183,6 @@ class FiltersDialog : DialogFragment() {
                 monthDropdownLayout.isEnabled = false
                 yearDropdownLayout.isEnabled = false
             }
-
         }
     }
 
