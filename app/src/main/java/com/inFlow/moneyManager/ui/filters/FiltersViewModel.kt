@@ -10,10 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.Month
+import java.time.Year
 
 class FiltersViewModel : ViewModel() {
     var year: Int = LocalDate.now().year
     var month: Int = LocalDate.now().monthValue - 1
+    var yearPosition = 0
+    var monthPosition = 0
 
     private val filtersEventChannel = Channel<FiltersEvent>()
     val filtersEvent = filtersEventChannel.receiveAsFlow()
@@ -23,7 +27,6 @@ class FiltersViewModel : ViewModel() {
     var showIncomes: Boolean = true
     var showExpenses: Boolean = true
     var sortBy = SORT_BY_DATE
-    var monthAndYear: LocalDate? = null
     var fromDate: LocalDate? = null
     var toDate: LocalDate? = null
 
@@ -44,13 +47,8 @@ class FiltersViewModel : ViewModel() {
 
     fun setFilters(data: FiltersDto) {
         period.value = data.period
-        if (data.period == PeriodMode.WHOLE_MONTH) {
-            monthAndYear = data.monthAndYear
-        }
-        else {
-            fromDate = data.fromDate
-            toDate = data.toDate
-        }
+        fromDate = data.fromDate
+        toDate = data.toDate
         sortBy = data.sortBy
         showIncomes = data.showIncomes
         showExpenses = data.showExpenses
@@ -75,10 +73,12 @@ class FiltersViewModel : ViewModel() {
     }
 
     fun onYearSelected(position: Int) {
+        yearPosition = position
         year = years[position].toInt()
     }
 
     fun onMonthSelected(position: Int) {
+        monthPosition = position
         month = MONTHS[position].toInt()
     }
 
@@ -88,70 +88,57 @@ class FiltersViewModel : ViewModel() {
     }
 
     fun onApplyClicked() = viewModelScope.launch {
-        if (period.value == PeriodMode.CUSTOM_RANGE) {
-            fromDate = fromDateString.value.toLocalDate()
-            toDate = toDateString.value.toLocalDate()
-            when {
-                fromDate == null -> filtersEventChannel.send(
-                    FiltersEvent.ShowFieldError(
-                        "Date is not valid",
-                        "fromDate"
-                    )
-                )
-                toDate == null -> filtersEventChannel.send(
-                    FiltersEvent.ShowFieldError(
-                        "Date is not valid",
-                        "toDate"
-                    )
-                )
-                else -> {
-                    val filtersData = FiltersDto(
-                        period.value,
-                        showIncomes,
-                        showExpenses,
-                        isDescending,
-                        sortBy,
-                        null,
-                        fromDate,
-                        toDate
-                    )
-                    filtersEventChannel.send(
-                        FiltersEvent.ApplyFilters(filtersData)
-                    )
-                }
-            }
+        val error = validateFilters()
+        if(error == null) {
+            val filtersData = FiltersDto(
+                period.value,
+                showIncomes,
+                showExpenses,
+                isDescending,
+                sortBy,
+                fromDate,
+                toDate
+            )
+            filtersEventChannel.send(FiltersEvent.ApplyFilters(filtersData))
         }
-
+        else filtersEventChannel.send(FiltersEvent.ShowFieldError(error))
     }
 
     /**
      * Returns null if there is no error
      */
-    fun validateFilters(): FieldError? {
+    private fun validateFilters(): FieldError? {
         if (period.value == PeriodMode.CUSTOM_RANGE) {
-            val today = LocalDate.now()
             fromDate = fromDateString.value.toLocalDate()
             toDate = toDateString.value.toLocalDate()
-            return when {
-                fromDate == null || fromDate!!.isAfter(today) ->
-                    FieldError(
-                        "Date is not valid",
-                        FieldType.FIELD_DATE_FROM
-                    )
-                toDate == null || toDate!!.isAfter(today) -> FieldError(
-                    "Date is not valid",
-                    FieldType.FIELD_DATE_TO
-                )
-                else -> null
-            }
+        } else {
+            val month = Month.of(monthPosition + 1)
+            val isLeapYear = Year.isLeap(year.toLong())
+            fromDate = LocalDate.of(year, month, 1)
+            toDate = LocalDate.of(year, month, month.length(isLeapYear))
         }
-        else {
-
+        val today = LocalDate.now()
+        return when {
+            fromDate == null || fromDate!!.isAfter(today) ->
+                FieldError(
+                    "Date is not valid",
+                    FieldType.FIELD_DATE_FROM
+                )
+            toDate == null || toDate!!.isAfter(today) -> FieldError(
+                "Date is not valid",
+                FieldType.FIELD_DATE_TO
+            )
+            // TODO: Find better message
+            !showIncomes && !showExpenses -> FieldError(
+                "Incomes or expenses must be selected",
+                FieldType.FIELD_OTHER
+            )
+            else -> null
         }
     }
 }
 
-data class FieldError(val msg: String, val field: FieldType)
+data class FieldError(val message: String, val field: FieldType)
 
 sealed class FiltersEvent {
     object ClearFilters : FiltersEvent()

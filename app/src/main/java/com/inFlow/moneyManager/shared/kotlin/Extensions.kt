@@ -63,23 +63,6 @@ fun String.getMonthPosition(): Int {
     }
 }
 
-//fun Int.getMonthByPosition(): Month {
-//    return when (this) {
-//        1 -> Month.JANUARY
-//        2 -> Month.FEBRUARY
-//        3 -> Month.MARCH
-//        4 -> Month.APRIL
-//        5 -> Month.MAY
-//        6 -> Month.JUNE
-//        "Jul" -> Month.JULY
-//        "Aug" -> Month.AUGUST
-//        "Sep" -> 8
-//        "Oct" -> 9
-//        "Nov" -> 10
-//        else -> 11
-//    }
-//}
-
 /**
  * Call this method (in onActivityCreated or later) to set
  * the width of the dialog to a percentage of the current
@@ -160,25 +143,15 @@ fun View.setAsRootView() {
     }
 }
 
-//fun <T> AccountResource.Error<T>.formatErrorMessage(context: Context): String {
-//    if(message != null && message.contains("resolve host"))
-//        return context.getString(R.string.err_internet)
-//
-//    return if (errorBody != null)
-//        context.getStringFromResName(errorBody.code.trim())
-//    else context.getString(R.string.err_server)
-//}
-
-//fun View.showError(mError: String?) {
-//    val defaultError = context?.getString(R.string.err_server) ?: ""
-//    val error = if (mError.isNullOrEmpty()) defaultError
-//    else mError
-//    Snackbar.make(
-//        this,
-//        error,
-//        Snackbar.LENGTH_SHORT
-//    ).show()
-//}
+fun View.showError(mError: String?) {
+    val error = if (mError.isNullOrEmpty()) "An error occured"
+    else mError
+    Snackbar.make(
+        this,
+        error,
+        Snackbar.LENGTH_SHORT
+    ).show()
+}
 
 fun Context.showInfoDialog(messageResId: Int) {
     AlertDialog.Builder(this)

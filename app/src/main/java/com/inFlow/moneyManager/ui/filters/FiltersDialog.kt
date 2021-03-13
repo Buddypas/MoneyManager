@@ -13,7 +13,6 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -53,7 +52,9 @@ class FiltersDialog : DialogFragment() {
     }
 
     private fun setUpUI() {
-        sortAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
+        binding.root.setAsRootView()
+        sortAdapter =
+            ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
         binding.sortDropdown.setAdapter(sortAdapter)
 
         monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, MONTHS)
@@ -72,6 +73,10 @@ class FiltersDialog : DialogFragment() {
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 viewModel.onMonthSelected(position)
             }
+
+        binding.applyBtn.setOnClickListener {
+            viewModel.onApplyClicked()
+        }
 
         binding.cancelBtn.setOnClickListener {
             dismiss()
@@ -106,6 +111,7 @@ class FiltersDialog : DialogFragment() {
                 }
             }
             viewModel.fromDateString.value = binding.fromInput.text.toString()
+            binding.fromLayout.error = null
         }
         binding.toInput.doOnTextChanged { text, start, before, count ->
             text?.let {
@@ -119,6 +125,7 @@ class FiltersDialog : DialogFragment() {
                 }
             }
             viewModel.toDateString.value = binding.toInput.text.toString()
+            binding.fromLayout.error = null
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.fromDateString.collectLatest { text ->
@@ -127,12 +134,15 @@ class FiltersDialog : DialogFragment() {
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
-                when(it) {
+                when (it) {
                     is FiltersEvent.ChangePeriodMode -> manageFields(it.newPeriodMode)
                     is FiltersEvent.ApplyFilters -> {
-                        findNavController().previousBackStackEntry?.savedStateHandle?.set(KEY_FILTERS, it.filtersData)
+                        findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                            KEY_FILTERS, it.filtersData
+                        )
                         dismiss()
                     }
+                    is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
                     FiltersEvent.ClearFilters -> populateFilters()
                 }
             }
@@ -142,11 +152,20 @@ class FiltersDialog : DialogFragment() {
         manageFields(viewModel.period.value)
     }
 
+    private fun displayError(fieldError: FieldError) {
+        when (fieldError.field) {
+            FieldType.FIELD_DATE_FROM -> binding.fromLayout.error =
+                fieldError.message
+            FieldType.FIELD_DATE_TO -> binding.toLayout.error = fieldError.message
+            FieldType.FIELD_OTHER -> binding.root.showError(fieldError.message)
+        }
+    }
+
     private fun populateFilters() {
         if (viewModel.period.value == PeriodMode.WHOLE_MONTH)
             binding.apply {
                 monthDropdown.setText(
-                    monthAdapter.getItem(viewModel.month),
+                    monthAdapter.getItem(viewModel.monthPosition),
                     false
                 )
                 yearDropdown.setText(viewModel.year.toString(), false)
