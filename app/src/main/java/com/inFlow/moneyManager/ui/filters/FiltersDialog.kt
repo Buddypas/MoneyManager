@@ -143,7 +143,7 @@ class FiltersDialog : DialogFragment() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
                 when (it) {
-                    is FiltersEvent.ChangePeriodMode -> manageFields(it.newPeriodMode)
+                    is FiltersEvent.ChangePeriodMode -> managePeriodFields(it.newPeriodMode)
                     is FiltersEvent.ApplyFilters -> {
                         findNavController().previousBackStackEntry?.savedStateHandle?.set(
                             KEY_FILTERS, it.filtersData
@@ -151,13 +151,16 @@ class FiltersDialog : DialogFragment() {
                         dismiss()
                     }
                     is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
-                    FiltersEvent.ClearFilters -> populateFilters()
+                    FiltersEvent.ClearFilters -> {
+                        populateFilters()
+//                        manageFields(viewModel.period.value)
+                    }
                 }
             }
         }
 
         populateFilters()
-        manageFields(viewModel.period.value)
+        managePeriodFields(viewModel.period)
     }
 
     private fun displayError(fieldError: FieldError) {
@@ -170,8 +173,10 @@ class FiltersDialog : DialogFragment() {
     }
 
     private fun populateFilters() {
-        if (viewModel.period.value == PeriodMode.WHOLE_MONTH)
+        if (viewModel.period == PeriodMode.WHOLE_MONTH)
             binding.apply {
+                if(periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
+                    periodRadioGroup.check(R.id.whole_month_btn)
                 monthDropdown.setText(
                     monthAdapter.getItem(viewModel.monthPosition),
                     false
@@ -187,8 +192,6 @@ class FiltersDialog : DialogFragment() {
             viewModel.toDateString.value = toString
         }
         binding.apply {
-            if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
-            else orderToggleGroup.check(R.id.asc_btn)
             if (viewModel.showIncomes) incomesCbx.isChecked = true
             if (viewModel.showExpenses) expensesCbx.isChecked = true
             when (viewModel.sortBy) {
@@ -196,10 +199,12 @@ class FiltersDialog : DialogFragment() {
                 SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
                 else -> sortDropdown.setText(sortAdapter.getItem(2), false)
             }
+            if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
+            else orderToggleGroup.check(R.id.asc_btn)
         }
     }
 
-    private fun manageFields(period: PeriodMode) {
+    private fun managePeriodFields(period: PeriodMode) {
         binding.apply {
             if (period == PeriodMode.WHOLE_MONTH) {
                 fromLbl.setTextColor(requireContext().getContextColor(R.color.gray))

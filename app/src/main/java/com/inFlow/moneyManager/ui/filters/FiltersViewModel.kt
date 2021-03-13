@@ -17,14 +17,13 @@ import java.time.Year
 
 class FiltersViewModel : ViewModel() {
     var year: Int = LocalDate.now().year
-//    var month: Int = LocalDate.now().monthValue - 1
     var yearPosition = 0
-    var monthPosition = 0
+    var monthPosition = LocalDate.now().monthValue - 1
 
     private val filtersEventChannel = Channel<FiltersEvent>()
     val filtersEvent = filtersEventChannel.receiveAsFlow()
 
-    var period = MutableStateFlow(PeriodMode.WHOLE_MONTH)
+    var period = PeriodMode.WHOLE_MONTH
     var isDescending = true
     var showIncomes: Boolean = true
     var showExpenses: Boolean = true
@@ -48,15 +47,14 @@ class FiltersViewModel : ViewModel() {
     )
 
     fun setFilters(data: FiltersDto) {
-        period.value = data.period
+        period = data.period
         fromDate = data.fromDate
         toDate = data.toDate
         sortBy = data.sortBy
         showIncomes = data.showIncomes
         showExpenses = data.showExpenses
+        isDescending = data.isDescending
     }
-
-    private fun clear() = setFilters(FiltersDto())
 
     fun onSortOrderChecked(checkedId: Int, isChecked: Boolean) {
         if (isChecked)
@@ -67,11 +65,10 @@ class FiltersViewModel : ViewModel() {
     }
 
     fun onPeriodSelected(checkedId: Int) = viewModelScope.launch {
-        when (checkedId) {
-            R.id.custom_range_btn -> period.value = PeriodMode.CUSTOM_RANGE
-            else -> period.value = PeriodMode.WHOLE_MONTH
-        }
-        filtersEventChannel.send(FiltersEvent.ChangePeriodMode(period.value))
+        period =
+            if (checkedId == R.id.custom_range_btn) PeriodMode.CUSTOM_RANGE
+            else PeriodMode.WHOLE_MONTH
+        filtersEventChannel.send(FiltersEvent.ChangePeriodMode(period))
     }
 
     fun onYearSelected(position: Int) {
@@ -81,26 +78,25 @@ class FiltersViewModel : ViewModel() {
 
     fun onMonthSelected(position: Int) {
         monthPosition = position
-//        month = MONTHS[position]
     }
 
-    fun onTypeChecked(btn:CompoundButton, isChecked: Boolean) {
-        when(btn.id) {
+    fun onTypeChecked(btn: CompoundButton, isChecked: Boolean) {
+        when (btn.id) {
             R.id.incomes_cbx -> showIncomes = isChecked
             R.id.expenses_cbx -> showExpenses = isChecked
         }
     }
 
     fun onClearClicked() = viewModelScope.launch {
-        clear()
+        setFilters(FiltersDto())
         filtersEventChannel.send(FiltersEvent.ClearFilters)
     }
 
     fun onApplyClicked() = viewModelScope.launch {
         val error = validateFilters()
-        if(error == null) {
+        if (error == null) {
             val filtersData = FiltersDto(
-                period.value,
+                period,
                 showIncomes,
                 showExpenses,
                 isDescending,
@@ -109,15 +105,14 @@ class FiltersViewModel : ViewModel() {
                 toDate
             )
             filtersEventChannel.send(FiltersEvent.ApplyFilters(filtersData))
-        }
-        else filtersEventChannel.send(FiltersEvent.ShowFieldError(error))
+        } else filtersEventChannel.send(FiltersEvent.ShowFieldError(error))
     }
 
     /**
      * Returns null if there is no error
      */
     private fun validateFilters(): FieldError? {
-        if (period.value == PeriodMode.CUSTOM_RANGE) {
+        if (period == PeriodMode.CUSTOM_RANGE) {
             fromDate = fromDateString.value.toLocalDate()
             toDate = toDateString.value.toLocalDate()
         } else {
@@ -131,7 +126,7 @@ class FiltersViewModel : ViewModel() {
         return when {
             fromDate == null || fromDate!!.isAfter(today) -> {
                 val fieldType =
-                    if (period.value == PeriodMode.CUSTOM_RANGE)
+                    if (period == PeriodMode.CUSTOM_RANGE)
                         FieldType.FIELD_DATE_FROM
                     else FieldType.FIELD_OTHER
                 FieldError(
@@ -140,7 +135,8 @@ class FiltersViewModel : ViewModel() {
                 )
             }
             toDate == null || toDate!!.isAfter(today) -> {
-                val fieldType = if (period.value == PeriodMode.CUSTOM_RANGE) FieldType.FIELD_DATE_TO else FieldType.FIELD_OTHER
+                val fieldType =
+                    if (period == PeriodMode.CUSTOM_RANGE) FieldType.FIELD_DATE_TO else FieldType.FIELD_OTHER
                 FieldError(
                     "Date is not valid",
                     fieldType
