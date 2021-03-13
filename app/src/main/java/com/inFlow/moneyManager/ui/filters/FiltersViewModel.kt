@@ -44,8 +44,9 @@ class FiltersViewModel : ViewModel() {
 
     fun setFilters(data: FiltersDto) {
         period.value = data.period
-        if (data.period == PeriodMode.WHOLE_MONTH)
+        if (data.period == PeriodMode.WHOLE_MONTH) {
             monthAndYear = data.monthAndYear
+        }
         else {
             fromDate = data.fromDate
             toDate = data.toDate
@@ -105,7 +106,14 @@ class FiltersViewModel : ViewModel() {
                 )
                 else -> {
                     val filtersData = FiltersDto(
-                        period.value, showIncomes, showExpenses, isDescending, sortBy, null,fromDate,toDate
+                        period.value,
+                        showIncomes,
+                        showExpenses,
+                        isDescending,
+                        sortBy,
+                        null,
+                        fromDate,
+                        toDate
                     )
                     filtersEventChannel.send(
                         FiltersEvent.ApplyFilters(filtersData)
@@ -116,36 +124,40 @@ class FiltersViewModel : ViewModel() {
 
     }
 
-    fun validateFilters(): Boolean {
+    /**
+     * Returns null if there is no error
+     */
+    fun validateFilters(): FieldError? {
         if (period.value == PeriodMode.CUSTOM_RANGE) {
             val today = LocalDate.now()
             fromDate = fromDateString.value.toLocalDate()
             toDate = toDateString.value.toLocalDate()
-            when {
-                fromDate == null || fromDate!!.isAfter(today) -> filtersEventChannel.send(
-                    FiltersEvent.ShowFieldError(
+            return when {
+                fromDate == null || fromDate!!.isAfter(today) ->
+                    FieldError(
                         "Date is not valid",
-                        "fromDate"
+                        FieldType.FIELD_DATE_FROM
                     )
+                toDate == null || toDate!!.isAfter(today) -> FieldError(
+                    "Date is not valid",
+                    FieldType.FIELD_DATE_TO
                 )
-                toDate == null || toDate!!.isAfter(today) -> filtersEventChannel.send(
-                    FiltersEvent.ShowFieldError(
-                        "Date is not valid",
-                        "toDate"
-                    )
-                )
+                else -> null
             }
+        }
+        else {
+
         }
     }
 }
-// TODO: Continue with valiadtion
-data class FieldError(val msg: String, val field:)
+
+data class FieldError(val msg: String, val field: FieldType)
 
 sealed class FiltersEvent {
     object ClearFilters : FiltersEvent()
     data class ApplyFilters(val filtersData: FiltersDto) : FiltersEvent()
     data class ChangePeriodMode(val newPeriodMode: PeriodMode) : FiltersEvent()
-    data class ShowFieldError(val message: String, val field: String) : FiltersEvent()
+    data class ShowFieldError(val fieldError: FieldError) : FiltersEvent()
 }
 
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
