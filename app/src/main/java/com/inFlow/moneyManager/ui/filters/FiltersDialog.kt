@@ -86,6 +86,14 @@ class FiltersDialog : DialogFragment() {
             viewModel.onClearClicked()
         }
 
+        binding.incomesCbx.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.onTypeChecked(buttonView,isChecked)
+        }
+
+        binding.expensesCbx.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.onTypeChecked(buttonView,isChecked)
+        }
+
         binding.periodRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.onPeriodSelected(checkedId)
         }

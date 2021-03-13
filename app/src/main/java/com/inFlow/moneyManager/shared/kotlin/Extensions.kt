@@ -102,7 +102,7 @@ fun String?.isValidEmail(): Boolean {
  * Returns null if string is not a valid date
  */
 fun String?.toLocalDate(): LocalDate? {
-    if (this == null) return null
+    if (this.isNullOrBlank()) return null
     else {
         val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
         val date: LocalDate

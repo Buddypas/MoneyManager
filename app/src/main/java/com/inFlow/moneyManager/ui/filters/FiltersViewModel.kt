@@ -1,5 +1,6 @@
 package com.inFlow.moneyManager.ui.filters
 
+import android.widget.CompoundButton
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
@@ -9,13 +10,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.Month
 import java.time.Year
 
 class FiltersViewModel : ViewModel() {
     var year: Int = LocalDate.now().year
-    var month: Int = LocalDate.now().monthValue - 1
+//    var month: Int = LocalDate.now().monthValue - 1
     var yearPosition = 0
     var monthPosition = 0
 
@@ -79,7 +81,14 @@ class FiltersViewModel : ViewModel() {
 
     fun onMonthSelected(position: Int) {
         monthPosition = position
-        month = MONTHS[position].toInt()
+//        month = MONTHS[position]
+    }
+
+    fun onTypeChecked(btn:CompoundButton, isChecked: Boolean) {
+        when(btn.id) {
+            R.id.incomes_cbx -> showIncomes = isChecked
+            R.id.expenses_cbx -> showExpenses = isChecked
+        }
     }
 
     fun onClearClicked() = viewModelScope.launch {
@@ -116,18 +125,27 @@ class FiltersViewModel : ViewModel() {
             val isLeapYear = Year.isLeap(year.toLong())
             fromDate = LocalDate.of(year, month, 1)
             toDate = LocalDate.of(year, month, month.length(isLeapYear))
+            Timber.e("$fromDate - $toDate")
         }
         val today = LocalDate.now()
         return when {
-            fromDate == null || fromDate!!.isAfter(today) ->
+            fromDate == null || fromDate!!.isAfter(today) -> {
+                val fieldType =
+                    if (period.value == PeriodMode.CUSTOM_RANGE)
+                        FieldType.FIELD_DATE_FROM
+                    else FieldType.FIELD_OTHER
                 FieldError(
                     "Date is not valid",
-                    FieldType.FIELD_DATE_FROM
+                    fieldType
                 )
-            toDate == null || toDate!!.isAfter(today) -> FieldError(
-                "Date is not valid",
-                FieldType.FIELD_DATE_TO
-            )
+            }
+            toDate == null || toDate!!.isAfter(today) -> {
+                val fieldType = if (period.value == PeriodMode.CUSTOM_RANGE) FieldType.FIELD_DATE_TO else FieldType.FIELD_OTHER
+                FieldError(
+                    "Date is not valid",
+                    fieldType
+                )
+            }
             // TODO: Find better message
             !showIncomes && !showExpenses -> FieldError(
                 "Incomes or expenses must be selected",
