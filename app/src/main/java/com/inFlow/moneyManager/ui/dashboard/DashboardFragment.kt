@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
@@ -16,6 +17,8 @@ import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import com.inFlow.moneyManager.ui.filters.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -40,9 +43,8 @@ class DashboardFragment : Fragment() {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
-            ) {
-                val result = navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)
-                formatFilters(result)
+            ) navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)?.let {
+                viewModel.activeFilters.value = it
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)
@@ -52,23 +54,6 @@ class DashboardFragment : Fragment() {
                 navBackStackEntry.lifecycle.removeObserver(observer)
             }
         })
-    }
-
-    private fun formatFilters(data: FiltersDto?) {
-        data?.let {
-            val argType = when {
-                it.showExpenses && it.showIncomes -> "all transactions"
-                it.showExpenses -> "all expenses"
-                else -> "all incomes"
-            }
-            val argPeriod =
-                if (it.period == PeriodMode.WHOLE_MONTH) "in ${it.fromDate?.month?.name} of ${it.fromDate?.year}"
-                else "from ${it.fromDate} to ${it.toDate}"
-            val argSort = it.sortBy
-            val argOrder = if (it.isDescending) "descending" else "ascending"
-            binding.filtersTxt.text =
-                getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,12 +84,31 @@ class DashboardFragment : Fragment() {
                 else -> false
             }
         }
-        formatFilters(FiltersDto())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.activeFilters.collectLatest {
+                formatFilters(it)
+            }
+        }
     }
+
+    private fun formatFilters(data: FiltersDto?) =
+        data?.let {
+            val argType = when {
+                it.showExpenses && it.showIncomes -> "all transactions"
+                it.showExpenses -> "all expenses"
+                else -> "all incomes"
+            }
+            val argPeriod =
+                if (it.period == PeriodMode.WHOLE_MONTH) "in ${it.fromDate?.month?.name} of ${it.fromDate?.year}"
+                else "from ${it.fromDate} to ${it.toDate}"
+            val argSort = it.sortBy
+            val argOrder = if (it.isDescending) "descending" else "ascending"
+            binding.filtersTxt.text =
+                getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
+        }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

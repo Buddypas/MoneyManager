@@ -104,7 +104,7 @@ fun String?.isValidEmail(): Boolean {
 fun String?.toLocalDate(): LocalDate? {
     if (this.isNullOrBlank()) return null
     else {
-        val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val date: LocalDate
         try {
             date = LocalDate.parse(this, formatter)
