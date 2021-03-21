@@ -2,17 +2,11 @@
 
 package com.inFlow.moneyManager.shared.kotlin
 
-import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -24,24 +18,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
 import java.time.LocalDate
-import java.time.Month
-import java.time.Year
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
 import kotlin.math.roundToInt
-
 
 /**
  * This method is zero based, i.e. January returns 0, December returns 11
