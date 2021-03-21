@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
+import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.ui.filters.FieldError
 import com.inFlow.moneyManager.ui.filters.FiltersEvent
 import com.inFlow.moneyManager.ui.filters.PeriodMode
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class DashboardViewModel : ViewModel() {
+class DashboardViewModel(val repo: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
 
     private val dashboardEventChannel = Channel<DashboardEvent>()
     val dashboardEvent = dashboardEventChannel.receiveAsFlow()
+
+    fun populateDb() = repo.populateDb(viewModelScope)
 }
 
 sealed class DashboardEvent {

@@ -1,8 +1,6 @@
 package com.inFlow.moneyManager.db.entities
 
 import androidx.room.*
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.*
 
 // TODO: Research FTS4 - https://developer.android.com/training/data-storage/room/defining-data#fts
@@ -11,6 +9,7 @@ data class Transaction(
     @PrimaryKey(autoGenerate = true) val transactionId: Int,
     val transactionAmount: Double,
     val transactionDate: Date,
+    val transactionDescription: String,
     // category id
     val transactionCategoryId: Int,
     // balance after this transaction
@@ -50,7 +49,7 @@ interface TransactionsDao {
     fun getMostRecentTransaction(): Transaction
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg transactions: Transaction)
+    suspend fun insertAll(vararg transactions: Transaction)
 
     @Delete
     fun delete(transaction: Transaction)
