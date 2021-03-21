@@ -11,7 +11,7 @@ import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import kotlinx.coroutines.CoroutineScope
 
-@Database(entities = [Transaction::class, Category::class], version = 1)
+@Database(entities = [Transaction::class, Category::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionsDao(): TransactionsDao
