@@ -22,6 +22,7 @@ import timber.log.Timber
 import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
 
+// TODO: Review the whole logic
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
@@ -109,7 +110,7 @@ class FiltersDialog : DialogFragment() {
          * This method is called to notify you that, within 'text', the 'count' characters beginning at 'start'
          * have just replaced old text that had length 'before'.
          */
-        binding.fromInput.doOnTextChanged { text, start, before, count ->
+        binding.fromInput.doOnTextChanged { text, _, before, count ->
 //            if before > count -> char deleted
             text?.let {
                 var newText = it.toString()
@@ -227,6 +228,45 @@ class FiltersDialog : DialogFragment() {
                 yearDropdownLayout.isEnabled = false
             }
         }
+
+    /**
+     * type can be "from" or "to"
+     */
+    fun getTextChangedListener(
+        type: FieldType,
+        text: CharSequence?,
+        before: Int,
+        count: Int
+    ) {
+        if (type == FieldType.FIELD_DATE_FROM) {
+            text?.let {
+                var newText = it.toString()
+                if (before < count) {
+                    if (newText.length == 2 || newText.length == 5) {
+                        newText += '/'
+                        binding.fromInput.text = SpannableStringBuilder(newText)
+                        binding.fromInput.setSelection(binding.fromInput.text!!.length)
+                    }
+                }
+            }
+            viewModel.fromDateString.value = binding.fromInput.text.toString()
+            binding.fromLayout.error = null
+        }
+        else {
+            text?.let {
+                var newText = it.toString()
+                if (before < count) {
+                    if (newText.length == 2 || newText.length == 5) {
+                        newText += '/'
+                        binding.toInput.text = SpannableStringBuilder(newText)
+                        binding.toInput.setSelection(binding.toInput.text!!.length)
+                    }
+                }
+            }
+            viewModel.toDateString.value = binding.toInput.text.toString()
+            binding.fromLayout.error = null
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

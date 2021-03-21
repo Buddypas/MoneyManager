@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
@@ -18,6 +19,7 @@ import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import com.inFlow.moneyManager.ui.filters.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -36,6 +38,60 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setNavObserver()
+        val wallets = listOf("Material", "Design", "Components", "Android")
+        val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
+        binding.walletDropdown.setAdapter(walletAdapter)
+        binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
+
+        val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.onQueryTextChanged {
+            viewModel.searchQuery.value = it
+        }
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_filter -> {
+                    showFiltersDialog(viewModel.activeFilters.value)
+                    true
+                }
+                else -> false
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.activeFilters.collectLatest {
+                formatFilters(it)
+            }
+        }
+
+//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//            viewModel.dashboardEvent.collect {
+//                when (it) {
+//                    is DashboardEvent.ShowFiltersDialog -> showFiltersDialog(it.filtersData)
+//                }
+//            }
+//        }
+    }
+
+    private fun formatFilters(data: FiltersDto?) = data?.let {
+        val argType = when {
+            it.showExpenses && it.showIncomes -> "all transactions"
+            it.showExpenses -> "all expenses"
+            else -> "all incomes"
+        }
+        val argPeriod =
+            if (it.period == PeriodMode.WHOLE_MONTH) "in ${it.fromDate?.month?.name} of ${it.fromDate?.year}"
+            else "from ${it.fromDate} to ${it.toDate}"
+        val argSort = it.sortBy
+        val argOrder = if (it.isDescending) "descending" else "ascending"
+        binding.filtersTxt.text =
+            getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
     }
 
     private fun setNavObserver() {
@@ -57,62 +113,13 @@ class DashboardFragment : Fragment() {
         })
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setNavObserver()
-        val wallets = listOf("Material", "Design", "Components", "Android")
-        val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
-        binding.walletDropdown.setAdapter(walletAdapter)
-        binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
-
-        val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.onQueryTextChanged {
-            viewModel.searchQuery.value = it
-        }
-        binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_filter -> {
-                    // TODO: Improve
-                    val navController = findNavController()
-                    if(navController.currentDestination?.id == R.id.dashboardFragment) {
-                        Timber.e(viewModel.activeFilters.value.toString())
-                        val action = DashboardFragmentDirections.actionDashboardToFilters(
-                            viewModel.activeFilters.value
-                        )
-                        navController.navigate(action)
-                        true
-                    }
-                    else false
-                }
-                else -> false
-            }
-
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.activeFilters.collectLatest {
-                formatFilters(it)
-            }
+    private fun showFiltersDialog(filtersData: FiltersDto) {
+        if (findNavController().currentDestination?.id == R.id.dashboardFragment) {
+            val action =
+                DashboardFragmentDirections.actionDashboardToFilters(filtersData)
+            findNavController().navigate(action)
         }
     }
-
-    private fun formatFilters(data: FiltersDto?) =
-        data?.let {
-            val argType = when {
-                it.showExpenses && it.showIncomes -> "all transactions"
-                it.showExpenses -> "all expenses"
-                else -> "all incomes"
-            }
-            val argPeriod =
-                if (it.period == PeriodMode.WHOLE_MONTH) "in ${it.fromDate?.month?.name} of ${it.fromDate?.year}"
-                else "from ${it.fromDate} to ${it.toDate}"
-            val argSort = it.sortBy
-            val argOrder = if (it.isDescending) "descending" else "ascending"
-            binding.filtersTxt.text =
-                getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
-        }
 
     override fun onDestroyView() {
         super.onDestroyView()
