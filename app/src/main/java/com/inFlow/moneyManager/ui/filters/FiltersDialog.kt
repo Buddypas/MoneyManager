@@ -150,7 +150,6 @@ class FiltersDialog : DialogFragment() {
                     }
                     is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
                     FiltersEvent.ClearFilters -> {
-//                        managePeriodFields(viewModel.period)
                         populateFilters()
                     }
                 }
@@ -170,35 +169,33 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun populateFilters() {
-        if (viewModel.period == PeriodMode.WHOLE_MONTH)
-            binding.apply {
+    private fun populateFilters() =
+        binding.apply {
+            monthDropdown.setText(
+                monthAdapter.getItem(viewModel.monthPosition),
+                false
+            )
+            yearDropdown.setText(viewModel.year.toString(), false)
+            if (viewModel.period == PeriodMode.WHOLE_MONTH) {
                 if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
                     periodRadioGroup.check(R.id.whole_month_btn)
-                monthDropdown.setText(
-                    monthAdapter.getItem(viewModel.monthPosition),
-                    false
-                )
-                yearDropdown.setText(viewModel.year.toString(), false)
+            } else {
+                if (periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
+                    periodRadioGroup.check(R.id.custom_range_btn)
+                val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+                val fromString = try {
+                    viewModel.fromDate?.format(formatter).orEmpty()
+                } catch (e: DateTimeException) {
+                    ""
+                }
+                val toString = try {
+                    viewModel.toDate?.format(formatter).orEmpty()
+                } catch (e: DateTimeException) {
+                    ""
+                }
+                viewModel.fromDateString.value = fromString
+                viewModel.toDateString.value = toString
             }
-        else {
-            if (binding.periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
-                binding.periodRadioGroup.check(R.id.custom_range_btn)
-            val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
-            val fromString = try {
-                viewModel.fromDate?.format(formatter).orEmpty()
-            } catch (e: DateTimeException) {
-                ""
-            }
-            val toString = try {
-                viewModel.toDate?.format(formatter).orEmpty()
-            } catch (e: DateTimeException) {
-                ""
-            }
-            viewModel.fromDateString.value = fromString
-            viewModel.toDateString.value = toString
-        }
-        binding.apply {
             if (viewModel.showIncomes) incomesCbx.isChecked = true
             if (viewModel.showExpenses) expensesCbx.isChecked = true
             when (viewModel.sortBy) {
@@ -209,7 +206,6 @@ class FiltersDialog : DialogFragment() {
             if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
             else orderToggleGroup.check(R.id.asc_btn)
         }
-    }
 
     private fun managePeriodFields(period: PeriodMode) =
         binding.apply {

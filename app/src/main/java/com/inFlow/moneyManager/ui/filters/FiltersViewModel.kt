@@ -54,6 +54,10 @@ class FiltersViewModel : ViewModel() {
         showIncomes = data.showIncomes
         showExpenses = data.showExpenses
         isDescending = data.isDescending
+        if(period == PeriodMode.WHOLE_MONTH && fromDate != null) {
+            monthPosition = fromDate!!.monthValue - 1
+            year = fromDate!!.year
+        }
     }
 
     fun onSortOrderChecked(checkedId: Int, isChecked: Boolean) {
