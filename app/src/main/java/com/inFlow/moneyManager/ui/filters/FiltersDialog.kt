@@ -13,11 +13,13 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
+import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
 
 class FiltersDialog : DialogFragment() {
@@ -46,6 +48,7 @@ class FiltersDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Timber.e("onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         viewModel.setFilters(args.filterData)
         setUpUI()
@@ -87,11 +90,11 @@ class FiltersDialog : DialogFragment() {
         }
 
         binding.incomesCbx.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.onTypeChecked(buttonView,isChecked)
+            viewModel.onTypeChecked(buttonView, isChecked)
         }
 
         binding.expensesCbx.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.onTypeChecked(buttonView,isChecked)
+            viewModel.onTypeChecked(buttonView, isChecked)
         }
 
         binding.periodRadioGroup.setOnCheckedChangeListener { _, checkedId ->
@@ -147,8 +150,8 @@ class FiltersDialog : DialogFragment() {
                     }
                     is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
                     FiltersEvent.ClearFilters -> {
+//                        managePeriodFields(viewModel.period)
                         populateFilters()
-//                        manageFields(viewModel.period.value)
                     }
                 }
             }
@@ -170,7 +173,7 @@ class FiltersDialog : DialogFragment() {
     private fun populateFilters() {
         if (viewModel.period == PeriodMode.WHOLE_MONTH)
             binding.apply {
-                if(periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
+                if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
                     periodRadioGroup.check(R.id.whole_month_btn)
                 monthDropdown.setText(
                     monthAdapter.getItem(viewModel.monthPosition),
@@ -179,10 +182,19 @@ class FiltersDialog : DialogFragment() {
                 yearDropdown.setText(viewModel.year.toString(), false)
             }
         else {
+            if (binding.periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
+                binding.periodRadioGroup.check(R.id.custom_range_btn)
             val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
-            val fromString = viewModel.fromDate?.format(formatter).orEmpty()
-            val toString = viewModel.toDate?.format(formatter).orEmpty()
-
+            val fromString = try {
+                viewModel.fromDate?.format(formatter).orEmpty()
+            } catch (e: DateTimeException) {
+                ""
+            }
+            val toString = try {
+                viewModel.toDate?.format(formatter).orEmpty()
+            } catch (e: DateTimeException) {
+                ""
+            }
             viewModel.fromDateString.value = fromString
             viewModel.toDateString.value = toString
         }
@@ -199,7 +211,7 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun managePeriodFields(period: PeriodMode) {
+    private fun managePeriodFields(period: PeriodMode) =
         binding.apply {
             if (period == PeriodMode.WHOLE_MONTH) {
                 fromLbl.setTextColor(requireContext().getContextColor(R.color.gray))
@@ -219,7 +231,6 @@ class FiltersDialog : DialogFragment() {
                 yearDropdownLayout.isEnabled = false
             }
         }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

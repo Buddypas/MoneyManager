@@ -142,7 +142,7 @@ class FiltersViewModel : ViewModel() {
                 )
             }
             fromDate?.isAfter(toDate) == true -> FieldError(
-                "Date is not valid",
+                "Dates are not valid",
                 FieldType.FIELD_OTHER
             )
             // TODO: Find better message

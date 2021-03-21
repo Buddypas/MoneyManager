@@ -5,7 +5,7 @@ import com.inFlow.moneyManager.ui.filters.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class DashboardViewModel() : ViewModel() {
+class DashboardViewModel : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
-    val searchQuery = MutableStateFlow<String>("")
+    val searchQuery = MutableStateFlow("")
 }

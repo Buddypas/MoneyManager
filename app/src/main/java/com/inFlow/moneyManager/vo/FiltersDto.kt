@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.Month
 
 @Parcelize
-class FiltersDto(
+data class FiltersDto(
     var period: PeriodMode = PeriodMode.WHOLE_MONTH,
     var showIncomes: Boolean = true,
     var showExpenses: Boolean = true,

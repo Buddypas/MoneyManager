@@ -78,6 +78,7 @@ class DashboardFragment : Fragment() {
                     // TODO: Improve
                     val navController = findNavController()
                     if(navController.currentDestination?.id == R.id.dashboardFragment) {
+                        Timber.e(viewModel.activeFilters.value.toString())
                         val action = DashboardFragmentDirections.actionDashboardToFilters(
                             viewModel.activeFilters.value
                         )
