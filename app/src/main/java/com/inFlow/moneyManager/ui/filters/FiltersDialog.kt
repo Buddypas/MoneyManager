@@ -40,7 +40,7 @@ class FiltersDialog : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        isCancelable = true
+        isCancelable = false
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -134,11 +134,6 @@ class FiltersDialog : DialogFragment() {
             }
             viewModel.toDateString.value = binding.toInput.text.toString()
             binding.fromLayout.error = null
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.fromDateString.collectLatest { text ->
-                Timber.e(text)
-            }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {

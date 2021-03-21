@@ -109,7 +109,7 @@ class FiltersViewModel : ViewModel() {
     }
 
     /**
-     * Returns null if there is no error
+     * Returns null if there is no error. Won't validate dates that are after today and will instead return no data
      */
     private fun validateFilters(): FieldError? {
         if (period == PeriodMode.CUSTOM_RANGE) {
@@ -122,9 +122,8 @@ class FiltersViewModel : ViewModel() {
             toDate = LocalDate.of(year, month, month.length(isLeapYear))
             Timber.e("$fromDate - $toDate")
         }
-        val today = LocalDate.now()
         return when {
-            fromDate == null || fromDate!!.isAfter(today) -> {
+            fromDate == null -> {
                 val fieldType =
                     if (period == PeriodMode.CUSTOM_RANGE)
                         FieldType.FIELD_DATE_FROM
@@ -134,7 +133,7 @@ class FiltersViewModel : ViewModel() {
                     fieldType
                 )
             }
-            toDate == null || toDate!!.isAfter(today) -> {
+            toDate == null-> {
                 val fieldType =
                     if (period == PeriodMode.CUSTOM_RANGE) FieldType.FIELD_DATE_TO else FieldType.FIELD_OTHER
                 FieldError(
@@ -142,6 +141,10 @@ class FiltersViewModel : ViewModel() {
                     fieldType
                 )
             }
+            fromDate?.isAfter(toDate) == true -> FieldError(
+                "Date is not valid",
+                FieldType.FIELD_OTHER
+            )
             // TODO: Find better message
             !showIncomes && !showExpenses -> FieldError(
                 "Incomes or expenses must be selected",

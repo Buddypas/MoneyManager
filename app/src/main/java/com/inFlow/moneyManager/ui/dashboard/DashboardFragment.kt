@@ -5,6 +5,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -74,15 +75,20 @@ class DashboardFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_filter -> {
-                    findNavController().navigate(
-                        DashboardFragmentDirections.actionDashboardToFilters(
+                    // TODO: Improve
+                    val navController = findNavController()
+                    if(navController.currentDestination?.id == R.id.dashboardFragment) {
+                        val action = DashboardFragmentDirections.actionDashboardToFilters(
                             viewModel.activeFilters.value
                         )
-                    )
-                    true
+                        navController.navigate(action)
+                        true
+                    }
+                    else false
                 }
                 else -> false
             }
+
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.activeFilters.collectLatest {
