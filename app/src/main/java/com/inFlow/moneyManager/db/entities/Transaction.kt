@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.db.entities
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 // TODO: Research FTS4 - https://developer.android.com/training/data-storage/room/defining-data#fts
@@ -19,7 +20,7 @@ data class Transaction(
 @Dao
 interface TransactionsDao {
     @Query("SELECT * FROM transactions")
-    fun getAll(): List<Transaction>
+    fun getAll(): Flow<List<Transaction>>
 
     @Query("SELECT * FROM transactions WHERE transactionId=:id")
     fun getById(id: Int): Transaction

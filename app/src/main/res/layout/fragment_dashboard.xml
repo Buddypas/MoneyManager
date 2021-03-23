@@ -183,5 +183,14 @@
         app:layout_constraintStart_toStartOf="@id/balance_lbl"
         app:layout_constraintTop_toBottomOf="@id/balance_lbl" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/transactions_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/income_bg"
+        tools:listitem="@layout/item_transaction" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

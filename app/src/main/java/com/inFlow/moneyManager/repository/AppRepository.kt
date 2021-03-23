@@ -56,4 +56,6 @@ class AppRepository(val db: AppDatabase) {
             ),
         )
     }
+
+    fun getAllTransactions() = db.transactionsDao().getAll()
 }

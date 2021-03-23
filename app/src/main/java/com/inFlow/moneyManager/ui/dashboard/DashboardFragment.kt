@@ -19,6 +19,7 @@ import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import com.inFlow.moneyManager.ui.filters.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,6 +33,8 @@ class DashboardFragment : Fragment() {
 
     private val viewModel: DashboardViewModel by viewModel()
 
+    lateinit var transactionsAdapter:TransactionsAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,9 +43,10 @@ class DashboardFragment : Fragment() {
         return binding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.populateDb()
+//        viewModel.populateDb()
         setNavObserver()
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
@@ -64,9 +68,17 @@ class DashboardFragment : Fragment() {
                 else -> false
             }
         }
+
+        transactionsAdapter = TransactionsAdapter()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.activeFilters.collectLatest {
                 formatFilters(it)
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.transactionList.collect {
+                transactionsAdapter.submitList(it)
             }
         }
 
