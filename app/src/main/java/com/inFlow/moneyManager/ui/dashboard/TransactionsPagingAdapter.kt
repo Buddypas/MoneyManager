@@ -12,7 +12,7 @@ import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 
-class TransactionsAdapter :
+class TransactionsAdapter() :
     ListAdapter<Transaction, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
@@ -32,13 +32,13 @@ class TransactionsAdapter :
                 nameTxt.text = item.transactionDescription
                 amountTxt.text = item.transactionAmount.toString()
                 if (item.transactionAmount > 0) typeImg.apply {
-                    setBackgroundResource(R.drawable.arrow_up_left)
-                    imageTintList =
-                        ColorStateList.valueOf(context.getContextColor(R.color.red))
-                } else typeImg.apply {
-                    setBackgroundResource(R.drawable.arrow_down_right)
+                    setImageResource(R.drawable.arrow_down_right)
                     imageTintList =
                         ColorStateList.valueOf(context.getContextColor(R.color.green))
+                } else typeImg.apply {
+                    setImageResource(R.drawable.arrow_up_left)
+                    imageTintList =
+                        ColorStateList.valueOf(context.getContextColor(R.color.red))
                 }
             }
         }

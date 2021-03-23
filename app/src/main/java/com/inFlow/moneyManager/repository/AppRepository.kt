@@ -32,7 +32,7 @@ class AppRepository(val db: AppDatabase) {
         db.transactionsDao().insertAll(
             Transaction(
                 0,
-                50.0,
+                -50.0,
                 Date.from(Instant.now()),
                 "Pregled specijaliste",
                 2,
@@ -48,7 +48,7 @@ class AppRepository(val db: AppDatabase) {
             ),
             Transaction(
                 0,
-                50.0,
+                -50.0,
                 Date.from(Instant.now()),
                 "Gorivo",
                 1,

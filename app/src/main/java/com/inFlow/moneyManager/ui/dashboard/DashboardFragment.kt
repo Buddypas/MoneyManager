@@ -31,9 +31,10 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
+    @ExperimentalCoroutinesApi
     private val viewModel: DashboardViewModel by viewModel()
 
-    lateinit var transactionsAdapter:TransactionsAdapter
+    lateinit var transactionsAdapter: TransactionsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,17 +71,18 @@ class DashboardFragment : Fragment() {
         }
 
         transactionsAdapter = TransactionsAdapter()
+        binding.transactionsRecycler.adapter = transactionsAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.activeFilters.collectLatest {
                 formatFilters(it)
             }
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.transactionList.collect {
-                transactionsAdapter.submitList(it)
-            }
-        }
+
+        viewModel.transactions.observe(viewLifecycleOwner, {
+            transactionsAdapter.submitList(it)
+        })
+
 
 //        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
 //            viewModel.dashboardEvent.collect {
