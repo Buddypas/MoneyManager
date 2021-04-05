@@ -4,6 +4,7 @@ import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -11,7 +12,7 @@ import java.util.*
 
 class AppRepository(val db: AppDatabase) {
 
-    fun populateDb(scope: CoroutineScope) = scope.launch {
+    suspend fun populateDb() {
         db.categoriesDao().insertAll(
             Category(
                 0,
@@ -29,31 +30,40 @@ class AppRepository(val db: AppDatabase) {
                 "income"
             )
         )
+        delay(500)
+        var now = Date.from(Instant.now())
         db.transactionsDao().insertAll(
             Transaction(
                 0,
                 -50.0,
-                Date.from(Instant.now()),
+                now,
                 "Pregled specijaliste",
                 2,
                 -50.0
-            ),
+            )
+        )
+        delay(500)
+        now = Date.from(Instant.now())
+        db.transactionsDao().insertAll(
             Transaction(
                 0,
                 650.0,
-                Date.from(Instant.now()),
+                now,
                 "Plata",
                 3,
                 600.0
-            ),
+            )
+        )
+        now = Date.from(Instant.now())
+        db.transactionsDao().insertAll(
             Transaction(
                 0,
                 -50.0,
-                Date.from(Instant.now()),
+                now,
                 "Gorivo",
                 1,
                 550.0
-            ),
+            )
         )
     }
 

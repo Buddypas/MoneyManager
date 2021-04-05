@@ -15,9 +15,3 @@ data class CategoriesWithTransactions(
     )
     val transactions: List<Transaction>
 )
-
-//@Dao
-//interface CategoriesTransactionsDao {
-//
-//
-//}

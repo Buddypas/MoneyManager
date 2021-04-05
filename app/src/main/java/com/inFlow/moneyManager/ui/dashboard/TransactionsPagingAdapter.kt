@@ -12,7 +12,7 @@ import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 
-class TransactionsAdapter() :
+class TransactionsAdapter :
     ListAdapter<Transaction, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {

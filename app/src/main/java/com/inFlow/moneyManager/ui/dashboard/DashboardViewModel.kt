@@ -28,11 +28,15 @@ class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
     private val dashboardEventChannel = Channel<DashboardEvent>()
     val dashboardEvent = dashboardEventChannel.receiveAsFlow()
 
-    fun populateDb() = repo.populateDb(viewModelScope)
+    fun populateDb() = viewModelScope.launch {
+        repo.populateDb()
+    }
 
     val transactionList = activeFilters.flatMapLatest {
         repo.getAllTransactions()
     }
+
+    val balanceFlow = repo.db.transactionsDao().getMostRecentTransaction()
 
     val transactions = transactionList.asLiveData()
 }

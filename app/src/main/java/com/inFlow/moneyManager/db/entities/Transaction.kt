@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.db.entities
 
 import androidx.room.*
+import com.inFlow.moneyManager.db.relations.CategoriesWithTransactions
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -17,10 +18,16 @@ data class Transaction(
     val transactionBalanceAfter: Double
 )
 
+// TODO: Add sort by date and take the most recent date as balance
 @Dao
 interface TransactionsDao {
+    @androidx.room.Transaction
     @Query("SELECT * FROM transactions")
     fun getAll(): Flow<List<Transaction>>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM transactions INNER JOIN categories ON transactionCategoryId=categoryId WHERE categoryType='income'")
+    fun getAllIncomes(): Flow<List<Transaction>>
 
     @Query("SELECT * FROM transactions WHERE transactionId=:id")
     fun getById(id: Int): Transaction
@@ -47,7 +54,7 @@ interface TransactionsDao {
     fun getAllDescending(): List<Transaction>
 
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC LIMIT 1")
-    fun getMostRecentTransaction(): Transaction
+    fun getMostRecentTransaction(): Flow<Transaction>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg transactions: Transaction)
