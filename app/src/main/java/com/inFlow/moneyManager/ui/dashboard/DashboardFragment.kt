@@ -47,7 +47,6 @@ class DashboardFragment : Fragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.populateDb()
         setNavObserver()
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
@@ -82,11 +81,6 @@ class DashboardFragment : Fragment() {
         viewModel.transactions.observe(viewLifecycleOwner, {
             transactionsAdapter.submitList(it)
         })
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.balanceFlow.collectLatest {
-                binding.balanceTxt.text = it.transactionBalanceAfter.toString()
-            }
-        }
 
 //        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
 //            viewModel.dashboardEvent.collect {
@@ -112,7 +106,6 @@ class DashboardFragment : Fragment() {
             getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
     }
 
-    @ExperimentalCoroutinesApi
     private fun setNavObserver() {
         val navController = findNavController()
         val navBackStackEntry = navController.getBackStackEntry(R.id.dashboardFragment)

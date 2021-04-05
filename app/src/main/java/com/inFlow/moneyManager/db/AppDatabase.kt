@@ -10,6 +10,10 @@ import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import java.time.Instant
+import java.util.*
+import java.util.concurrent.Executors
 
 @Database(entities = [Transaction::class, Category::class], version = 2)
 @TypeConverters(Converters::class)
