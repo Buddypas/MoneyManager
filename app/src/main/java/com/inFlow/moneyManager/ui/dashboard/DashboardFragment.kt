@@ -81,14 +81,6 @@ class DashboardFragment : Fragment() {
         viewModel.transactions.observe(viewLifecycleOwner, {
             transactionsAdapter.submitList(it)
         })
-
-//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-//            viewModel.dashboardEvent.collect {
-//                when (it) {
-//                    is DashboardEvent.ShowFiltersDialog -> showFiltersDialog(it.filtersData)
-//                }
-//            }
-//        }
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {

@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
@@ -29,11 +28,6 @@ class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
 
     val transactionList = activeFilters.flatMapLatest {
         repo.getAllTransactions()
-    }
-
-//    val _balanceFlow = MutableStateFlow<Transaction?>(null)
-    val balanceFlow: Flow<Transaction?> = flow {
-        emitAll(repo.db.transactionsDao().getMostRecentTransaction())
     }
 
     val transactions = transactionList.asLiveData()
