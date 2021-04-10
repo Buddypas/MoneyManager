@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.vo
 
 import android.os.Parcelable
 import com.inFlow.moneyManager.shared.kotlin.SORT_BY_DATE
-import com.inFlow.moneyManager.ui.filters.PeriodMode
+import com.inFlow.moneyManager.ui.dashboard.PeriodMode
 import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.Month

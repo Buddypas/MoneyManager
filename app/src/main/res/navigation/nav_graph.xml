@@ -9,7 +9,7 @@
         android:id="@+id/dashboardFragment"
         android:name="com.inFlow.moneyManager.ui.dashboard.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" >
+        tools:layout="@layout/fragment_dashboard">
         <action
             android:id="@+id/action_dashboard_to_filters"
             app:destination="@id/filtersDialog" />
@@ -23,9 +23,5 @@
         android:id="@+id/filtersDialog"
         android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
         android:label="Filters"
-        tools:layout="@layout/dialog_filters" >
-        <argument
-            android:name="filterData"
-            app:argType="com.inFlow.moneyManager.vo.FiltersDto" />
-    </dialog>
+        tools:layout="@layout/dialog_filters" />
 </navigation>

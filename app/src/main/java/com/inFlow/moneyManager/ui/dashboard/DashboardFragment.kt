@@ -17,12 +17,12 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
-import com.inFlow.moneyManager.ui.filters.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -32,7 +32,7 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     @ExperimentalCoroutinesApi
-    private val viewModel: DashboardViewModel by viewModel()
+    private val viewModel: DashboardViewModel by sharedViewModel()
 
     lateinit var transactionsAdapter: TransactionsAdapter
 
@@ -48,6 +48,7 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
+        viewModel.test = "Test from dashboard"
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
         binding.walletDropdown.setAdapter(walletAdapter)
@@ -62,7 +63,7 @@ class DashboardFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {
-                    showFiltersDialog(viewModel.activeFilters.value)
+                    showFiltersDialog()
                     true
                 }
                 else -> false
@@ -116,12 +117,9 @@ class DashboardFragment : Fragment() {
         })
     }
 
-    private fun showFiltersDialog(filtersData: FiltersDto) {
-        if (findNavController().currentDestination?.id == R.id.dashboardFragment) {
-            val action =
-                DashboardFragmentDirections.actionDashboardToFilters(filtersData)
-            findNavController().navigate(action)
-        }
+    private fun showFiltersDialog() {
+        if (findNavController().currentDestination?.id == R.id.dashboardFragment)
+            findNavController().navigate(R.id.filtersDialog)
     }
 
     override fun onDestroyView() {

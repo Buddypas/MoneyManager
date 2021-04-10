@@ -9,7 +9,6 @@ import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
-import com.inFlow.moneyManager.ui.filters.FiltersViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -44,7 +43,6 @@ val dataModule = module {
 @ExperimentalCoroutinesApi
 val viewModelModule = module {
     factory { DashboardViewModel(get()) }
-    factory { FiltersViewModel() }
 }
 
 //val miscModule = module {

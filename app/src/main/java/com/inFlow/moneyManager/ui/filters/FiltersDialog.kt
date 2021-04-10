@@ -13,22 +13,25 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
+import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
+import com.inFlow.moneyManager.ui.dashboard.FieldError
+import com.inFlow.moneyManager.ui.dashboard.FiltersEvent
+import com.inFlow.moneyManager.ui.dashboard.PeriodMode
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
 
-// TODO: Review the whole logic
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: FiltersViewModel by viewModel()
-    private val args: FiltersDialogArgs by navArgs()
+    private val viewModel: DashboardViewModel by sharedViewModel()
 
     private lateinit var sortAdapter: ArrayAdapter<String>
     private lateinit var monthAdapter: ArrayAdapter<String>
@@ -49,9 +52,9 @@ class FiltersDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Timber.e("onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setFilters(args.filterData)
+        viewModel.setFilters(viewModel.activeFilters.value)
+        Timber.e(viewModel.test)
         setUpUI()
     }
 
