@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.db.entities
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 @Entity(
@@ -20,6 +21,12 @@ data class Category(
 interface CategoriesDao {
     @Query("SELECT * FROM categories")
     fun getAll(): List<Category>
+
+    @Query("SELECT * FROM categories WHERE categoryType='expense'")
+    fun getAllExpenseCategories(): Flow<List<Category>>
+
+    @Query("SELECT * FROM categories WHERE categoryType='income'")
+    fun getAllIncomeCategories(): Flow<List<Category>>
 
     @Query("SELECT * FROM categories WHERE categoryId=:id")
     fun getById(id: Int): Category

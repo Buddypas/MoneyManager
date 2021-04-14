@@ -68,4 +68,6 @@ class AppRepository(val db: AppDatabase) {
     }
 
     fun getAllTransactions() = db.transactionsDao().getAll()
+    fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
+    fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
 }

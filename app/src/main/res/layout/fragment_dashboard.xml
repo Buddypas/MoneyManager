@@ -20,6 +20,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/wallet_dropdown_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"

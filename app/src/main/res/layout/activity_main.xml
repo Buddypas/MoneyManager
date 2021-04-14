@@ -24,6 +24,7 @@
         app:menu="@menu/nav_menu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

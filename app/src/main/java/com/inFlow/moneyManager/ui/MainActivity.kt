@@ -26,5 +26,9 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         findViewById<BottomNavigationView>(R.id.bottom_nav)
             .setupWithNavController(navController)
+
+        binding.addBtn.setOnClickListener {
+            navController.navigate(R.id.addTransactionFragment)
+        }
     }
 }

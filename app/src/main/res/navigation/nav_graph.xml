@@ -19,6 +19,12 @@
         android:name="com.inFlow.moneyManager.ui.categories.CategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_categories" />
+    <fragment
+        android:id="@+id/addTransactionFragment"
+        android:name="com.inFlow.moneyManager.ui.add_transaction.AddTransactionFragment"
+        android:label="Add Transaction"
+        tools:layout="@layout/fragment_add_transaction" />
+
     <dialog
         android:id="@+id/filtersDialog"
         android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
