@@ -24,8 +24,16 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     val incomes = incomeFlow.asLiveData()
 
     init {
-        loadExpenses()
-        loadIncomes()
+        viewModelScope.launch {
+            repository.db.categoriesDao().insertAll(
+                Category(categoryId = 1,categoryName = "Gorivo", categoryType = "expense"),
+                Category(categoryId = 2,categoryName = "Plata", categoryType = "income"),
+                Category(categoryId = 3,categoryName = "Doktor", categoryType = "expense"),
+                Category(categoryId = 4,categoryName = "Kladionica", categoryType = "income")
+            )
+            loadExpenses()
+            loadIncomes()
+        }
     }
 
     fun onTypeSelected(checkedId: Int) {

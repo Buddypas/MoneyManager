@@ -8,6 +8,7 @@ import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import com.inFlow.moneyManager.repository.AppRepository
+import com.inFlow.moneyManager.ui.add_transaction.AddTransactionViewModel
 import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,6 +44,7 @@ val dataModule = module {
 @ExperimentalCoroutinesApi
 val viewModelModule = module {
     factory { DashboardViewModel(get()) }
+    factory { AddTransactionViewModel(get()) }
 }
 
 //val miscModule = module {

@@ -14,13 +14,14 @@ import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.db.entities.Category
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class AddTransactionFragment : Fragment() {
 
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: AddTransactionViewModel
-    private lateinit var categoryAdapter: ArrayAdapter<Category>
+    private val viewModel: AddTransactionViewModel by viewModel()
+    private var categoryAdapter: ArrayAdapter<Category>? = null
 
     val incomeList = mutableListOf<Category>()
     val expenseList = mutableListOf<Category>()
@@ -36,26 +37,40 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoryAdapter = ArrayAdapter<Category>(requireContext(), R.layout.item_month_dropdown)
-            .also { binding.categoryDropdown.setAdapter(it) }
+//        categoryAdapter = ArrayAdapter<Category>(requireContext(), R.layout.item_month_dropdown)
+//            .also { binding.categoryDropdown.setAdapter(it) }
 
         binding.typeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             viewModel.onTypeSelected(checkedId)
         }
 
-        viewModel.incomes.observe(viewLifecycleOwner, {
-            incomeList.addAll(it)
-        })
-        viewModel.expenses.observe(viewLifecycleOwner, {
-            expenseList.addAll(it)
-        })
+        // TODO: Continue
+        with(viewModel) {
+            incomes.observe(viewLifecycleOwner, {
+                incomeList.addAll(it)
+            })
+            expenses.observe(viewLifecycleOwner, {
+                expenseList.addAll(it)
+                initDropdownAdapter()
+            })
+//            loadIncomes()
+//            loadExpenses()
+        }
 
         lifecycleScope.launch {
             viewModel.categoryType.collectLatest {
-                categoryAdapter.clear()
-                if (it == CategoryType.EXPENSE) categoryAdapter.addAll(expenseList)
-                else categoryAdapter.addAll(incomeList)
+                categoryAdapter?.clear()
+                if (it == CategoryType.EXPENSE) categoryAdapter?.addAll(expenseList)
+                else categoryAdapter?.addAll(incomeList)
+                categoryAdapter?.notifyDataSetChanged()
             }
+        }
+    }
+
+    private fun initDropdownAdapter() {
+        if (categoryAdapter == null) {
+            categoryAdapter = ArrayAdapter<Category>(requireContext(), R.layout.item_month_dropdown, expenseList)
+                    .also { binding.categoryDropdown.setAdapter(it) }
         }
     }
 }
