@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.AutoCompleteTextView
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -31,7 +33,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 fun <T> MutableStateFlow<T>.setValueIfDifferent(newValue: T) {
-    if(value != newValue) value = newValue
+    if (value != newValue) value = newValue
 }
 
 /**
@@ -82,6 +84,16 @@ inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit)
     })
 }
 
+inline fun AutoCompleteTextView.onSelectedItemChanged(crossinline listener: (Int) -> Unit) {
+    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            listener(position)
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
+    }
+}
+
 fun String?.isValidPassword() = this?.length in 4..30
 
 fun String?.isValidEmail(): Boolean {
@@ -104,7 +116,7 @@ fun String?.toLocalDate(): LocalDate? {
             return null
         }
         val today = LocalDate.now()
-        if(date.isAfter(today)) return null
+        if (date.isAfter(today)) return null
         return date
     }
 }
