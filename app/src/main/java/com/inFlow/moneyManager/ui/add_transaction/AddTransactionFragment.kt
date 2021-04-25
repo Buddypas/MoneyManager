@@ -6,8 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
 import com.inFlow.moneyManager.db.entities.Category
@@ -15,22 +17,20 @@ import com.inFlow.moneyManager.shared.kotlin.onSelectedItemChanged
 import com.inFlow.moneyManager.shared.kotlin.setValueIfDifferent
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
-/**
- * 1. Load expenses
- * 2. Load incomes
- * 3. Set initial category to be expense
- */
 class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: AddTransactionViewModel by viewModel()
 
     private var categoryType = CategoryType.EXPENSE
     private var selectedCategoryPosition = -1
 
-    val incomeList = mutableListOf<Category>()
-    val expenseList = mutableListOf<Category>()
+    private val incomeList = mutableListOf<Category>()
+    private val expenseList = mutableListOf<Category>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,8 +48,13 @@ class AddTransactionFragment : Fragment() {
             onTypeSelected(isChecked)
         }
 
-        binding.categoryDropdown.onSelectedItemChanged {
-            selectedCategoryPosition = it
+        binding.categoryDropdown.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                selectedCategoryPosition = position
+            }
+
+        binding.cancelBtn.setOnClickListener {
+            findNavController().navigateUp()
         }
 
         with(viewModel) {

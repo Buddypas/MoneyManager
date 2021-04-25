@@ -10,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.inFlow.moneyManager.NavGraphDirections
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ActivityMainBinding
 
@@ -28,7 +29,8 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController)
 
         binding.addBtn.setOnClickListener {
-            navController.navigate(R.id.addTransactionFragment)
+//            navController.navigate(R.id.addTransactionFragment)
+            navController.navigate(NavGraphDirections.actionAddTransaction())
         }
     }
 }
