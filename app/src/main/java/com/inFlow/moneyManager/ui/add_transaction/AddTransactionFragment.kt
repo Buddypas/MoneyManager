@@ -29,13 +29,8 @@ class AddTransactionFragment : Fragment() {
     private var categoryType = CategoryType.EXPENSE
     private var selectedCategoryPosition = -1
 
-    private var categoryAdapter: ArrayAdapter<String>? = null
-
     val incomeList = mutableListOf<Category>()
     val expenseList = mutableListOf<Category>()
-
-//    val activeCategoryList = mutableListOf<String>()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,12 +47,6 @@ class AddTransactionFragment : Fragment() {
             binding.categoryDropdown.text = SpannableStringBuilder("")
             onTypeSelected(isChecked)
         }
-
-//        binding.typeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-//            selectedCategoryPosition = -1
-//            binding.categoryDropdown.text = SpannableStringBuilder("")
-//            onTypeSelected(checkedId)
-//        }
 
         binding.categoryDropdown.onSelectedItemChanged {
             selectedCategoryPosition = it
@@ -82,23 +71,23 @@ class AddTransactionFragment : Fragment() {
                 expenseList.map { it.categoryName }
             else
                 incomeList.map { it.categoryName }
-        categoryAdapter?.apply {
-            clear()
-            addAll(list)
-//            notifyDataSetChanged()
-        }
+        val categoryAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_month_dropdown,
+            R.id.dropdown_txt,
+            list
+        )
+        binding.categoryDropdown.setAdapter(categoryAdapter)
     }
 
     private fun initDropdownAdapter() {
-        if (categoryAdapter == null) {
-            val list = expenseList.map { it.categoryName }
-            categoryAdapter = ArrayAdapter(
-                requireContext(),
-                R.layout.item_month_dropdown,
-                R.id.dropdown_txt,
-                list
-            ).apply { setNotifyOnChange(true) }
-            binding.categoryDropdown.setAdapter(categoryAdapter)
-        }
+        val list = expenseList.map { it.categoryName }
+        val categoryAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_month_dropdown,
+            R.id.dropdown_txt,
+            list
+        )
+        binding.categoryDropdown.setAdapter(categoryAdapter)
     }
 }

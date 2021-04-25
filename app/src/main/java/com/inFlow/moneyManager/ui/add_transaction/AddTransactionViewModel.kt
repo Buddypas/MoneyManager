@@ -52,6 +52,6 @@ enum class CategoryType {
     EXPENSE, INCOME;
 }
 
-sealed class AddTransactionEvent {
-    data class CategoryTypeChanged(val categoryType: CategoryType) : AddTransactionEvent()
-}
+//sealed class AddTransactionEvent {
+//    data class CategoryTypeChanged(val categoryType: CategoryType) : AddTransactionEvent()
+//}
