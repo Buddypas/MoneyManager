@@ -29,8 +29,6 @@ class AddTransactionFragment : Fragment() {
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()
 
-//    var loadingDialog: AlertDialog? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,10 +73,6 @@ class AddTransactionFragment : Fragment() {
             viewModel.eventFlow.collect { event ->
                 when (event) {
                     is AddTransactionEvent.ShowErrorMessage -> binding.root.showError(event.msg)
-//                    is AddTransactionEvent.ShowLoading -> {
-//                        if (event.shouldShow) loadingDialog?.show()
-//                        else loadingDialog?.dismiss()
-//                    }
                     is AddTransactionEvent.ShowSuccessMessage ->
                         binding.root.showSuccessMessage(event.msg)
                     AddTransactionEvent.NavigateUp -> findNavController().navigateUp()

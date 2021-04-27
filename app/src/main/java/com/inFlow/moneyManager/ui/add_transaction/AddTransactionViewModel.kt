@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.*
 
 class AddTransactionViewModel(private val repository: AppRepository) : ViewModel() {
 
@@ -55,28 +54,18 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     }
 
     fun saveTransaction(desc: String, amount: Double) = viewModelScope.launch(Dispatchers.IO) {
-//        showLoading()
         val realAmount = if (categoryType == CategoryType.EXPENSE) -amount else amount
         val catId =
             if (categoryType == CategoryType.EXPENSE) expenses.value!![selectedCategoryPosition].categoryId
             else incomes.value!![selectedCategoryPosition].categoryId
         repository.saveTransaction(realAmount, catId, desc)
-//        showLoading(false)
         showSuccess("Transaction added.")
         navigateUp()
-    }
-
-    private suspend fun showError(msg: String? = null) {
-        eventChannel.send(AddTransactionEvent.ShowErrorMessage(msg))
     }
 
     private suspend fun showSuccess(msg: String) {
         eventChannel.send(AddTransactionEvent.ShowSuccessMessage(msg))
     }
-
-//    private suspend fun showLoading(shouldShow: Boolean = true) {
-//        eventChannel.send(AddTransactionEvent.ShowLoading(shouldShow))
-//    }
 
     private suspend fun navigateUp() {
         eventChannel.send(AddTransactionEvent.NavigateUp)
@@ -90,7 +79,5 @@ enum class CategoryType {
 sealed class AddTransactionEvent {
     data class ShowErrorMessage(val msg: String?) : AddTransactionEvent()
     data class ShowSuccessMessage(val msg: String) : AddTransactionEvent()
-
-    //    data class ShowLoading(val shouldShow: Boolean) : AddTransactionEvent()
     object NavigateUp : AddTransactionEvent()
 }
