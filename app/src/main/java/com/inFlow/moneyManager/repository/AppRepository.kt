@@ -5,6 +5,7 @@ import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.base.Resource
+import com.inFlow.moneyManager.ui.add_transaction.CategoryType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -68,7 +69,6 @@ class AppRepository(val db: AppDatabase) {
     }
 
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
-//        emit(Resource.Loading())
         db.withTransaction {
             val lastTransaction = db.transactionsDao().getMostRecentTransaction()
             val previousBalance: Double = lastTransaction?.transactionBalanceAfter ?: 0.0
@@ -81,18 +81,14 @@ class AppRepository(val db: AppDatabase) {
             )
             db.transactionsDao().insertAll(transaction)
         }
-//        db.transactionsDao().fetchLastAndInsertNewTransaction(amount, categoryId, desc)
-//        val lastTransaction = db.transactionsDao().getMostRecentTransaction()
-//        val previousBalance = lastTransaction.transactionBalanceAfter
-//        val transaction = Transaction(
-//            transactionAmount = amount,
-//            transactionDate = Date(),
-//            transactionDescription = desc.trim(),
-//            transactionCategoryId = categoryId,
-//            transactionBalanceAfter = previousBalance + amount
-//        )
-//        db.transactionsDao().insertAll(transaction)
     }
+
+    suspend fun saveCategory(type: CategoryType, name: String) = db.categoriesDao().insertAll(
+        Category(
+            categoryName = name,
+            categoryType = if (type == CategoryType.EXPENSE) "expense" else "income"
+        )
+    )
 
     fun getAllTransactions() = db.transactionsDao().getAll()
     fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()

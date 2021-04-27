@@ -29,7 +29,7 @@ class AddTransactionFragment : Fragment() {
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()
 
-    var loadingDialog: AlertDialog? = null
+//    var loadingDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +42,6 @@ class AddTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.addRoot.setAsRootView()
-        loadingDialog = requireContext().getLoadingDialog()
 
         binding.expenseBtn.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.selectedCategoryPosition = -1
