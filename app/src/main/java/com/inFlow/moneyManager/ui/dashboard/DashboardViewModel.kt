@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -61,7 +62,8 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         (year - 2).toString()
     )
 
-    fun fetchBalanceData() = liveData {
+    // TODO: Consider using state flows
+    fun fetchBalanceData() = flow {
         val expenseList = repository.getAllExpenses()
         var expenses = 0.0
         if (expenseList.isNotEmpty()) expenseList.forEach {

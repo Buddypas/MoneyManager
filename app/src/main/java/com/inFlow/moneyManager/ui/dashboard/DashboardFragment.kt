@@ -48,12 +48,6 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
 
-        viewModel.fetchBalanceData().observe(viewLifecycleOwner, {
-            binding.incomeTxt.text = it.first.toString()
-            binding.expenseTxt.text = it.second.toString()
-            binding.balanceTxt.text = (it.first - it.second).toString()
-        })
-
         // TODO: Replace placeholder
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
@@ -85,9 +79,17 @@ class DashboardFragment : Fragment() {
             findNavController().navigate(DashboardFragmentDirections.actionDashboardToAddTransaction())
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             viewModel.activeFilters.collectLatest {
                 formatFilters(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.fetchBalanceData().collectLatest {
+                binding.incomeTxt.text = it.first.toString()
+                binding.expenseTxt.text = it.second.toString()
+                binding.balanceTxt.text = (it.first - it.second).toString()
             }
         }
 
