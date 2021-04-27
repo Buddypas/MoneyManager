@@ -76,10 +76,10 @@ class AddTransactionFragment : Fragment() {
             viewModel.eventFlow.collect { event ->
                 when (event) {
                     is AddTransactionEvent.ShowErrorMessage -> binding.root.showError(event.msg)
-                    is AddTransactionEvent.ShowLoading -> {
-                        if (event.shouldShow) loadingDialog?.show()
-                        else loadingDialog?.dismiss()
-                    }
+//                    is AddTransactionEvent.ShowLoading -> {
+//                        if (event.shouldShow) loadingDialog?.show()
+//                        else loadingDialog?.dismiss()
+//                    }
                     is AddTransactionEvent.ShowSuccessMessage ->
                         binding.root.showSuccessMessage(event.msg)
                     AddTransactionEvent.NavigateUp -> findNavController().navigateUp()
@@ -121,9 +121,9 @@ class AddTransactionFragment : Fragment() {
         val desc = binding.descriptionInput.text.toString()
         val amountString = binding.amountInput.text.toString()
         when {
-            amountString.isEmpty() -> binding.amountLayout.error = "Amount must be larger than 0."
-            desc.isEmpty() -> binding.descriptionLayout.error = "You must enter a description."
             viewModel.selectedCategoryPosition < 0 -> binding.root.showError("You must select a category.")
+            desc.isBlank() -> binding.descriptionLayout.error = "You must enter a description."
+            amountString.isEmpty() -> binding.amountLayout.error = "Amount must be larger than 0."
             else -> viewModel.saveTransaction(desc, amountString.toDouble())
         }
     }

@@ -55,18 +55,13 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     }
 
     fun saveTransaction(desc: String, amount: Double) = viewModelScope.launch(Dispatchers.IO) {
-//        if (selectedCategoryPosition < 0) {
-//            showError("You must select a category.")
-//            return@launch
-//        }
-
-        showLoading()
+//        showLoading()
         val realAmount = if (categoryType == CategoryType.EXPENSE) -amount else amount
         val catId =
             if (categoryType == CategoryType.EXPENSE) expenses.value!![selectedCategoryPosition].categoryId
             else incomes.value!![selectedCategoryPosition].categoryId
         repository.saveTransaction(realAmount, catId, desc)
-        showLoading(false)
+//        showLoading(false)
         showSuccess("Transaction added.")
         navigateUp()
     }
@@ -79,9 +74,9 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
         eventChannel.send(AddTransactionEvent.ShowSuccessMessage(msg))
     }
 
-    private suspend fun showLoading(shouldShow: Boolean = true) {
-        eventChannel.send(AddTransactionEvent.ShowLoading(shouldShow))
-    }
+//    private suspend fun showLoading(shouldShow: Boolean = true) {
+//        eventChannel.send(AddTransactionEvent.ShowLoading(shouldShow))
+//    }
 
     private suspend fun navigateUp() {
         eventChannel.send(AddTransactionEvent.NavigateUp)
@@ -95,6 +90,7 @@ enum class CategoryType {
 sealed class AddTransactionEvent {
     data class ShowErrorMessage(val msg: String?) : AddTransactionEvent()
     data class ShowSuccessMessage(val msg: String) : AddTransactionEvent()
-    data class ShowLoading(val shouldShow: Boolean) : AddTransactionEvent()
+
+    //    data class ShowLoading(val shouldShow: Boolean) : AddTransactionEvent()
     object NavigateUp : AddTransactionEvent()
 }
