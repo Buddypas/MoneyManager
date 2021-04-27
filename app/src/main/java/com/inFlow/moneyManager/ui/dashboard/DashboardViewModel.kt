@@ -21,16 +21,13 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.Year
 
-class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
+class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
     var test = "Test"
 
-    private val dashboardEventChannel = Channel<DashboardEvent>()
-    val dashboardEvent = dashboardEventChannel.receiveAsFlow()
-
     val transactionList = activeFilters.flatMapLatest {
-        repo.getAllTransactions()
+        repository.getAllTransactions()
     }
 
     val transactions = transactionList.asLiveData()
@@ -64,6 +61,12 @@ class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
         (year - 1).toString(),
         (year - 2).toString()
     )
+    
+//    init {
+//        viewModelScope.launch {
+//            repository.populateDb()
+//        }
+//    }
 
     fun setFilters(data: FiltersDto) {
         period = data.period
@@ -176,10 +179,6 @@ class DashboardViewModel(private val repo: AppRepository) : ViewModel() {
             else -> null
         }
     }
-}
-
-sealed class DashboardEvent {
-    data class ShowFiltersDialog(val filtersData: FiltersDto) : DashboardEvent()
 }
 
 data class FieldError(val message: String, val field: FieldType)

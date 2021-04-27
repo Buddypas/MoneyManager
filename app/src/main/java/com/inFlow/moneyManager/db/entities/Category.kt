@@ -11,7 +11,7 @@ import java.util.*
     )]
 )
 data class Category(
-    @PrimaryKey(autoGenerate = true) val categoryId: Int,
+    @PrimaryKey(autoGenerate = true) val categoryId: Int = 0,
     val categoryName: String,
     val categoryType: String, // will be either income or expense
     val categoryIconUrl: String? = null

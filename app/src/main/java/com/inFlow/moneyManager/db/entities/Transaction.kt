@@ -53,24 +53,24 @@ interface TransactionsDao {
     fun getAllDescending(): List<Transaction>
 
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC LIMIT 1")
-    suspend fun getMostRecentTransaction(): Transaction
+    suspend fun getMostRecentTransaction(): Transaction?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg transactions: Transaction)
 
-    @androidx.room.Transaction
-    suspend fun fetchLastAndInsertNewTransaction(amount: Double, categoryId: Int, desc: String) {
-        val lastTransaction = getMostRecentTransaction()
-        val previousBalance = lastTransaction.transactionBalanceAfter
-        val transaction = Transaction(
-            transactionAmount = amount,
-            transactionDate = Date(),
-            transactionDescription = desc.trim(),
-            transactionCategoryId = categoryId,
-            transactionBalanceAfter = previousBalance + amount
-        )
-        insertAll(transaction)
-    }
+//    @androidx.room.Transaction
+//    suspend fun fetchLastAndInsertNewTransaction(amount: Double, categoryId: Int, desc: String) {
+//        val lastTransaction = getMostRecentTransaction()
+//        val previousBalance = lastTransaction.transactionBalanceAfter
+//        val transaction = Transaction(
+//            transactionAmount = amount,
+//            transactionDate = Date(),
+//            transactionDescription = desc.trim(),
+//            transactionCategoryId = categoryId,
+//            transactionBalanceAfter = previousBalance + amount
+//        )
+//        insertAll(transaction)
+//    }
 
     @Delete
     fun delete(transaction: Transaction)

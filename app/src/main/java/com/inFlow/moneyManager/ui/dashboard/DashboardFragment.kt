@@ -28,7 +28,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class DashboardFragment : Fragment() {
-
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 

@@ -1,10 +1,13 @@
 package com.inFlow.moneyManager.repository
 
+import androidx.room.withTransaction
 import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
+import com.inFlow.moneyManager.shared.base.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -15,60 +18,70 @@ class AppRepository(val db: AppDatabase) {
     suspend fun populateDb() {
         db.categoriesDao().insertAll(
             Category(
-                0,
-                "Car",
-                "expense",
+                categoryName = "Car",
+                categoryType = "expense",
             ),
             Category(
-                0,
-                "Health",
-                "expense"
+                categoryName = "Health",
+                categoryType = "expense"
             ),
             Category(
-                0,
-                "Salary",
-                "income"
+                categoryName = "Salary",
+                categoryType = "income"
             )
         )
-        delay(500)
-        var now = Date.from(Instant.now())
-        db.transactionsDao().insertAll(
-            Transaction(
-                0,
-                -50.0,
-                now,
-                "Pregled specijaliste",
-                2,
-                -50.0
-            )
-        )
-        delay(500)
-        now = Date.from(Instant.now())
-        db.transactionsDao().insertAll(
-            Transaction(
-                0,
-                650.0,
-                now,
-                "Plata",
-                3,
-                600.0
-            )
-        )
-        now = Date.from(Instant.now())
-        db.transactionsDao().insertAll(
-            Transaction(
-                0,
-                -50.0,
-                now,
-                "Gorivo",
-                1,
-                550.0
-            )
-        )
+//        delay(500)
+//        var now = Date.from(Instant.now())
+//        db.transactionsDao().insertAll(
+//            Transaction(
+//                0,
+//                -50.0,
+//                now,
+//                "Pregled specijaliste",
+//                2,
+//                -50.0
+//            )
+//        )
+//        delay(500)
+//        now = Date.from(Instant.now())
+//        db.transactionsDao().insertAll(
+//            Transaction(
+//                0,
+//                650.0,
+//                now,
+//                "Plata",
+//                3,
+//                600.0
+//            )
+//        )
+//        now = Date.from(Instant.now())
+//        db.transactionsDao().insertAll(
+//            Transaction(
+//                0,
+//                -50.0,
+//                now,
+//                "Gorivo",
+//                1,
+//                550.0
+//            )
+//        )
     }
 
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
-        db.transactionsDao().fetchLastAndInsertNewTransaction(amount, categoryId, desc)
+//        emit(Resource.Loading())
+        db.withTransaction {
+            val lastTransaction = db.transactionsDao().getMostRecentTransaction()
+            val previousBalance: Double = lastTransaction?.transactionBalanceAfter ?: 0.0
+            val transaction = Transaction(
+                transactionAmount = amount,
+                transactionDate = Date(),
+                transactionDescription = desc.trim(),
+                transactionCategoryId = categoryId,
+                transactionBalanceAfter = previousBalance + amount
+            )
+            db.transactionsDao().insertAll(transaction)
+        }
+//        db.transactionsDao().fetchLastAndInsertNewTransaction(amount, categoryId, desc)
 //        val lastTransaction = db.transactionsDao().getMostRecentTransaction()
 //        val previousBalance = lastTransaction.transactionBalanceAfter
 //        val transaction = Transaction(
