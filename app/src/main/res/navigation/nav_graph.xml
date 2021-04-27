@@ -13,13 +13,34 @@
         <action
             android:id="@+id/action_dashboard_to_filters"
             app:destination="@id/filtersDialog" />
+        <action
+            android:id="@+id/action_dashboard_to_addTransaction"
+            app:destination="@id/addTransactionFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.inFlow.moneyManager.ui.categories.CategoriesFragment"
         android:label="Categories"
-        tools:layout="@layout/fragment_categories" />
+        tools:layout="@layout/fragment_categories">
+        <action
+            android:id="@+id/action_categories_to_addCategory"
+            app:destination="@id/addCategoryFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addCategoryFragment"
+        android:name="com.inFlow.moneyManager.ui.add_category.AddCategoryFragment"
+        android:label="fragment_add_category"
+        tools:layout="@layout/fragment_add_category" />
 
     <fragment
         android:id="@+id/addTransactionFragment"
@@ -32,12 +53,6 @@
         android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
         android:label="Filters"
         tools:layout="@layout/dialog_filters" />
-    <action
-        android:id="@+id/action_addTransaction"
-        app:destination="@id/addTransactionFragment"
-        app:enterAnim="@anim/fade_in"
-        app:exitAnim="@anim/fade_out"
-        app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/fade_out" />
+
 
 </navigation>
