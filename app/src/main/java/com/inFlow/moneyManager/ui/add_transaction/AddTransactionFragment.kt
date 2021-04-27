@@ -8,15 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
 import com.inFlow.moneyManager.db.entities.Category
-import com.inFlow.moneyManager.shared.kotlin.onSelectedItemChanged
-import com.inFlow.moneyManager.shared.kotlin.setAsRootView
-import com.inFlow.moneyManager.shared.kotlin.setValueIfDifferent
-import kotlinx.coroutines.flow.collectLatest
+import com.inFlow.moneyManager.shared.kotlin.*
+import com.inFlow.moneyManager.ui.MainActivity
+import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -29,6 +29,8 @@ class AddTransactionFragment : Fragment() {
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()
 
+    var loadingDialog: AlertDialog? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +41,8 @@ class AddTransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.root.setAsRootView()
+        binding.addRoot.setAsRootView()
+        loadingDialog = requireContext().getLoadingDialog()
 
         binding.expenseBtn.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.selectedCategoryPosition = -1
@@ -67,6 +70,24 @@ class AddTransactionFragment : Fragment() {
                 if (it) initDropdownAdapter()
             })
             initData()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.eventFlow.collect {
+                when (it) {
+                    is AddTransactionEvent.ShowErrorMessage -> {
+                        (requireActivity() as MainActivity).showError(it.msg)
+                        Timber.e("snackbar shown")
+                    }
+                    is AddTransactionEvent.ShowLoading -> {
+                        if (it.shouldShow) loadingDialog?.show()
+                        else loadingDialog?.hide()
+                    }
+                    is AddTransactionEvent.ShowSuccessMessage ->
+                        binding.root.showSuccessMessage(it.msg)
+                    AddTransactionEvent.NavigateUp -> findNavController().navigateUp()
+                }
+            }
         }
     }
 

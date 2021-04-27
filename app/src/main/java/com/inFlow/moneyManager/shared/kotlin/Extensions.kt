@@ -6,6 +6,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +22,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +35,20 @@ import kotlin.math.roundToInt
 fun <T> MutableStateFlow<T>.setValueIfDifferent(newValue: T) {
     if (value != newValue) value = newValue
 }
+
+fun View.showSuccessMessage(msg: String) {
+    Snackbar.make(
+        this,
+        msg,
+        Snackbar.LENGTH_SHORT
+    ).show()
+}
+
+fun Context.getLoadingDialog(): AlertDialog = AlertDialog.Builder(this)
+    .setView(R.layout.popup_loading)
+    .setCancelable(false)
+    .create()
+    .apply { window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) }
 
 /**
  * This method is zero based, i.e. January returns 0, December returns 11
@@ -153,7 +167,9 @@ fun View.showError(mError: String?) {
         this,
         error,
         Snackbar.LENGTH_SHORT
-    ).show()
+    ).setBackgroundTint(context.getContextColor(R.color.black))
+        .setTextColor(context.getContextColor(R.color.white))
+        .show()
 }
 
 fun Context.showInfoDialog(messageResId: Int) {

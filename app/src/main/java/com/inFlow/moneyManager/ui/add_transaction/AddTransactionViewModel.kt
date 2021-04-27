@@ -4,11 +4,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.db.entities.Category
-import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.repository.AppRepository
-import com.inFlow.moneyManager.shared.kotlin.setValueIfDifferent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -58,7 +55,7 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
 
     fun saveTransaction(desc: String, amount: Double) = viewModelScope.launch {
         if (selectedCategoryPosition < 0) {
-            sendError("You must select a category.")
+            showError("You must select a category.")
             return@launch
         }
 
@@ -68,14 +65,25 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
             if (categoryType == CategoryType.EXPENSE) expenses.value!![selectedCategoryPosition].categoryId
             else incomes.value!![selectedCategoryPosition].categoryId
         repository.saveTransaction(realAmount, catId, desc)
+        showSuccess("Transaction added.")
+        navigateUp()
+
     }
 
-    private suspend fun sendError(msg: String? = null) {
+    private suspend fun showError(msg: String? = null) {
         eventChannel.send(AddTransactionEvent.ShowErrorMessage(msg))
+    }
+
+    private suspend fun showSuccess(msg: String) {
+        eventChannel.send(AddTransactionEvent.ShowSuccessMessage(msg))
     }
 
     private suspend fun showLoading() {
         eventChannel.send(AddTransactionEvent.ShowLoading())
+    }
+
+    private suspend fun navigateUp() {
+        eventChannel.send(AddTransactionEvent.NavigateUp)
     }
 }
 
@@ -85,5 +93,7 @@ enum class CategoryType {
 
 sealed class AddTransactionEvent {
     data class ShowErrorMessage(val msg: String?) : AddTransactionEvent()
+    data class ShowSuccessMessage(val msg: String) : AddTransactionEvent()
     data class ShowLoading(val shouldShow: Boolean = true) : AddTransactionEvent()
+    object NavigateUp: AddTransactionEvent()
 }

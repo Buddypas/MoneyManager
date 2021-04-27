@@ -3,6 +3,7 @@ package com.inFlow.moneyManager.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import androidx.core.view.isVisible
 import androidx.navigation.NavGraph
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -13,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.inFlow.moneyManager.NavGraphDirections
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ActivityMainBinding
+import com.inFlow.moneyManager.shared.kotlin.showError
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -28,8 +30,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.bottom_nav)
             .setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            binding.addBtn.isVisible = when (destination.id) {
+                R.id.addTransactionFragment -> false
+                else -> true
+            }
+        }
+
         binding.addBtn.setOnClickListener {
             navController.navigate(NavGraphDirections.actionAddTransaction())
         }
     }
+
+    fun showError(err: String? = null) = binding.root.showError(err)
 }
