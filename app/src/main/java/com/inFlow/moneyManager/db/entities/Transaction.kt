@@ -8,7 +8,7 @@ import java.util.*
 // TODO: Research FTS4 - https://developer.android.com/training/data-storage/room/defining-data#fts
 @Entity(tableName = "transactions")
 data class Transaction(
-    @PrimaryKey(autoGenerate = true) val transactionId: Int,
+    @PrimaryKey(autoGenerate = true) val transactionId: Int = 0,
     val transactionAmount: Double,
     val transactionDate: Date,
     val transactionDescription: String,
@@ -54,7 +54,7 @@ interface TransactionsDao {
     fun getAllDescending(): List<Transaction>
 
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC LIMIT 1")
-    fun getMostRecentTransaction(): Flow<Transaction>
+    suspend fun getMostRecentTransaction(): Transaction
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg transactions: Transaction)

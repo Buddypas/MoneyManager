@@ -14,6 +14,7 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.shared.kotlin.onSelectedItemChanged
+import com.inFlow.moneyManager.shared.kotlin.setAsRootView
 import com.inFlow.moneyManager.shared.kotlin.setValueIfDifferent
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -24,9 +25,6 @@ class AddTransactionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AddTransactionViewModel by viewModel()
-
-    private var categoryType = CategoryType.EXPENSE
-    private var selectedCategoryPosition = -1
 
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()
@@ -41,20 +39,25 @@ class AddTransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setAsRootView()
 
         binding.expenseBtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            selectedCategoryPosition = -1
+            viewModel.selectedCategoryPosition = -1
             binding.categoryDropdown.text = SpannableStringBuilder("")
             onTypeSelected(isChecked)
         }
 
         binding.categoryDropdown.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                selectedCategoryPosition = position
+                viewModel.selectedCategoryPosition = position
             }
 
         binding.cancelBtn.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.saveBtn.setOnClickListener {
+            onSaveClicked()
         }
 
         with(viewModel) {
@@ -68,11 +71,11 @@ class AddTransactionFragment : Fragment() {
     }
 
     private fun onTypeSelected(isExpenseChecked: Boolean) {
-        categoryType =
+        viewModel.categoryType =
             if (isExpenseChecked) CategoryType.EXPENSE
             else CategoryType.INCOME
         val list =
-            if (categoryType == CategoryType.EXPENSE)
+            if (viewModel.categoryType == CategoryType.EXPENSE)
                 expenseList.map { it.categoryName }
             else
                 incomeList.map { it.categoryName }
@@ -94,5 +97,12 @@ class AddTransactionFragment : Fragment() {
             list
         )
         binding.categoryDropdown.setAdapter(categoryAdapter)
+    }
+
+    private fun onSaveClicked() {
+        val desc = binding.descriptionInput.text.toString()
+        val amountString = binding.amountInput.text.toString()
+        if (amountString.isEmpty()) binding.amountLayout.error = "Amount must be larger than 0."
+        else viewModel.saveTransaction(desc, amountString.toDouble())
     }
 }

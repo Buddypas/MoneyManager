@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController)
 
         binding.addBtn.setOnClickListener {
-//            navController.navigate(R.id.addTransactionFragment)
             navController.navigate(NavGraphDirections.actionAddTransaction())
         }
     }
