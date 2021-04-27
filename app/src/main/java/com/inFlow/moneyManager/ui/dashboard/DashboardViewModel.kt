@@ -1,32 +1,31 @@
 package com.inFlow.moneyManager.ui.dashboard
 
-import android.view.MenuItem
 import android.widget.CompoundButton
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.db.entities.Transaction
-import com.inFlow.moneyManager.db.entities.TransactionsDao
 import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.Month
 import java.time.Year
 
+@ExperimentalCoroutinesApi
 class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
-    var test = "Test"
 
-    val transactionList = activeFilters.flatMapLatest {
+    private val transactionList = activeFilters.flatMapLatest {
         repository.getAllTransactions()
     }
 
@@ -61,7 +60,22 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         (year - 1).toString(),
         (year - 2).toString()
     )
-    
+
+    fun fetchBalanceData() = liveData {
+        val expenseList = repository.getAllExpenses()
+        var expenses = 0.0
+        if (expenseList.isNotEmpty()) expenseList.forEach {
+            expenses -= it.transactionAmount
+        }
+
+        val incomeList = repository.getAllIncomes()
+        var incomes = 0.0
+        if (incomeList.isNotEmpty()) incomeList.forEach {
+            incomes += it.transactionAmount
+        }
+        emit(Pair(incomes, expenses))
+    }
+
 //    init {
 //        viewModelScope.launch {
 //            repository.populateDb()
@@ -171,7 +185,6 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
                 "Dates are not valid",
                 FieldType.FIELD_OTHER
             )
-            // TODO: Find better message
             !showIncomes && !showExpenses -> FieldError(
                 "Incomes or expenses must be selected",
                 FieldType.FIELD_OTHER

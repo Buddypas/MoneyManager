@@ -46,6 +46,12 @@ interface TransactionsDao {
     @Query("SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate AND transactionAmount > 0")
     fun getIncomesInRange(startDate: Date, endDate: Date): List<Transaction>
 
+    @Query("SELECT * FROM transactions WHERE transactionAmount < 0")
+    suspend fun getExpenses(): List<Transaction>
+
+    @Query("SELECT * FROM transactions WHERE transactionAmount > 0")
+    suspend fun getIncomes(): List<Transaction>
+
     @Query("SELECT * FROM transactions WHERE transactionCategoryId=:catId")
     fun getByCategoryId(catId: Int): List<Transaction>
 
@@ -57,20 +63,6 @@ interface TransactionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg transactions: Transaction)
-
-//    @androidx.room.Transaction
-//    suspend fun fetchLastAndInsertNewTransaction(amount: Double, categoryId: Int, desc: String) {
-//        val lastTransaction = getMostRecentTransaction()
-//        val previousBalance = lastTransaction.transactionBalanceAfter
-//        val transaction = Transaction(
-//            transactionAmount = amount,
-//            transactionDate = Date(),
-//            transactionDescription = desc.trim(),
-//            transactionCategoryId = categoryId,
-//            transactionBalanceAfter = previousBalance + amount
-//        )
-//        insertAll(transaction)
-//    }
 
     @Delete
     fun delete(transaction: Transaction)

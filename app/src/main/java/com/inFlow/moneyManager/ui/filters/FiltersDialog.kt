@@ -54,7 +54,6 @@ class FiltersDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setFilters(viewModel.activeFilters.value)
-        Timber.e(viewModel.test)
         setUpUI()
     }
 

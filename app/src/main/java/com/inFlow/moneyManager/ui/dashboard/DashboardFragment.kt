@@ -47,11 +47,19 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
-        viewModel.test = "Test from dashboard"
+
+        viewModel.fetchBalanceData().observe(viewLifecycleOwner, {
+            binding.incomeTxt.text = it.first.toString()
+            binding.expenseTxt.text = it.second.toString()
+            binding.balanceTxt.text = (it.first - it.second).toString()
+        })
+
+        // TODO: Replace placeholder
         val wallets = listOf("Material", "Design", "Components", "Android")
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
         binding.walletDropdown.setAdapter(walletAdapter)
         binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
+
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
@@ -59,6 +67,7 @@ class DashboardFragment : Fragment() {
         searchView.onQueryTextChanged {
             viewModel.searchQuery.value = it
         }
+
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {

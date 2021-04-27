@@ -31,41 +31,6 @@ class AppRepository(val db: AppDatabase) {
                 categoryType = "income"
             )
         )
-//        delay(500)
-//        var now = Date.from(Instant.now())
-//        db.transactionsDao().insertAll(
-//            Transaction(
-//                0,
-//                -50.0,
-//                now,
-//                "Pregled specijaliste",
-//                2,
-//                -50.0
-//            )
-//        )
-//        delay(500)
-//        now = Date.from(Instant.now())
-//        db.transactionsDao().insertAll(
-//            Transaction(
-//                0,
-//                650.0,
-//                now,
-//                "Plata",
-//                3,
-//                600.0
-//            )
-//        )
-//        now = Date.from(Instant.now())
-//        db.transactionsDao().insertAll(
-//            Transaction(
-//                0,
-//                -50.0,
-//                now,
-//                "Gorivo",
-//                1,
-//                550.0
-//            )
-//        )
     }
 
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
@@ -91,6 +56,8 @@ class AppRepository(val db: AppDatabase) {
     )
 
     fun getAllTransactions() = db.transactionsDao().getAll()
+    suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
+    suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
     fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
     fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
 }

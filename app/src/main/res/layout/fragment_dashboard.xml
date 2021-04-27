@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            android:text="650"
+            tools:text="650"
             app:layout_constraintEnd_toEndOf="@id/income_lbl"
             app:layout_constraintStart_toStartOf="@id/income_lbl"
             app:layout_constraintTop_toBottomOf="@id/income_lbl" />
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            android:text="500"
+            tools:text="500"
             app:layout_constraintEnd_toEndOf="@id/expense_lbl"
             app:layout_constraintStart_toStartOf="@id/expense_lbl"
             app:layout_constraintTop_toBottomOf="@id/expense_lbl" />
@@ -183,7 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            android:text="150"
+            tools:text="150"
             app:layout_constraintEnd_toEndOf="@id/balance_lbl"
             app:layout_constraintStart_toStartOf="@id/balance_lbl"
             app:layout_constraintTop_toBottomOf="@id/balance_lbl" />
