@@ -2,20 +2,17 @@ package com.inFlow.moneyManager.di
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.TransactionsDao
 import com.inFlow.moneyManager.repository.AppRepository
+import com.inFlow.moneyManager.ui.add_category.AddCategoryViewModel
 import com.inFlow.moneyManager.ui.add_transaction.AddTransactionViewModel
 import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import java.util.concurrent.Executors
 
 val dataModule = module {
 
@@ -43,8 +40,9 @@ val dataModule = module {
 
 @ExperimentalCoroutinesApi
 val viewModelModule = module {
-    factory { DashboardViewModel(get()) }
-    factory { AddTransactionViewModel(get()) }
+    viewModel { DashboardViewModel(get()) }
+    viewModel { AddTransactionViewModel(get()) }
+    viewModel { AddCategoryViewModel(get()) }
 }
 
 //val miscModule = module {

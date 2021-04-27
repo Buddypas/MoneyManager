@@ -29,7 +29,7 @@ class CategoriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.addBtn.setOnClickListener {
-            findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddTransaction())
+            findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddCategory())
         }
     }
 
