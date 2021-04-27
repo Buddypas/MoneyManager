@@ -68,16 +68,17 @@ class AppRepository(val db: AppDatabase) {
     }
 
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
-        val lastTransaction = db.transactionsDao().getMostRecentTransaction()
-        val previousBalance = lastTransaction.transactionBalanceAfter
-        val transaction = Transaction(
-            transactionAmount = amount,
-            transactionDate = Date(),
-            transactionDescription = desc.trim(),
-            transactionCategoryId = categoryId,
-            transactionBalanceAfter = previousBalance + amount
-        )
-        db.transactionsDao().insertAll(transaction)
+        db.transactionsDao().fetchLastAndInsertNewTransaction(amount, categoryId, desc)
+//        val lastTransaction = db.transactionsDao().getMostRecentTransaction()
+//        val previousBalance = lastTransaction.transactionBalanceAfter
+//        val transaction = Transaction(
+//            transactionAmount = amount,
+//            transactionDate = Date(),
+//            transactionDescription = desc.trim(),
+//            transactionCategoryId = categoryId,
+//            transactionBalanceAfter = previousBalance + amount
+//        )
+//        db.transactionsDao().insertAll(transaction)
     }
 
     fun getAllTransactions() = db.transactionsDao().getAll()

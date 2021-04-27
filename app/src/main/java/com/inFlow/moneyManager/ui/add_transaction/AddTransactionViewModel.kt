@@ -59,7 +59,7 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
             return@launch
         }
 
-        showLoading()
+//        showLoading()
         val realAmount = if (categoryType == CategoryType.EXPENSE) -amount else amount
         val catId =
             if (categoryType == CategoryType.EXPENSE) expenses.value!![selectedCategoryPosition].categoryId
@@ -67,7 +67,6 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
         repository.saveTransaction(realAmount, catId, desc)
         showSuccess("Transaction added.")
         navigateUp()
-
     }
 
     private suspend fun showError(msg: String? = null) {
@@ -78,9 +77,9 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
         eventChannel.send(AddTransactionEvent.ShowSuccessMessage(msg))
     }
 
-    private suspend fun showLoading() {
-        eventChannel.send(AddTransactionEvent.ShowLoading())
-    }
+//    private suspend fun showLoading() {
+//        eventChannel.send(AddTransactionEvent.ShowLoading())
+//    }
 
     private suspend fun navigateUp() {
         eventChannel.send(AddTransactionEvent.NavigateUp)
@@ -94,6 +93,6 @@ enum class CategoryType {
 sealed class AddTransactionEvent {
     data class ShowErrorMessage(val msg: String?) : AddTransactionEvent()
     data class ShowSuccessMessage(val msg: String) : AddTransactionEvent()
-    data class ShowLoading(val shouldShow: Boolean = true) : AddTransactionEvent()
+//    data class ShowLoading(val shouldShow: Boolean = true) : AddTransactionEvent()
     object NavigateUp: AddTransactionEvent()
 }

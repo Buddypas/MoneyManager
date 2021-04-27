@@ -29,14 +29,5 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         findViewById<BottomNavigationView>(R.id.bottom_nav)
             .setupWithNavController(navController)
-
-//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-//            binding.addBtn.isVisible = when (destination.id) {
-//                R.id.addTransactionFragment -> false
-//                else -> true
-//            }
-//        }
     }
-
-    fun showError(err: String? = null) = binding.root.showError(err)
 }

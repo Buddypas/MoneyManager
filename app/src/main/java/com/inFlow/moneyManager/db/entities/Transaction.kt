@@ -18,7 +18,6 @@ data class Transaction(
     val transactionBalanceAfter: Double
 )
 
-// TODO: Add sort by date and take the most recent date as balance
 @Dao
 interface TransactionsDao {
     @androidx.room.Transaction
@@ -58,6 +57,20 @@ interface TransactionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg transactions: Transaction)
+
+    @androidx.room.Transaction
+    suspend fun fetchLastAndInsertNewTransaction(amount: Double, categoryId: Int, desc: String) {
+        val lastTransaction = getMostRecentTransaction()
+        val previousBalance = lastTransaction.transactionBalanceAfter
+        val transaction = Transaction(
+            transactionAmount = amount,
+            transactionDate = Date(),
+            transactionDescription = desc.trim(),
+            transactionCategoryId = categoryId,
+            transactionBalanceAfter = previousBalance + amount
+        )
+        insertAll(transaction)
+    }
 
     @Delete
     fun delete(transaction: Transaction)

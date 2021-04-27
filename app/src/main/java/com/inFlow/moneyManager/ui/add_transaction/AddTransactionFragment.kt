@@ -75,14 +75,7 @@ class AddTransactionFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.eventFlow.collect {
                 when (it) {
-                    is AddTransactionEvent.ShowErrorMessage -> {
-                        binding.root.showError(it.msg)
-                        Timber.e("snackbar shown")
-                    }
-                    is AddTransactionEvent.ShowLoading -> {
-                        if (it.shouldShow) loadingDialog?.show()
-                        else loadingDialog?.hide()
-                    }
+                    is AddTransactionEvent.ShowErrorMessage -> binding.root.showError(it.msg)
                     is AddTransactionEvent.ShowSuccessMessage ->
                         binding.root.showSuccessMessage(it.msg)
                     AddTransactionEvent.NavigateUp -> findNavController().navigateUp()
