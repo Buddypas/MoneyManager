@@ -167,9 +167,7 @@ fun View.showError(mError: String?) {
         this,
         error,
         Snackbar.LENGTH_SHORT
-    ).setBackgroundTint(context.getContextColor(R.color.black))
-        .setTextColor(context.getContextColor(R.color.white))
-        .show()
+    ).show()
 }
 
 fun Context.showInfoDialog(messageResId: Int) {

@@ -30,16 +30,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.bottom_nav)
             .setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            binding.addBtn.isVisible = when (destination.id) {
-                R.id.addTransactionFragment -> false
-                else -> true
-            }
-        }
-
-        binding.addBtn.setOnClickListener {
-            navController.navigate(NavGraphDirections.actionAddTransaction())
-        }
+//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+//            binding.addBtn.isVisible = when (destination.id) {
+//                R.id.addTransactionFragment -> false
+//                else -> true
+//            }
+//        }
     }
 
     fun showError(err: String? = null) = binding.root.showError(err)

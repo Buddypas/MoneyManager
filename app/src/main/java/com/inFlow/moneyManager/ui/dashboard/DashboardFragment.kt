@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import com.inFlow.moneyManager.NavGraphDirections
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
@@ -72,6 +73,10 @@ class DashboardFragment : Fragment() {
 
         transactionsAdapter = TransactionsAdapter()
         binding.transactionsRecycler.adapter = transactionsAdapter
+
+        binding.addBtn.setOnClickListener {
+            findNavController().navigate(NavGraphDirections.actionAddTransaction())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.activeFilters.collectLatest {

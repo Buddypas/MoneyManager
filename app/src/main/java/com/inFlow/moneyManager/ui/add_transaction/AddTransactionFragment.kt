@@ -76,7 +76,7 @@ class AddTransactionFragment : Fragment() {
             viewModel.eventFlow.collect {
                 when (it) {
                     is AddTransactionEvent.ShowErrorMessage -> {
-                        (requireActivity() as MainActivity).showError(it.msg)
+                        binding.root.showError(it.msg)
                         Timber.e("snackbar shown")
                     }
                     is AddTransactionEvent.ShowLoading -> {
