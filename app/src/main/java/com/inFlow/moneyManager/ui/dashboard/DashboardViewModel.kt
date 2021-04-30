@@ -23,14 +23,15 @@ import java.time.Year
 
 @ExperimentalCoroutinesApi
 class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
-
-
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
 
     val transactionList = activeFilters.flatMapLatest {
         repository.getAllTransactions()
     }
+
+    // TODO: Switch to flow
+    val transactions = transactionList.asLiveData()
 
     var year: Int = LocalDate.now().year
     var yearPosition = 0
@@ -43,7 +44,7 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var isDescending = true
     var showIncomes: Boolean = true
     var showExpenses: Boolean = true
-    var sortBy = SORT_BY_DATE
+    var sortBy = SortBy.SORT_BY_DATE
     var fromDate: LocalDate? = null
     var toDate: LocalDate? = null
 
@@ -51,9 +52,9 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var toDateString = MutableStateFlow("")
 
     val sortOptions = listOf(
-        SORT_BY_DATE,
-        SORT_BY_CATEGORY,
-        SORT_BY_AMOUNT
+        SortBy.SORT_BY_DATE,
+        SortBy.SORT_BY_CATEGORY,
+        SortBy.SORT_BY_AMOUNT
     )
 
     val years = listOf(
@@ -206,3 +207,5 @@ sealed class FiltersEvent {
 }
 
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
+
+enum class SortBy { SORT_BY_DATE, SORT_BY_CATEGORY, SORT_BY_AMOUNT }

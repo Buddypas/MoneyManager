@@ -15,9 +15,4 @@ val MONTHS = listOf(
     "Dec"
 )
 
-const val SORT_BY_DATE = "Date"
-const val SORT_BY_CATEGORY = "Category"
-const val SORT_BY_AMOUNT = "Amount"
-
-
 const val KEY_FILTERS = "filters"

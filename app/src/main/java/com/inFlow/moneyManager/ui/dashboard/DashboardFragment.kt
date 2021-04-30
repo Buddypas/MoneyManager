@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.time.LocalDate
 
 class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
@@ -48,8 +47,6 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
-
-        binding.monthTxt.text = LocalDate.now().month.name
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
@@ -75,11 +72,11 @@ class DashboardFragment : Fragment() {
             findNavController().navigate(DashboardFragmentDirections.actionDashboardToAddTransaction())
         }
 
-        lifecycleScope.launch {
-            viewModel.activeFilters.collectLatest {
-                formatFilters(it)
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.activeFilters.collectLatest {
+//                formatFilters(it)
+//            }
+//        }
 
         lifecycleScope.launch {
             viewModel.fetchBalanceData().collectLatest {
@@ -89,11 +86,11 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.transactionList.collectLatest {
-                transactionsAdapter.submitList(it)
-            }
-        }
+
+
+//        viewModel.transactions.observe(viewLifecycleOwner, {
+//            transactionsAdapter.submitList(it)
+//        })
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {
@@ -118,7 +115,7 @@ class DashboardFragment : Fragment() {
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
             ) navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)?.let {
-                viewModel.activeFilters.value = it
+//                viewModel.activeFilters.value = it
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)

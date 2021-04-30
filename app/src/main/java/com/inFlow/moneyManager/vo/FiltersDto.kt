@@ -1,8 +1,8 @@
 package com.inFlow.moneyManager.vo
 
 import android.os.Parcelable
-import com.inFlow.moneyManager.shared.kotlin.SORT_BY_DATE
 import com.inFlow.moneyManager.ui.dashboard.PeriodMode
+import com.inFlow.moneyManager.ui.dashboard.SortBy
 import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.Month
@@ -13,7 +13,7 @@ data class FiltersDto(
     var showIncomes: Boolean = true,
     var showExpenses: Boolean = true,
     var isDescending: Boolean = true,
-    var sortBy: String = SORT_BY_DATE,
+    var sortBy: SortBy = SortBy.SORT_BY_DATE,
     var fromDate: LocalDate? = null,
     var toDate: LocalDate? = null
 ) : Parcelable
