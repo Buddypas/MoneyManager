@@ -16,7 +16,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:menu="@menu/dashboard_menu" />
+            app:menu="@menu/dashboard_menu"
+            app:title="Dashboard"
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -106,10 +108,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            tools:text="650"
             app:layout_constraintEnd_toEndOf="@id/income_lbl"
             app:layout_constraintStart_toStartOf="@id/income_lbl"
-            app:layout_constraintTop_toBottomOf="@id/income_lbl" />
+            app:layout_constraintTop_toBottomOf="@id/income_lbl"
+            tools:text="650" />
 
         <View
             android:id="@+id/expense_bg"
@@ -144,10 +146,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            tools:text="500"
             app:layout_constraintEnd_toEndOf="@id/expense_lbl"
             app:layout_constraintStart_toStartOf="@id/expense_lbl"
-            app:layout_constraintTop_toBottomOf="@id/expense_lbl" />
+            app:layout_constraintTop_toBottomOf="@id/expense_lbl"
+            tools:text="500" />
 
         <View
             android:id="@+id/balance_bg"
@@ -183,10 +185,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="8dp"
-            tools:text="150"
             app:layout_constraintEnd_toEndOf="@id/balance_lbl"
             app:layout_constraintStart_toStartOf="@id/balance_lbl"
-            app:layout_constraintTop_toBottomOf="@id/balance_lbl" />
+            app:layout_constraintTop_toBottomOf="@id/balance_lbl"
+            tools:text="150" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactions_recycler"
