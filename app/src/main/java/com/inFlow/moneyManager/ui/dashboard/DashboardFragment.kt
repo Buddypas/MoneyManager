@@ -33,7 +33,7 @@ class DashboardFragment : Fragment() {
     @ExperimentalCoroutinesApi
     private val viewModel: DashboardViewModel by sharedViewModel()
 
-    lateinit var transactionsAdapter: TransactionsAdapter
+    private lateinit var transactionsAdapter: TransactionsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +53,6 @@ class DashboardFragment : Fragment() {
         val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
         binding.walletDropdown.setAdapter(walletAdapter)
         binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
-
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView

@@ -20,7 +20,7 @@ data class Category(
 @Dao
 interface CategoriesDao {
     @Query("SELECT * FROM categories")
-    fun getAll(): List<Category>
+    fun getAll(): Flow<List<Category>>
 
     @Query("SELECT * FROM categories WHERE categoryType='expense'")
     fun getAllExpenseCategories(): Flow<List<Category>>

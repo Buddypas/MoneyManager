@@ -30,6 +30,7 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         repository.getAllTransactions()
     }
 
+    // TODO: Switch to flow
     val transactions = transactionList.asLiveData()
 
     var year: Int = LocalDate.now().year

@@ -11,7 +11,6 @@ import com.inFlow.moneyManager.databinding.ItemTransactionBinding
 import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
-
 class TransactionsAdapter :
     ListAdapter<Transaction, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
