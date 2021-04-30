@@ -23,6 +23,8 @@ import java.time.Year
 
 @ExperimentalCoroutinesApi
 class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
+
+
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
 
