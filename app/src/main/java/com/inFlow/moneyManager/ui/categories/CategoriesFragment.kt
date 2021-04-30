@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
 import com.inFlow.moneyManager.shared.kotlin.setAsRootView
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -39,11 +40,11 @@ class CategoriesFragment : Fragment() {
             findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddCategory())
         }
 
-//        lifecycleScope.launch {
-        viewModel.categories.observe(viewLifecycleOwner, {
-            categoriesAdapter.submitList(it)
-        })
-//        }
+        lifecycleScope.launch {
+            viewModel.categoryList.collectLatest {
+                categoriesAdapter.submitList(it)
+            }
+        }
     }
 
 }

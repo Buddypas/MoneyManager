@@ -89,9 +89,11 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        viewModel.transactions.observe(viewLifecycleOwner, {
-            transactionsAdapter.submitList(it)
-        })
+        lifecycleScope.launch {
+            viewModel.transactionList.collectLatest {
+                transactionsAdapter.submitList(it)
+            }
+        }
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {

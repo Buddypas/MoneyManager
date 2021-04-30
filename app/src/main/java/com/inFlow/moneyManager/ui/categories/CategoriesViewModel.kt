@@ -6,8 +6,8 @@ import com.inFlow.moneyManager.repository.AppRepository
 
 class CategoriesViewModel(private val repository: AppRepository) : ViewModel() {
 
-    private val categoryList = repository.getAllCategories()
+    val categoryList = repository.getAllCategories()
 
-    val categories = categoryList.asLiveData()
+//    val categories = categoryList.asLiveData()
 
 }

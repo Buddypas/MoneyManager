@@ -26,12 +26,9 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val searchQuery = MutableStateFlow("")
 
-    private val transactionList = activeFilters.flatMapLatest {
+    val transactionList = activeFilters.flatMapLatest {
         repository.getAllTransactions()
     }
-
-    // TODO: Switch to flow
-    val transactions = transactionList.asLiveData()
 
     var year: Int = LocalDate.now().year
     var yearPosition = 0
