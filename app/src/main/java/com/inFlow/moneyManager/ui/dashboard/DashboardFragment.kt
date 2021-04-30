@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.time.LocalDate
 
 class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
@@ -48,11 +49,7 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
 
-        // TODO: Replace placeholder
-        val wallets = listOf("Material", "Design", "Components", "Android")
-        val walletAdapter = ArrayAdapter(requireContext(), R.layout.item_wallet_dropdown, wallets)
-        binding.walletDropdown.setAdapter(walletAdapter)
-        binding.walletDropdown.setText(walletAdapter.getItem(0).toString(), false)
+        binding.monthTxt.text = LocalDate.now().month.name
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
