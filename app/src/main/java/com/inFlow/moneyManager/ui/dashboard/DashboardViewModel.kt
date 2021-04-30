@@ -30,9 +30,6 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         repository.getAllTransactions()
     }
 
-    // TODO: Switch to flow
-    val transactions = transactionList.asLiveData()
-
     var year: Int = LocalDate.now().year
     var yearPosition = 0
     var monthPosition = LocalDate.now().monthValue - 1
@@ -52,9 +49,9 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var toDateString = MutableStateFlow("")
 
     val sortOptions = listOf(
-        SortBy.SORT_BY_DATE,
-        SortBy.SORT_BY_CATEGORY,
-        SortBy.SORT_BY_AMOUNT
+        "Date",
+        "Category",
+        "Amount"
     )
 
     val years = listOf(

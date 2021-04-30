@@ -13,10 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
-import com.inFlow.moneyManager.ui.dashboard.FieldError
-import com.inFlow.moneyManager.ui.dashboard.FiltersEvent
-import com.inFlow.moneyManager.ui.dashboard.PeriodMode
+import com.inFlow.moneyManager.ui.dashboard.*
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -202,8 +199,8 @@ class FiltersDialog : DialogFragment() {
             if (viewModel.showIncomes) incomesCbx.isChecked = true
             if (viewModel.showExpenses) expensesCbx.isChecked = true
             when (viewModel.sortBy) {
-                SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
-                SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
+                SortBy.SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
+                SortBy.SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
                 else -> sortDropdown.setText(sortAdapter.getItem(2), false)
             }
             if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
