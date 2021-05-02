@@ -10,6 +10,7 @@ import com.inFlow.moneyManager.ui.add_category.AddCategoryViewModel
 import com.inFlow.moneyManager.ui.add_transaction.AddTransactionViewModel
 import com.inFlow.moneyManager.ui.categories.CategoriesViewModel
 import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
+import com.inFlow.moneyManager.ui.filters.FiltersViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.dsl.viewModel
@@ -43,6 +44,7 @@ val dataModule = module {
 val viewModelModule = module {
     viewModel { DashboardViewModel(get()) }
     viewModel { CategoriesViewModel(get()) }
+    viewModel { FiltersViewModel() }
     viewModel { AddTransactionViewModel(get()) }
     viewModel { AddCategoryViewModel(get()) }
 }

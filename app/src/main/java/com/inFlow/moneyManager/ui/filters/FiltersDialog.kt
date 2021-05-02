@@ -29,6 +29,7 @@ class FiltersDialog : DialogFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FiltersViewModel by viewModel()
+    private val args: FiltersDialogArgs by navArgs()
 
     private lateinit var sortAdapter: ArrayAdapter<String>
     private lateinit var monthAdapter: ArrayAdapter<String>
@@ -44,13 +45,14 @@ class FiltersDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         isCancelable = false
+        viewModel.filters = args.filters
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setFilters(viewModel.activeFilters.value)
+        viewModel.setInitialFilters(args.filters)
         setUpUI()
     }
 
@@ -68,8 +70,9 @@ class FiltersDialog : DialogFragment() {
         binding.yearDropdown.setAdapter(yearAdapter)
 
         binding.yearDropdown.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-                viewModel.onYearSelected(position)
+            AdapterView.OnItemClickListener { _, _, _, _ ->
+                val year = binding.yearDropdown.text.toString().toInt()
+                viewModel.onYearSelected(year)
             }
 
         binding.monthDropdown.onItemClickListener =
@@ -157,7 +160,7 @@ class FiltersDialog : DialogFragment() {
         }
 
         populateFilters()
-        managePeriodFields(viewModel.period)
+        managePeriodFields(viewModel.filters.period)
     }
 
     private fun displayError(fieldError: FieldError) {
@@ -172,11 +175,11 @@ class FiltersDialog : DialogFragment() {
     private fun populateFilters() =
         binding.apply {
             monthDropdown.setText(
-                monthAdapter.getItem(viewModel.monthPosition),
+                monthAdapter.getItem(viewModel.filters.yearMonth!!.monthValue - 1),
                 false
             )
-            yearDropdown.setText(viewModel.year.toString(), false)
-            if (viewModel.period == PeriodMode.WHOLE_MONTH) {
+            yearDropdown.setText(viewModel.filters.yearMonth!!.year.toString(), false)
+            if (viewModel.filters.period == PeriodMode.WHOLE_MONTH) {
                 if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
                     periodRadioGroup.check(R.id.whole_month_btn)
             } else {
@@ -184,26 +187,33 @@ class FiltersDialog : DialogFragment() {
                     periodRadioGroup.check(R.id.custom_range_btn)
                 val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
                 val fromString = try {
-                    viewModel.fromDate?.format(formatter).orEmpty()
+                    viewModel.filters.customRange.first?.format(formatter).orEmpty()
                 } catch (e: DateTimeException) {
                     ""
                 }
                 val toString = try {
-                    viewModel.toDate?.format(formatter).orEmpty()
+                    viewModel.filters.customRange.second?.format(formatter).orEmpty()
                 } catch (e: DateTimeException) {
                     ""
                 }
                 viewModel.fromDateString.value = fromString
                 viewModel.toDateString.value = toString
             }
-            if (viewModel.showIncomes) incomesCbx.isChecked = true
-            if (viewModel.showExpenses) expensesCbx.isChecked = true
-            when (viewModel.sortBy) {
+            when(viewModel.filters.show) {
+                ShowTransactions.SHOW_BOTH -> {
+                    incomesCbx.isChecked = true
+                    expensesCbx.isChecked = true
+                }
+                ShowTransactions.SHOW_EXPENSES -> expensesCbx.isChecked = true
+                ShowTransactions.SHOW_INCOMES -> incomesCbx.isChecked = true
+            }
+
+            when (viewModel.filters.sortBy) {
                 SortBy.SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
                 SortBy.SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
                 else -> sortDropdown.setText(sortAdapter.getItem(2), false)
             }
-            if (viewModel.isDescending) orderToggleGroup.check(R.id.desc_btn)
+            if (viewModel.filters.isDescending) orderToggleGroup.check(R.id.desc_btn)
             else orderToggleGroup.check(R.id.asc_btn)
         }
 
@@ -250,8 +260,7 @@ class FiltersDialog : DialogFragment() {
             }
             viewModel.fromDateString.value = binding.fromInput.text.toString()
             binding.fromLayout.error = null
-        }
-        else {
+        } else {
             text?.let {
                 var newText = it.toString()
                 if (before < count) {

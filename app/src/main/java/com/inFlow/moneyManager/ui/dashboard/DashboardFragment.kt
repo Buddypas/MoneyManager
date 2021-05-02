@@ -52,12 +52,13 @@ class DashboardFragment : Fragment() {
         val searchView = searchItem.actionView as SearchView
 
         searchView.onQueryTextChanged {
-            viewModel.searchQuery.value = it
+            viewModel.activeFilters.value.searchQuery = it
         }
 
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {
+                    binding.toolbar.menu.getItem(1).isEnabled = false
                     showFiltersDialog()
                     true
                 }
@@ -99,9 +100,9 @@ class DashboardFragment : Fragment() {
         val argType = when (data.show) {
             ShowTransactions.SHOW_EXPENSES -> "all expenses"
             ShowTransactions.SHOW_INCOMES -> "all incomes"
-            ShowTransactions.SHOW_BOTH -> "all transactions"
+            else -> "all transactions"
         }
-        content += argType
+        content += "$argType "
         val segmentPeriod =
             if (it.period == PeriodMode.WHOLE_MONTH) getString(
                 R.string.month_template,
@@ -113,7 +114,7 @@ class DashboardFragment : Fragment() {
                 it.customRange.first,
                 it.customRange.second,
             )
-        content += segmentPeriod
+        content += "$segmentPeriod "
         val argSort = it.sortBy.sortName
         val argOrder = if (it.isDescending) "descending" else "ascending"
         val segmentSort = getString(R.string.sorted_by_template, argSort, argOrder)
@@ -128,7 +129,7 @@ class DashboardFragment : Fragment() {
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
             ) navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)?.let {
-//                viewModel.activeFilters.value = it
+                viewModel.activeFilters.value = it
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)
@@ -140,8 +141,10 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showFiltersDialog() {
-        if (findNavController().currentDestination?.id == R.id.dashboardFragment)
-            findNavController().navigate(R.id.filtersDialog)
+        val action =
+            DashboardFragmentDirections.actionDashboardToFilters(viewModel.activeFilters.value)
+        findNavController().navigate(action)
+        binding.toolbar.menu.getItem(1).isEnabled = true
     }
 
     override fun onDestroyView() {
