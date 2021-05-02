@@ -33,8 +33,6 @@ class DashboardFragment : Fragment() {
     @ExperimentalCoroutinesApi
     private val viewModel: DashboardViewModel by sharedViewModel()
 
-    private lateinit var transactionsAdapter: TransactionsAdapter
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,12 +63,19 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        transactionsAdapter = TransactionsAdapter()
-        binding.transactionsRecycler.adapter = transactionsAdapter
-
         binding.addBtn.setOnClickListener {
             val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
             findNavController().navigate(action)
+        }
+
+        val transactionsAdapter = TransactionsAdapter().also {
+            binding.transactionsRecycler.adapter = it
+        }
+
+        lifecycleScope.launch {
+            viewModel.transactionList.collectLatest {
+                transactionsAdapter.submitList(it)
+            }
         }
 
         lifecycleScope.launch {
@@ -84,12 +89,6 @@ class DashboardFragment : Fragment() {
                 binding.incomeTxt.text = it.first.toString()
                 binding.expenseTxt.text = it.second.toString()
                 binding.balanceTxt.text = (it.first - it.second).toString()
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.transactionList.collectLatest {
-                transactionsAdapter.submitList(it)
             }
         }
     }
@@ -116,7 +115,7 @@ class DashboardFragment : Fragment() {
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
             ) navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)?.let {
-//                viewModel.activeFilters.value = it
+                viewModel.activeFilters.value = it
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)

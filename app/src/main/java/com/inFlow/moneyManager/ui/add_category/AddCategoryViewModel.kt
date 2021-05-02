@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class AddCategoryViewModel(private val repository: AppRepository) : ViewModel() {
     var categoryType = CategoryType.EXPENSE
 
-    val eventChannel = Channel<AddCategoryEvent>()
+    private val eventChannel = Channel<AddCategoryEvent>()
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun saveCategory(name: String) = viewModelScope.launch(Dispatchers.IO) {
