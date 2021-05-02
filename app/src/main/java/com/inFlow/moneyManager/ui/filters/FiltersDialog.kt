@@ -50,7 +50,7 @@ class FiltersDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.setFilters(viewModel.activeFilters.value)
+        viewModel.setFilters(viewModel.activeFilters.value)
         setUpUI()
     }
 
@@ -69,7 +69,6 @@ class FiltersDialog : DialogFragment() {
 
         binding.yearDropdown.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                val year = binding.yearDropdown.text.toString().toInt()
                 viewModel.onYearSelected(position)
             }
 
@@ -122,11 +121,7 @@ class FiltersDialog : DialogFragment() {
                     }
                 }
             }
-            val date = binding.fromInput.text.toString().toLocalDate()
-            date?.let {
-                val oldRange = viewModel.customRange.value
-                viewModel.customRange.value = Pair(it, oldRange.second)
-            }
+            viewModel.fromDateString.value = binding.fromInput.text.toString()
             binding.fromLayout.error = null
         }
         binding.toInput.doOnTextChanged { text, start, before, count ->
@@ -140,23 +135,19 @@ class FiltersDialog : DialogFragment() {
                     }
                 }
             }
-            val date = binding.toInput.text.toString().toLocalDate()
-            date?.let {
-                val oldRange = viewModel.customRange.value
-                viewModel.customRange.value = Pair(oldRange.first, it)
-            }
+            viewModel.toDateString.value = binding.toInput.text.toString()
             binding.fromLayout.error = null
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
                 when (it) {
                     is FiltersEvent.ChangePeriodMode -> managePeriodFields(it.newPeriodMode)
-//                    is FiltersEvent.ApplyFilters -> {
-//                        findNavController().previousBackStackEntry?.savedStateHandle?.set(
-//                            KEY_FILTERS, it.filtersData
-//                        )
-//                        dismiss()
-//                    }
+                    is FiltersEvent.ApplyFilters -> {
+                        findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                            KEY_FILTERS, it.filtersData
+                        )
+                        dismiss()
+                    }
                     is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
                     FiltersEvent.ClearFilters -> {
                         populateFilters()
@@ -166,7 +157,7 @@ class FiltersDialog : DialogFragment() {
         }
 
         populateFilters()
-        managePeriodFields(viewModel.period.value)
+        managePeriodFields(viewModel.period)
     }
 
     private fun displayError(fieldError: FieldError) {
@@ -259,7 +250,8 @@ class FiltersDialog : DialogFragment() {
             }
             viewModel.fromDateString.value = binding.fromInput.text.toString()
             binding.fromLayout.error = null
-        } else {
+        }
+        else {
             text?.let {
                 var newText = it.toString()
                 if (before < count) {

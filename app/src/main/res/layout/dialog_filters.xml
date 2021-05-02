@@ -313,6 +313,18 @@
         app:layout_constraintTop_toBottomOf="@id/order_toggle_group" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="cancel"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintEnd_toStartOf="@id/apply_btn"
+        app:layout_constraintTop_toTopOf="@id/apply_btn" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/clear_btn"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
