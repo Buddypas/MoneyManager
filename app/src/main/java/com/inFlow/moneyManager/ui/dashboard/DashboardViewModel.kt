@@ -24,7 +24,6 @@ import java.time.Year
 @ExperimentalCoroutinesApi
 class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
-    val searchQuery = MutableStateFlow("")
 
     val transactionList = activeFilters.flatMapLatest {
         repository.getAllTransactions()
@@ -39,8 +38,7 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
 
     var period = PeriodMode.WHOLE_MONTH
     var isDescending = true
-    var showIncomes: Boolean = true
-    var showExpenses: Boolean = true
+    var show: ShowTransactions = ShowTransactions.SHOW_BOTH
     var sortBy = SortBy.SORT_BY_DATE
     var fromDate: LocalDate? = null
     var toDate: LocalDate? = null
@@ -136,9 +134,8 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         val error = validateFilters()
         if (error == null) {
             val filtersData = FiltersDto(
-                period,
-                showIncomes,
-                showExpenses,
+                period = period,
+                show =
                 isDescending,
                 sortBy,
                 fromDate,
@@ -205,4 +202,9 @@ sealed class FiltersEvent {
 
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
 
-enum class SortBy { SORT_BY_DATE, SORT_BY_CATEGORY, SORT_BY_AMOUNT }
+enum class ShowTransactions { SHOW_EXPENSES, SHOW_INCOMES, SHOW_BOTH }
+enum class SortBy(val sortName: String) {
+    SORT_BY_DATE("date"),
+    SORT_BY_CATEGORY("category"),
+    SORT_BY_AMOUNT("amount")
+}

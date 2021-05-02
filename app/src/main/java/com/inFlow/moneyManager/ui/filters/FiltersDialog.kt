@@ -28,7 +28,7 @@ class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: DashboardViewModel by sharedViewModel()
+    private val viewModel: FiltersViewModel by viewModel()
 
     private lateinit var sortAdapter: ArrayAdapter<String>
     private lateinit var monthAdapter: ArrayAdapter<String>

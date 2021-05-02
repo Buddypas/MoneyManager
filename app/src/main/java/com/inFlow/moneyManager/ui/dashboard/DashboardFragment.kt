@@ -95,18 +95,30 @@ class DashboardFragment : Fragment() {
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {
-        val argType = when {
-            it.showExpenses && it.showIncomes -> "all transactions"
-            it.showExpenses -> "all expenses"
-            else -> "all incomes"
+        var content = "Showing "
+        val argType = when (data.show) {
+            ShowTransactions.SHOW_EXPENSES -> "all expenses"
+            ShowTransactions.SHOW_INCOMES -> "all incomes"
+            ShowTransactions.SHOW_BOTH -> "all transactions"
         }
-        val argPeriod =
-            if (it.period == PeriodMode.WHOLE_MONTH) "in ${it.fromDate?.month?.name} of ${it.fromDate?.year}"
-            else "from ${it.fromDate} to ${it.toDate}"
-        val argSort = it.sortBy
+        content += argType
+        val segmentPeriod =
+            if (it.period == PeriodMode.WHOLE_MONTH) getString(
+                R.string.month_template,
+                it.yearMonth!!.month,
+                it.yearMonth!!.year
+            )
+            else getString(
+                R.string.range_template,
+                it.customRange.first,
+                it.customRange.second,
+            )
+        content += segmentPeriod
+        val argSort = it.sortBy.sortName
         val argOrder = if (it.isDescending) "descending" else "ascending"
-        binding.filtersTxt.text =
-            getString(R.string.filters_template, argType, argPeriod, argSort, argOrder)
+        val segmentSort = getString(R.string.sorted_by_template, argSort, argOrder)
+        content += segmentSort
+        binding.filtersTxt.text = content
     }
 
     private fun setNavObserver() {
