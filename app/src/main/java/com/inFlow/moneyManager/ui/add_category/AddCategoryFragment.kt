@@ -11,6 +11,7 @@ import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
 import com.inFlow.moneyManager.shared.kotlin.setAsRootView
 import com.inFlow.moneyManager.shared.kotlin.showError
 import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage
+import com.inFlow.moneyManager.ui.add_transaction.CategoryType
 import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -37,6 +38,12 @@ class AddCategoryFragment : Fragment() {
 
         binding.saveBtn.setOnClickListener {
             onSaveClicked()
+        }
+
+        binding.expenseRadio.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.categoryType =
+                if (isChecked) CategoryType.EXPENSE
+                else CategoryType.INCOME
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
