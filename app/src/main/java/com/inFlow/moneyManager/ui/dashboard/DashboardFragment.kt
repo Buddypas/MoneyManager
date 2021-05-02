@@ -69,7 +69,8 @@ class DashboardFragment : Fragment() {
         binding.transactionsRecycler.adapter = transactionsAdapter
 
         binding.addBtn.setOnClickListener {
-            findNavController().navigate(DashboardFragmentDirections.actionDashboardToAddTransaction())
+            val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
+            findNavController().navigate(action)
         }
 
         lifecycleScope.launch {

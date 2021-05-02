@@ -13,7 +13,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ActivityMainBinding
+import com.inFlow.moneyManager.shared.kotlin.hideWithAnimation
 import com.inFlow.moneyManager.shared.kotlin.showError
+import com.inFlow.moneyManager.shared.kotlin.showWithAnimation
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -30,7 +32,9 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            // TODO: Continue
+            if (destination.id == R.id.addTransactionFragment || destination.id == R.id.addCategoryFragment)
+                binding.bottomNav.hideWithAnimation()
+            else binding.bottomNav.showWithAnimation()
         }
     }
 }
