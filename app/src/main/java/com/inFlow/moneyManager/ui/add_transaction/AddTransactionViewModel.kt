@@ -1,8 +1,6 @@
 package com.inFlow.moneyManager.ui.add_transaction
 
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.repository.AppRepository
@@ -25,28 +23,6 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     var categoryType = CategoryType.EXPENSE
     var selectedCategoryPosition = -1
 
-    val expenses = expenseFlow.asLiveData()
-    val incomes = incomeFlow.asLiveData()
-
-//    val categoriesReady = combine(expenseFlow, incomeFlow) { expenseCategories, incomeCategories ->
-//        !(expenseCategories == null || incomeCategories == null)
-//    }
-
-    private val _categoriesReady = MutableStateFlow(false)
-    val categoriesReady: StateFlow<Boolean> by this::_categoriesReady
-
-//    val categoriesReady = MediatorLiveData<Boolean>()
-//
-//    init {
-//        categoriesReady.value = false
-//        categoriesReady.addSource(expenses) {
-//            categoriesReady.value = it.isNotEmpty() && !incomes.value.isNullOrEmpty()
-//        }
-//        categoriesReady.addSource(incomes) {
-//            categoriesReady.value = it.isNotEmpty() && !expenses.value.isNullOrEmpty()
-//        }
-//    }
-
     fun initData() = viewModelScope.launch {
         loadExpenses()
         loadIncomes()
@@ -63,8 +39,8 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     fun saveTransaction(desc: String, amount: Double) = viewModelScope.launch(Dispatchers.IO) {
         val realAmount = if (categoryType == CategoryType.EXPENSE) -amount else amount
         val catId =
-            if (categoryType == CategoryType.EXPENSE) expenses.value!![selectedCategoryPosition].categoryId
-            else incomes.value!![selectedCategoryPosition].categoryId
+            if (categoryType == CategoryType.EXPENSE) _expenseFlow.value!![selectedCategoryPosition].categoryId
+            else _incomeFlow.value!![selectedCategoryPosition].categoryId
         repository.saveTransaction(realAmount, catId, desc)
         showSuccess("Transaction added.")
         navigateUp()
