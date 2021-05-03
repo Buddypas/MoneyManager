@@ -3,6 +3,7 @@ package com.inFlow.moneyManager.ui.dashboard
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -49,14 +50,12 @@ class DashboardFragment : BaseFragment() {
         binding.monthTxt.text = LocalDate.now().month.name
 
         searchView.onQueryTextChanged {
-            Timber.e("text changed: $it")
             viewModel.query.value = it
         }
 
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {
-//                    binding.toolbar.menu.getItem(1).isEnabled = false
                     showFiltersDialog()
                     true
                 }
@@ -88,6 +87,7 @@ class DashboardFragment : BaseFragment() {
 
         lifecycleScope.launch {
             viewModel.transactionList.collectLatest {
+                binding.noTransactionsTxt.isVisible = it.isNullOrEmpty()
                 transactionsAdapter.submitList(it)
             }
         }
@@ -142,7 +142,6 @@ class DashboardFragment : BaseFragment() {
         val action =
             DashboardFragmentDirections.actionDashboardToFilters(viewModel.activeFilters.value)
         navigateSafely(action)
-//        binding.toolbar.menu.getItem(1).isEnabled = true
     }
 
     override fun onDestroyView() {

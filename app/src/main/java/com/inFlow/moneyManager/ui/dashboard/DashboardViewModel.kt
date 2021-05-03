@@ -34,14 +34,6 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
         }
         emit(Pair(incomes, expenses))
     }
-
-//    init {
-//        viewModelScope.launch {
-//            repository.populateDb()
-//        }
-//    }
-
-
 }
 
 data class FieldError(val message: String, val field: FieldType)
