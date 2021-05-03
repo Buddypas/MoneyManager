@@ -16,7 +16,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:menu="@menu/categories_menu"
             app:title="Categories"
             app:titleTextColor="@color/white" />
 
