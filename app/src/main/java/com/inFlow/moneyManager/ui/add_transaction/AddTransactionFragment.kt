@@ -81,13 +81,17 @@ class AddTransactionFragment : BaseFragment() {
 //        }
 
         lifecycleScope.launch {
-            viewModel.incomeFlow.collectLatest { list -> incomeList.addAll(list) }
+            viewModel.incomeFlow.collectLatest {
+                it?.let { list -> incomeList.addAll(list) }
+            }
         }
 
         lifecycleScope.launch {
-            viewModel.expenseFlow.collectLatest { list ->
-                expenseList.addAll(list)
-                if(!isDropdownInitialized) initDropdownAdapter()
+            viewModel.expenseFlow.collectLatest {
+                it?.let { list ->
+                    expenseList.addAll(list)
+                    if (!isDropdownInitialized) initDropdownAdapter()
+                }
             }
         }
 

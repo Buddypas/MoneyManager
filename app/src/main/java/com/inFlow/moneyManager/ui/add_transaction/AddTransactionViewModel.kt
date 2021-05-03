@@ -16,11 +16,11 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     val eventChannel = Channel<AddTransactionEvent>()
     val eventFlow = eventChannel.receiveAsFlow()
 
-    private val _expenseFlow = MutableStateFlow<List<Category>>(listOf<Category>())
-    val expenseFlow: StateFlow<List<Category>> by this::_expenseFlow
+    private val _expenseFlow = MutableStateFlow<List<Category>?>(null)
+    val expenseFlow: StateFlow<List<Category>?> by this::_expenseFlow
 
-    private val _incomeFlow = MutableStateFlow<List<Category>>(listOf<Category>())
-    val incomeFlow: StateFlow<List<Category>> by this::_incomeFlow
+    private val _incomeFlow = MutableStateFlow<List<Category>?>(null)
+    val incomeFlow: StateFlow<List<Category>?> by this::_incomeFlow
 
     var categoryType = CategoryType.EXPENSE
     var selectedCategoryPosition = -1
