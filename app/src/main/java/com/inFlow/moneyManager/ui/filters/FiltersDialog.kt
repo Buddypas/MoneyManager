@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.ui.filters
 
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.*
 import android.widget.AdapterView
@@ -22,6 +23,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.DateTimeException
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class FiltersDialog : DialogFragment() {
@@ -45,7 +47,6 @@ class FiltersDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         isCancelable = false
-//        viewModel.filters = args.filters
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -110,7 +111,11 @@ class FiltersDialog : DialogFragment() {
         }
 
         binding.periodRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            viewModel.onPeriodSelected(checkedId)
+//            viewModel.onPeriodSelected(checkedId)
+            viewModel.filters.period =
+                if (checkedId == R.id.custom_range_btn) PeriodMode.CUSTOM_RANGE
+                else PeriodMode.WHOLE_MONTH
+            managePeriodFields(viewModel.filters.period)
         }
 
         binding.orderToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -154,7 +159,6 @@ class FiltersDialog : DialogFragment() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
                 when (it) {
-                    is FiltersEvent.ChangePeriodMode -> managePeriodFields(it.newPeriodMode)
                     is FiltersEvent.ApplyFilters -> {
                         findNavController().previousBackStackEntry?.savedStateHandle?.set(
                             KEY_FILTERS, it.filtersData
@@ -181,18 +185,28 @@ class FiltersDialog : DialogFragment() {
     }
 
     private fun populateFilters() = binding.apply {
+        val monthPosition =
+            if (viewModel.filters.yearMonth != null) viewModel.filters.yearMonth!!.monthValue - 1
+            else LocalDate.now().monthValue - 1
         monthDropdown.setText(
-            monthAdapter.getItem(viewModel.filters.yearMonth!!.monthValue - 1),
+            monthAdapter.getItem(monthPosition),
             false
         )
-        yearDropdown.setText(viewModel.filters.yearMonth!!.year.toString(), false)
+
+        val year =
+            if (viewModel.filters.yearMonth != null) viewModel.filters.yearMonth!!.year.toString()
+            else LocalDate.now().year.toString()
+        yearDropdown.setText(year, false)
+
         if (viewModel.filters.period == PeriodMode.WHOLE_MONTH) {
             if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
                 periodRadioGroup.check(R.id.whole_month_btn)
+            if(fromInput.text.toString().isNotEmpty()) fromInput.text = SpannableStringBuilder("")
+            if(toInput.text.toString().isNotEmpty()) toInput.text = SpannableStringBuilder("")
         } else {
             if (periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
                 periodRadioGroup.check(R.id.custom_range_btn)
-            val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             val fromString = try {
                 viewModel.filters.customRange.first?.format(formatter).orEmpty()
             } catch (e: DateTimeException) {
@@ -205,6 +219,8 @@ class FiltersDialog : DialogFragment() {
             }
             viewModel.fromDateString.value = fromString
             viewModel.toDateString.value = toString
+            fromInput.text = SpannableStringBuilder(fromString)
+            toInput.text = SpannableStringBuilder(toString)
         }
         when (viewModel.filters.show) {
             ShowTransactions.SHOW_BOTH -> {
@@ -244,44 +260,6 @@ class FiltersDialog : DialogFragment() {
                 yearDropdownLayout.isEnabled = false
             }
         }
-
-    /**
-     * type can be "from" or "to"
-     */
-    fun getTextChangedListener(
-        type: FieldType,
-        text: CharSequence?,
-        before: Int,
-        count: Int
-    ) {
-        if (type == FieldType.FIELD_DATE_FROM) {
-            text?.let {
-                var newText = it.toString()
-                if (before < count) {
-                    if (newText.length == 2 || newText.length == 5) {
-                        newText += '/'
-                        binding.fromInput.text = SpannableStringBuilder(newText)
-                        binding.fromInput.setSelection(binding.fromInput.text!!.length)
-                    }
-                }
-            }
-            viewModel.fromDateString.value = binding.fromInput.text.toString()
-            binding.fromLayout.error = null
-        } else {
-            text?.let {
-                var newText = it.toString()
-                if (before < count) {
-                    if (newText.length == 2 || newText.length == 5) {
-                        newText += '/'
-                        binding.toInput.text = SpannableStringBuilder(newText)
-                        binding.toInput.setSelection(binding.toInput.text!!.length)
-                    }
-                }
-            }
-            viewModel.toDateString.value = binding.toInput.text.toString()
-            binding.fromLayout.error = null
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

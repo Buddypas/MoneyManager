@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.shared.kotlin.FieldType
+import com.inFlow.moneyManager.shared.kotlin.toLocalDate
 import com.inFlow.moneyManager.ui.dashboard.*
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.YearMonth
 
 class FiltersViewModel : ViewModel() {
@@ -29,7 +31,11 @@ class FiltersViewModel : ViewModel() {
         SortBy.SORT_BY_AMOUNT.sortName
     )
 
-    lateinit var years: List<String>
+    val years: List<String> = listOf(
+        LocalDate.now().year.toString(),
+        (LocalDate.now().year - 1).toString(),
+        (LocalDate.now().year - 2).toString()
+    )
 
     fun setInitialFilters(data: FiltersDto) {
         val f = FiltersDto(
@@ -41,11 +47,6 @@ class FiltersViewModel : ViewModel() {
             data.isDescending
         )
         filters = f
-        years = listOf(
-            filters.yearMonth!!.year.toString(),
-            (filters.yearMonth!!.year - 1).toString(),
-            (filters.yearMonth!!.year - 2).toString()
-        )
     }
 
     fun onYearSelected(year: Int) {
@@ -92,13 +93,6 @@ class FiltersViewModel : ViewModel() {
             }
     }
 
-    fun onPeriodSelected(checkedId: Int) = viewModelScope.launch {
-        filters.period =
-            if (checkedId == R.id.custom_range_btn) PeriodMode.CUSTOM_RANGE
-            else PeriodMode.WHOLE_MONTH
-                .also { filtersEventChannel.send(FiltersEvent.ChangePeriodMode(it)) }
-    }
-
     /**
      * Returns null if there is no error. Won't validate dates that are after today and will instead return no data
      */
@@ -108,6 +102,9 @@ class FiltersViewModel : ViewModel() {
             FieldType.FIELD_OTHER
         )
         if (filters.period == PeriodMode.CUSTOM_RANGE) {
+            val from = fromDateString.value.toLocalDate()
+            val to = toDateString.value.toLocalDate()
+            filters.customRange = Pair(from, to)
             if (filters.customRange.first == null) return FieldError(
                 "Date is not valid",
                 FieldType.FIELD_DATE_FROM
@@ -151,4 +148,10 @@ class FiltersViewModel : ViewModel() {
         filters = FiltersDto()
         filtersEventChannel.send(FiltersEvent.ClearFilters)
     }
+}
+
+sealed class FiltersEvent {
+    object ClearFilters : FiltersEvent()
+    data class ApplyFilters(val filtersData: FiltersDto) : FiltersEvent()
+    data class ShowFieldError(val fieldError: FieldError) : FiltersEvent()
 }

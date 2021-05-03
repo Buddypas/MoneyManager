@@ -46,13 +46,6 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
 
 data class FieldError(val message: String, val field: FieldType)
 
-sealed class FiltersEvent {
-    object ClearFilters : FiltersEvent()
-    data class ApplyFilters(val filtersData: FiltersDto) : FiltersEvent()
-    data class ChangePeriodMode(val newPeriodMode: PeriodMode) : FiltersEvent()
-    data class ShowFieldError(val fieldError: FieldError) : FiltersEvent()
-}
-
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
 
 enum class ShowTransactions { SHOW_EXPENSES, SHOW_INCOMES, SHOW_BOTH }

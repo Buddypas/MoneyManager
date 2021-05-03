@@ -140,8 +140,6 @@ fun String?.toLocalDate(): LocalDate? {
             Timber.e(e)
             return null
         }
-        val today = LocalDate.now()
-        if (date.isAfter(today)) return null
         return date
     }
 }
