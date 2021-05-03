@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
+import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.setAsRootView
 import com.inFlow.moneyManager.shared.kotlin.showError
 import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage
@@ -15,7 +16,7 @@ import com.inFlow.moneyManager.ui.add_transaction.CategoryType
 import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class AddCategoryFragment : Fragment() {
+class AddCategoryFragment : BaseFragment() {
     private var _binding: FragmentAddCategoryBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AddCategoryViewModel by viewModel()

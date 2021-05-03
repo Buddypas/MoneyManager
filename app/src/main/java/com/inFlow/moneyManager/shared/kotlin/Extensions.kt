@@ -22,11 +22,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
@@ -35,6 +38,14 @@ import kotlin.math.roundToInt
 fun <T> MutableStateFlow<T>.setValueIfDifferent(newValue: T) {
     if (value != newValue) value = newValue
 }
+
+
+
+fun LocalDate.toDate(): Date = Date.from(
+    this.atStartOfDay()
+        .atZone(ZoneId.systemDefault())
+        .toInstant()
+)
 
 fun View.showSuccessMessage(msg: String) {
     Snackbar.make(

@@ -14,7 +14,7 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
 
     val transactionList = activeFilters.flatMapLatest {
-        repository.getAllTransactions()
+        repository.getTransactions(it)
     }
 
     // TODO: Consider using state flows

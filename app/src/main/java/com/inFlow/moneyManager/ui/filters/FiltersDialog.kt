@@ -152,9 +152,7 @@ class FiltersDialog : DialogFragment() {
                         dismiss()
                     }
                     is FiltersEvent.ShowFieldError -> displayError(it.fieldError)
-                    FiltersEvent.ClearFilters -> {
-                        populateFilters()
-                    }
+                    FiltersEvent.ClearFilters -> populateFilters()
                 }
             }
         }
@@ -172,50 +170,49 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun populateFilters() =
-        binding.apply {
-            monthDropdown.setText(
-                monthAdapter.getItem(viewModel.filters.yearMonth!!.monthValue - 1),
-                false
-            )
-            yearDropdown.setText(viewModel.filters.yearMonth!!.year.toString(), false)
-            if (viewModel.filters.period == PeriodMode.WHOLE_MONTH) {
-                if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
-                    periodRadioGroup.check(R.id.whole_month_btn)
-            } else {
-                if (periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
-                    periodRadioGroup.check(R.id.custom_range_btn)
-                val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
-                val fromString = try {
-                    viewModel.filters.customRange.first?.format(formatter).orEmpty()
-                } catch (e: DateTimeException) {
-                    ""
-                }
-                val toString = try {
-                    viewModel.filters.customRange.second?.format(formatter).orEmpty()
-                } catch (e: DateTimeException) {
-                    ""
-                }
-                viewModel.fromDateString.value = fromString
-                viewModel.toDateString.value = toString
+    private fun populateFilters() = binding.apply {
+        monthDropdown.setText(
+            monthAdapter.getItem(viewModel.filters.yearMonth!!.monthValue - 1),
+            false
+        )
+        yearDropdown.setText(viewModel.filters.yearMonth!!.year.toString(), false)
+        if (viewModel.filters.period == PeriodMode.WHOLE_MONTH) {
+            if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
+                periodRadioGroup.check(R.id.whole_month_btn)
+        } else {
+            if (periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
+                periodRadioGroup.check(R.id.custom_range_btn)
+            val formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy")
+            val fromString = try {
+                viewModel.filters.customRange.first?.format(formatter).orEmpty()
+            } catch (e: DateTimeException) {
+                ""
             }
-            when(viewModel.filters.show) {
-                ShowTransactions.SHOW_BOTH -> {
-                    incomesCbx.isChecked = true
-                    expensesCbx.isChecked = true
-                }
-                ShowTransactions.SHOW_EXPENSES -> expensesCbx.isChecked = true
-                ShowTransactions.SHOW_INCOMES -> incomesCbx.isChecked = true
+            val toString = try {
+                viewModel.filters.customRange.second?.format(formatter).orEmpty()
+            } catch (e: DateTimeException) {
+                ""
             }
-
-            when (viewModel.filters.sortBy) {
-                SortBy.SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
-                SortBy.SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
-                else -> sortDropdown.setText(sortAdapter.getItem(2), false)
-            }
-            if (viewModel.filters.isDescending) orderToggleGroup.check(R.id.desc_btn)
-            else orderToggleGroup.check(R.id.asc_btn)
+            viewModel.fromDateString.value = fromString
+            viewModel.toDateString.value = toString
         }
+        when (viewModel.filters.show) {
+            ShowTransactions.SHOW_BOTH -> {
+                incomesCbx.isChecked = true
+                expensesCbx.isChecked = true
+            }
+            ShowTransactions.SHOW_EXPENSES -> expensesCbx.isChecked = true
+            ShowTransactions.SHOW_INCOMES -> incomesCbx.isChecked = true
+        }
+
+        when (viewModel.filters.sortBy) {
+            SortBy.SORT_BY_DATE -> sortDropdown.setText(sortAdapter.getItem(0), false)
+            SortBy.SORT_BY_CATEGORY -> sortDropdown.setText(sortAdapter.getItem(1), false)
+            else -> sortDropdown.setText(sortAdapter.getItem(2), false)
+        }
+        if (viewModel.filters.isDescending) orderToggleGroup.check(R.id.desc_btn)
+        else orderToggleGroup.check(R.id.asc_btn)
+    }
 
     private fun managePeriodFields(period: PeriodMode) =
         binding.apply {
