@@ -23,8 +23,8 @@ data class Transaction(
 
 @Dao
 interface TransactionsDao {
-//    @androidx.room.Transaction
 
+    @androidx.room.Transaction
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC")
     fun getAll(): Flow<List<Transaction>>
 

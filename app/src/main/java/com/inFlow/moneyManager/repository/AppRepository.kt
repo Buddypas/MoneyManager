@@ -143,6 +143,8 @@ class AppRepository(val db: AppDatabase) {
         }
     }
 
+    fun getAll() = db.transactionsDao().getAll()
+
     suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
     suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
     fun getAllCategories() = db.categoriesDao().getAll()

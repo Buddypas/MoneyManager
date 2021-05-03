@@ -17,7 +17,9 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
 
     val transactionList = combine(activeFilters, query) { filters, query ->
         Pair(filters, query)
-    }.flatMapLatest { repository.getTransactions(it.first, it.second) }
+    }.flatMapLatest {
+        repository.getTransactions(it.first, it.second)
+    }
 
     // TODO: Consider using state flows
     fun fetchBalanceData() = flow {
