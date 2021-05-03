@@ -45,7 +45,7 @@ class FiltersDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         isCancelable = false
-        viewModel.filters = args.filters
+//        viewModel.filters = args.filters
         _binding = DialogFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -78,6 +78,15 @@ class FiltersDialog : DialogFragment() {
         binding.monthDropdown.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 viewModel.onMonthSelected(position)
+            }
+
+        binding.sortDropdown.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.filters.sortBy = when (position) {
+                    0 -> SortBy.SORT_BY_DATE
+                    1 -> SortBy.SORT_BY_CATEGORY
+                    else -> SortBy.SORT_BY_AMOUNT
+                }
             }
 
         binding.applyBtn.setOnClickListener {
@@ -141,6 +150,7 @@ class FiltersDialog : DialogFragment() {
             viewModel.toDateString.value = binding.toInput.text.toString()
             binding.fromLayout.error = null
         }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.filtersEvent.collect {
                 when (it) {

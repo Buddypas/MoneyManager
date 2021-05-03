@@ -70,6 +70,7 @@ class FiltersViewModel : ViewModel() {
                 ShowTransactions.SHOW_INCOMES -> if (!isChecked) filters.show = null
                 ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.show =
                     ShowTransactions.SHOW_EXPENSES
+                null -> if (isChecked) filters.show = ShowTransactions.SHOW_INCOMES
             }
             R.id.expenses_cbx -> when (filters.show) {
                 ShowTransactions.SHOW_EXPENSES -> if (!isChecked) filters.show =
@@ -78,6 +79,7 @@ class FiltersViewModel : ViewModel() {
                     ShowTransactions.SHOW_BOTH
                 ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.show =
                     ShowTransactions.SHOW_INCOMES
+                null -> if (isChecked) filters.show = ShowTransactions.SHOW_EXPENSES
             }
         }
     }
