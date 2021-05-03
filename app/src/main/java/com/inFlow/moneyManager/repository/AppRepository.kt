@@ -61,8 +61,9 @@ class AppRepository(val db: AppDatabase) {
         )
     )
 
-    fun getTransactions(filters: FiltersDto? = null): Flow<List<Transaction>> {
+    fun getTransactions(filters: FiltersDto? = null, query: String = ""): Flow<List<Transaction>> {
         if (filters == null) return db.transactionsDao().getAll()
+
         val startDate: Date
         val endDate: Date
         if (filters.period == PeriodMode.WHOLE_MONTH) {
@@ -72,8 +73,8 @@ class AppRepository(val db: AppDatabase) {
             startDate = filters.customRange.first!!.toDate()
             endDate = filters.customRange.second!!.toDate()
         }
-        if (filters.searchQuery.isNotBlank()) return db.transactionsDao()
-            .searchTransactions(filters.searchQuery, startDate, endDate)
+        if (query.isNotBlank())
+            return db.transactionsDao().searchTransactions(query, startDate, endDate)
 
         when (filters.show) {
             ShowTransactions.SHOW_EXPENSES ->

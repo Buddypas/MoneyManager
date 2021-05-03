@@ -18,6 +18,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
+import java.time.LocalDate
 
 class DashboardFragment : BaseFragment() {
     private var _binding: FragmentDashboardBinding? = null
@@ -44,14 +46,17 @@ class DashboardFragment : BaseFragment() {
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
 
+        binding.monthTxt.text = LocalDate.now().month.name
+
         searchView.onQueryTextChanged {
-            viewModel.activeFilters.value.searchQuery = it
+            Timber.e("text changed: $it")
+            viewModel.query.value = it
         }
 
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {
-                    binding.toolbar.menu.getItem(1).isEnabled = false
+//                    binding.toolbar.menu.getItem(1).isEnabled = false
                     showFiltersDialog()
                     true
                 }
@@ -137,7 +142,7 @@ class DashboardFragment : BaseFragment() {
         val action =
             DashboardFragmentDirections.actionDashboardToFilters(viewModel.activeFilters.value)
         navigateSafely(action)
-        binding.toolbar.menu.getItem(1).isEnabled = true
+//        binding.toolbar.menu.getItem(1).isEnabled = true
     }
 
     override fun onDestroyView() {

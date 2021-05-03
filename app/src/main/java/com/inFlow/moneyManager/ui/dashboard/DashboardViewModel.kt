@@ -6,16 +6,18 @@ import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 
 @ExperimentalCoroutinesApi
 class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
+    val query = MutableStateFlow("")
 
-    val transactionList = activeFilters.flatMapLatest {
-        repository.getTransactions(it)
-    }
+    val transactionList = combine(activeFilters, query) { filters, query ->
+        Pair(filters, query)
+    }.flatMapLatest { repository.getTransactions(it.first, it.second) }
 
     // TODO: Consider using state flows
     fun fetchBalanceData() = flow {

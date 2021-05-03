@@ -16,6 +16,5 @@ data class FiltersDto(
     var yearMonth: YearMonth? = YearMonth.now(),
     var customRange: Pair<LocalDate?, LocalDate?> = Pair(null, null),
     var sortBy: SortBy = SortBy.SORT_BY_DATE,
-    var isDescending: Boolean = true,
-    var searchQuery: String = ""
+    var isDescending: Boolean = true
 ) : Parcelable

@@ -38,8 +38,7 @@ class FiltersViewModel : ViewModel() {
             if (data.period == PeriodMode.WHOLE_MONTH) data.yearMonth!! else null,
             if (data.period == PeriodMode.CUSTOM_RANGE) data.customRange else Pair(null, null),
             data.sortBy,
-            data.isDescending,
-            data.searchQuery
+            data.isDescending
         )
         filters = f
         years = listOf(
@@ -139,8 +138,7 @@ class FiltersViewModel : ViewModel() {
                 if (filters.period == PeriodMode.CUSTOM_RANGE) filters.customRange
                 else Pair(null, null),
                 sortBy = filters.sortBy,
-                isDescending = filters.isDescending,
-                searchQuery = filters.searchQuery
+                isDescending = filters.isDescending
             ).also {
                 filtersEventChannel.send(FiltersEvent.ApplyFilters(it))
             }
