@@ -16,10 +16,10 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     val eventChannel = Channel<AddTransactionEvent>()
     val eventFlow = eventChannel.receiveAsFlow()
 
-    private val _expenseFlow = MutableStateFlow(listOf<Category>())
+    private val _expenseFlow = MutableStateFlow<List<Category>>(listOf<Category>())
     val expenseFlow: StateFlow<List<Category>> by this::_expenseFlow
 
-    private val _incomeFlow = MutableStateFlow(listOf<Category>())
+    private val _incomeFlow = MutableStateFlow<List<Category>>(listOf<Category>())
     val incomeFlow: StateFlow<List<Category>> by this::_incomeFlow
 
     var categoryType = CategoryType.EXPENSE
@@ -28,17 +28,24 @@ class AddTransactionViewModel(private val repository: AppRepository) : ViewModel
     val expenses = expenseFlow.asLiveData()
     val incomes = incomeFlow.asLiveData()
 
-    val categoriesReady = MediatorLiveData<Boolean>()
+//    val categoriesReady = combine(expenseFlow, incomeFlow) { expenseCategories, incomeCategories ->
+//        !(expenseCategories == null || incomeCategories == null)
+//    }
 
-    init {
-        categoriesReady.value = false
-        categoriesReady.addSource(expenses) {
-            categoriesReady.value = it.isNotEmpty() && !incomes.value.isNullOrEmpty()
-        }
-        categoriesReady.addSource(incomes) {
-            categoriesReady.value = it.isNotEmpty() && !expenses.value.isNullOrEmpty()
-        }
-    }
+    private val _categoriesReady = MutableStateFlow(false)
+    val categoriesReady: StateFlow<Boolean> by this::_categoriesReady
+
+//    val categoriesReady = MediatorLiveData<Boolean>()
+//
+//    init {
+//        categoriesReady.value = false
+//        categoriesReady.addSource(expenses) {
+//            categoriesReady.value = it.isNotEmpty() && !incomes.value.isNullOrEmpty()
+//        }
+//        categoriesReady.addSource(incomes) {
+//            categoriesReady.value = it.isNotEmpty() && !expenses.value.isNullOrEmpty()
+//        }
+//    }
 
     fun initData() = viewModelScope.launch {
         loadExpenses()

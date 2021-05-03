@@ -18,6 +18,8 @@ import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.ui.MainActivity
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -29,6 +31,8 @@ class AddTransactionFragment : BaseFragment() {
 
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()
+
+    private var isDropdownInitialized = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,15 +66,32 @@ class AddTransactionFragment : BaseFragment() {
         }
 
         with(viewModel) {
-            incomes.observe(viewLifecycleOwner, { incomeList.addAll(it) })
-            expenses.observe(viewLifecycleOwner, { expenseList.addAll(it) })
-            categoriesReady.observe(viewLifecycleOwner, {
-                if (it) initDropdownAdapter()
-            })
+//            incomes.observe(viewLifecycleOwner, { incomeList.addAll(it) })
+//            expenses.observe(viewLifecycleOwner, { expenseList.addAll(it) })
+//            categoriesReady.observe(viewLifecycleOwner, {
+//                if (it) initDropdownAdapter()
+//            })
             initData()
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//        lifecycleScope.launch {
+//            viewModel.categoriesReady.collectLatest {
+//                if (it) initDropdownAdapter()
+//            }
+//        }
+
+        lifecycleScope.launch {
+            viewModel.incomeFlow.collectLatest { list -> incomeList.addAll(list) }
+        }
+
+        lifecycleScope.launch {
+            viewModel.expenseFlow.collectLatest { list ->
+                expenseList.addAll(list)
+                if(!isDropdownInitialized) initDropdownAdapter()
+            }
+        }
+
+        lifecycleScope.launchWhenStarted {
             viewModel.eventFlow.collect { event ->
                 when (event) {
                     is AddTransactionEvent.ShowErrorMessage -> binding.root.showError(event.msg)
@@ -101,7 +122,9 @@ class AddTransactionFragment : BaseFragment() {
     }
 
     private fun initDropdownAdapter() {
-        val list = expenseList.map { it.categoryName }
+        val list = expenseList.map {
+            it.categoryName
+        }
         val categoryAdapter = ArrayAdapter(
             requireContext(),
             R.layout.item_month_dropdown,
@@ -109,6 +132,7 @@ class AddTransactionFragment : BaseFragment() {
             list
         )
         binding.categoryDropdown.setAdapter(categoryAdapter)
+        isDropdownInitialized = true
     }
 
     private fun onSaveClicked() {
