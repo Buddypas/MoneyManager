@@ -43,6 +43,7 @@ class DashboardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
+        viewModel.fetchBalanceData()
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
@@ -67,8 +68,9 @@ class DashboardFragment : BaseFragment() {
         binding.transactionsRecycler.adapter = transactionsAdapter
 
         binding.addBtn.setOnClickListener {
-            val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
-            findNavController().navigate(action)
+            viewModel.onAddClicked()
+//            val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
+//            findNavController().navigate(action)
         }
 
         lifecycleScope.launch {
@@ -78,10 +80,14 @@ class DashboardFragment : BaseFragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.fetchBalanceData().collectLatest {
-                binding.incomeTxt.text = it.first.toString()
-                binding.expenseTxt.text = it.second.toString()
-                binding.balanceTxt.text = (it.first - it.second).toString()
+            viewModel.balanceData.collectLatest {
+                it?.let { data ->
+                    binding.apply {
+                        incomeTxt.text = data.first.toString()
+                        expenseTxt.text = data.second.toString()
+                        balanceTxt.text = (data.first - data.second).toString()
+                    }
+                }
             }
         }
 
@@ -91,6 +97,8 @@ class DashboardFragment : BaseFragment() {
                 transactionsAdapter.submitList(it)
             }
         }
+
+
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {

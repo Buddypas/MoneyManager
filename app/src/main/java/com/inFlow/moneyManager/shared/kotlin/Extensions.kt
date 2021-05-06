@@ -23,10 +23,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.ZoneId
@@ -38,8 +43,6 @@ import kotlin.math.roundToInt
 fun <T> MutableStateFlow<T>.setValueIfDifferent(newValue: T) {
     if (value != newValue) value = newValue
 }
-
-
 
 fun LocalDate.toDate(): Date = Date.from(
     this.atStartOfDay()
