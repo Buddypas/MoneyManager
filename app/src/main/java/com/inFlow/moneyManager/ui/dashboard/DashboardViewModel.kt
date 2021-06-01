@@ -45,20 +45,20 @@ class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
     fun onAddClicked() = viewModelScope.launch {
         eventChannel.send(DashboardEvent.NavigateToAddTransaction)
     }
+
+    fun openFilters() = viewModelScope.launch {
+        eventChannel.send(DashboardEvent.OpenFilters(activeFilters.value))
+    }
 }
 
 sealed class DashboardEvent {
-    object NavigateToFilters: DashboardEvent()
-    object NavigateToAddTransaction: DashboardEvent()
-    object OpenFilters: DashboardEvent()
+    object NavigateToAddTransaction : DashboardEvent()
+    data class OpenFilters(val filters: FiltersDto) : DashboardEvent()
 }
 
 data class FieldError(val message: String, val field: FieldType)
-
 enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
-
 enum class ShowTransactions { SHOW_EXPENSES, SHOW_INCOMES, SHOW_BOTH }
-
 enum class SortBy(val sortName: String) {
     SORT_BY_DATE("Date"),
     SORT_BY_CATEGORY("Category"),

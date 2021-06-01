@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.addRepeatingJob
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
@@ -16,12 +17,16 @@ import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import java.time.LocalDate
 
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 class DashboardFragment : BaseFragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
@@ -57,7 +62,7 @@ class DashboardFragment : BaseFragment() {
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_filter -> {
-                    showFiltersDialog()
+                    viewModel.openFilters()
                     true
                 }
                 else -> false
@@ -69,8 +74,6 @@ class DashboardFragment : BaseFragment() {
 
         binding.addBtn.setOnClickListener {
             viewModel.onAddClicked()
-//            val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
-//            findNavController().navigate(action)
         }
 
         lifecycleScope.launch {
@@ -98,7 +101,21 @@ class DashboardFragment : BaseFragment() {
             }
         }
 
-
+        viewLifecycleOwner.addRepeatingJob(Lifecycle.State.STARTED) {
+            viewModel.eventFlow.collect { event ->
+                when (event) {
+                    DashboardEvent.NavigateToAddTransaction -> {
+                        val action = DashboardFragmentDirections.actionDashboardToAddTransaction()
+                        findNavController().navigate(action)
+                    }
+                    is DashboardEvent.OpenFilters -> {
+                        val action =
+                            DashboardFragmentDirections.actionDashboardToFilters(event.filters)
+                        navigateSafely(action)
+                    }
+                }
+            }
+        }
     }
 
     private fun formatFilters(data: FiltersDto?) = data?.let {
@@ -139,17 +156,10 @@ class DashboardFragment : BaseFragment() {
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)
-
         viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY)
                 navBackStackEntry.lifecycle.removeObserver(observer)
         })
-    }
-
-    private fun showFiltersDialog() {
-        val action =
-            DashboardFragmentDirections.actionDashboardToFilters(viewModel.activeFilters.value)
-        navigateSafely(action)
     }
 
     override fun onDestroyView() {
