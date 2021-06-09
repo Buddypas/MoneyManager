@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
@@ -13,7 +14,6 @@ import com.inFlow.moneyManager.shared.kotlin.setAsRootView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.viewModel
 
 @AndroidEntryPoint
 class CategoriesFragment : BaseFragment() {
@@ -22,7 +22,7 @@ class CategoriesFragment : BaseFragment() {
 
     private lateinit var categoriesAdapter: CategoriesAdapter
 
-    private val viewModel: CategoriesViewModel by viewModel()
+    private val viewModel: CategoriesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

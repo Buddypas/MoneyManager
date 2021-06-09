@@ -16,9 +16,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
+import javax.inject.Inject
 
 @HiltViewModel
-class FiltersViewModel : ViewModel() {
+class FiltersViewModel @Inject constructor() : ViewModel() {
     lateinit var filters: FiltersDto
 
     var fromDateString = MutableStateFlow("")

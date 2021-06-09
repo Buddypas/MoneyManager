@@ -9,9 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class AddCategoryViewModel(private val repository: AppRepository) : ViewModel() {
+class AddCategoryViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
     var categoryType = CategoryType.EXPENSE
 
     private val eventChannel = Channel<AddCategoryEvent>()

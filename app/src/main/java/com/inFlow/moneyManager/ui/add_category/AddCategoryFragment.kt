@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
@@ -15,13 +16,12 @@ import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage
 import com.inFlow.moneyManager.ui.add_transaction.CategoryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import org.koin.android.viewmodel.ext.android.viewModel
 
 @AndroidEntryPoint
 class AddCategoryFragment : BaseFragment() {
     private var _binding: FragmentAddCategoryBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AddCategoryViewModel by viewModel()
+    private val viewModel: AddCategoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
