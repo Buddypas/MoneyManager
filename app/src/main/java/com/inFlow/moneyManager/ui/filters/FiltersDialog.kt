@@ -1,36 +1,37 @@
 package com.inFlow.moneyManager.ui.filters
 
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.ui.dashboard.*
-import com.inFlow.moneyManager.vo.FiltersDto
+import com.inFlow.moneyManager.ui.dashboard.FieldError
+import com.inFlow.moneyManager.ui.dashboard.PeriodMode
+import com.inFlow.moneyManager.ui.dashboard.ShowTransactions
+import com.inFlow.moneyManager.ui.dashboard.SortBy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.sharedViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@AndroidEntryPoint
 class FiltersDialog : DialogFragment() {
     private var _binding: DialogFiltersBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: FiltersViewModel by viewModel()
+    private val viewModel: FiltersViewModel by viewModels()
     private val args: FiltersDialogArgs by navArgs()
 
     private lateinit var sortAdapter: ArrayAdapter<String>

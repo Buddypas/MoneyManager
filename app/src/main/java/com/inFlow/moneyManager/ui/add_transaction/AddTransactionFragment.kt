@@ -2,13 +2,12 @@ package com.inFlow.moneyManager.ui.add_transaction
 
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
@@ -16,18 +15,17 @@ import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
+@AndroidEntryPoint
 class AddTransactionFragment : BaseFragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AddTransactionViewModel by viewModel()
+    private val viewModel: AddTransactionViewModel by viewModels()
 
     private val incomeList = mutableListOf<Category>()
     private val expenseList = mutableListOf<Category>()

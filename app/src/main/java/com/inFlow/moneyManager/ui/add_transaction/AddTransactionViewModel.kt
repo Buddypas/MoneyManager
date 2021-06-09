@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.repository.AppRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@HiltViewModel
 class AddTransactionViewModel(private val repository: AppRepository) : ViewModel() {
 
     val eventChannel = Channel<AddTransactionEvent>()

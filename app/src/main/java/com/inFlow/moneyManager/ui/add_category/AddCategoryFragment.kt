@@ -13,9 +13,11 @@ import com.inFlow.moneyManager.shared.kotlin.setAsRootView
 import com.inFlow.moneyManager.shared.kotlin.showError
 import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage
 import com.inFlow.moneyManager.ui.add_transaction.CategoryType
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class AddCategoryFragment : BaseFragment() {
     private var _binding: FragmentAddCategoryBinding? = null
     private val binding get() = _binding!!

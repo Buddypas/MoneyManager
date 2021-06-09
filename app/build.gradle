@@ -97,8 +97,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     // Koin for Android
-    implementation "org.koin:koin-android:$koin_version"
-    implementation "org.koin:koin-android-viewmodel:$koin_version"
+//    implementation "org.koin:koin-android:$koin_version"
+//    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

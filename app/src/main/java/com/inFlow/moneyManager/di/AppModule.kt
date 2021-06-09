@@ -1,50 +1,82 @@
 package com.inFlow.moneyManager.di
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.CategoriesDao
 import com.inFlow.moneyManager.db.entities.TransactionsDao
-import com.inFlow.moneyManager.repository.AppRepository
-import com.inFlow.moneyManager.ui.add_category.AddCategoryViewModel
-import com.inFlow.moneyManager.ui.add_transaction.AddTransactionViewModel
-import com.inFlow.moneyManager.ui.categories.CategoriesViewModel
-import com.inFlow.moneyManager.ui.dashboard.DashboardViewModel
-import com.inFlow.moneyManager.ui.filters.FiltersViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.ext.koin.androidApplication
-import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
-val dataModule = module {
+@InstallIn(SingletonComponent::class)
+@Module
+object AppModule {
 
-    fun provideDatabase(application: Application): AppDatabase {
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
         return Room
-            .databaseBuilder(application, AppDatabase::class.java, "app.db")
+            .databaseBuilder(appContext, AppDatabase::class.java, "app.db")
             .fallbackToDestructiveMigration()
             .build()
     }
 
+    @Provides
     fun provideTransactionsDao(database: AppDatabase): TransactionsDao {
         return database.transactionsDao()
     }
 
+    @Provides
     fun provideCategoriesDao(database: AppDatabase): CategoriesDao {
         return database.categoriesDao()
     }
 
-    single { provideDatabase(androidApplication()) }
-    single { provideCategoriesDao(get()) }
-    single { provideTransactionsDao(get()) }
-
-    single { AppRepository(get()) }
+    @ApplicationScope
+    @Provides
+    @Singleton
+    fun provideApplicationScope() = CoroutineScope(SupervisorJob())
 }
 
-@ExperimentalCoroutinesApi
-val viewModelModule = module {
-    viewModel { DashboardViewModel(get()) }
-    viewModel { CategoriesViewModel(get()) }
-    viewModel { FiltersViewModel() }
-    viewModel { AddTransactionViewModel(get()) }
-    viewModel { AddCategoryViewModel(get()) }
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class ApplicationScope
+
+//val dataModule = module {
+//
+//    fun provideDatabase(application: Application): AppDatabase {
+//        return Room
+//            .databaseBuilder(application, AppDatabase::class.java, "app.db")
+//            .fallbackToDestructiveMigration()
+//            .build()
+//    }
+//
+//    fun provideTransactionsDao(database: AppDatabase): TransactionsDao {
+//        return database.transactionsDao()
+//    }
+//
+//    fun provideCategoriesDao(database: AppDatabase): CategoriesDao {
+//        return database.categoriesDao()
+//    }
+//
+//    single { provideDatabase(androidApplication()) }
+//    single { provideCategoriesDao(get()) }
+//    single { provideTransactionsDao(get()) }
+//
+//    single { AppRepository(get()) }
+//}
+//
+//@ExperimentalCoroutinesApi
+//val viewModelModule = module {
+//    viewModel { DashboardViewModel(get()) }
+//    viewModel { CategoriesViewModel(get()) }
+//    viewModel { FiltersViewModel() }
+//    viewModel { AddTransactionViewModel(get()) }
+//    viewModel { AddCategoryViewModel(get()) }
+//}

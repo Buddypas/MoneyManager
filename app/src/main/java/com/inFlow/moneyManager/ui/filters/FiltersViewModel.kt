@@ -9,6 +9,7 @@ import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.shared.kotlin.toLocalDate
 import com.inFlow.moneyManager.ui.dashboard.*
 import com.inFlow.moneyManager.vo.FiltersDto
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@HiltViewModel
 class FiltersViewModel : ViewModel() {
     lateinit var filters: FiltersDto
 

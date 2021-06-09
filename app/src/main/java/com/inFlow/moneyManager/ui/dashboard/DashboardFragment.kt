@@ -1,10 +1,12 @@
 package com.inFlow.moneyManager.ui.dashboard
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.addRepeatingJob
@@ -16,23 +18,23 @@ import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import com.inFlow.moneyManager.vo.FiltersDto
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.sharedViewModel
-import timber.log.Timber
 import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
+@AndroidEntryPoint
 class DashboardFragment : BaseFragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
     @ExperimentalCoroutinesApi
-    private val viewModel: DashboardViewModel by sharedViewModel()
+    private val viewModel: DashboardViewModel by viewModels()
 
     private lateinit var transactionsAdapter: TransactionsAdapter
 

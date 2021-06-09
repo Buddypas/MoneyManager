@@ -10,10 +10,12 @@ import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.setAsRootView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 
+@AndroidEntryPoint
 class CategoriesFragment : BaseFragment() {
     private var _binding: FragmentCategoriesBinding? = null
     private val binding get() = _binding!!

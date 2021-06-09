@@ -16,7 +16,9 @@ import com.inFlow.moneyManager.databinding.ActivityMainBinding
 import com.inFlow.moneyManager.shared.kotlin.hideWithAnimation
 import com.inFlow.moneyManager.shared.kotlin.showError
 import com.inFlow.moneyManager.shared.kotlin.showWithAnimation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.bottom_nav)
             .setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.addTransactionFragment || destination.id == R.id.addCategoryFragment)
                 binding.bottomNav.hideWithAnimation()
             else binding.bottomNav.showWithAnimation()

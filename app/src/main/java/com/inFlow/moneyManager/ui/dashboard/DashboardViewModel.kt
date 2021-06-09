@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.vo.FiltersDto
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class DashboardViewModel(private val repository: AppRepository) : ViewModel() {
+@HiltViewModel
+class DashboardViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val query = MutableStateFlow("")
 

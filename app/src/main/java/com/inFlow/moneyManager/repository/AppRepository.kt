@@ -19,8 +19,11 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AppRepository(val db: AppDatabase) {
+@Singleton
+class AppRepository @Inject constructor(private val db: AppDatabase) {
 
     suspend fun populateDb() {
         db.categoriesDao().insertAll(
