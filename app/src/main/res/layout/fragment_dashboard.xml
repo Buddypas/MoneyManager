@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:menu="@menu/dashboard_menu"
+            app:title="Dashboard"
+            app:titleTextColor="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <TextView
+            android:id="@+id/month_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="March" />
+
+        <TextView
+            android:id="@+id/filters_txt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/filters_template"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/month_txt" />
+
+        <View
+            android:id="@+id/income_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/income_txt"
+            app:layout_constraintEnd_toEndOf="@id/income_lbl"
+            app:layout_constraintStart_toStartOf="@id/income_lbl"
+            app:layout_constraintTop_toTopOf="@id/income_lbl" />
+
+        <TextView
+            android:id="@+id/income_lbl"
+            style="?attr/textAppearanceBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:text="Income"
+            app:drawableEndCompat="@drawable/arrow_down_right"
+            app:drawableTint="@color/green"
+            app:layout_constraintEnd_toStartOf="@id/expense_lbl"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/filters_txt" />
+
+        <TextView
+            android:id="@+id/income_txt"
+            style="?attr/textAppearanceHeadline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toEndOf="@id/income_lbl"
+            app:layout_constraintStart_toStartOf="@id/income_lbl"
+            app:layout_constraintTop_toBottomOf="@id/income_lbl"
+            tools:text="650" />
+
+        <View
+            android:id="@+id/expense_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/expense_txt"
+            app:layout_constraintEnd_toEndOf="@id/expense_lbl"
+            app:layout_constraintStart_toStartOf="@id/expense_lbl"
+            app:layout_constraintTop_toTopOf="@id/expense_lbl" />
+
+        <TextView
+            android:id="@+id/expense_lbl"
+            style="?attr/textAppearanceBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:text="Expense"
+            app:drawableEndCompat="@drawable/arrow_up_left"
+            app:drawableTint="@color/red"
+            app:layout_constraintBottom_toBottomOf="@id/income_lbl"
+            app:layout_constraintEnd_toStartOf="@id/balance_lbl"
+            app:layout_constraintStart_toEndOf="@id/income_lbl"
+            app:layout_constraintTop_toTopOf="@id/income_lbl" />
+
+        <TextView
+            android:id="@+id/expense_txt"
+            style="?attr/textAppearanceHeadline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toEndOf="@id/expense_lbl"
+            app:layout_constraintStart_toStartOf="@id/expense_lbl"
+            app:layout_constraintTop_toBottomOf="@id/expense_lbl"
+            tools:text="500" />
+
+        <View
+            android:id="@+id/balance_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/balance_txt"
+            app:layout_constraintEnd_toEndOf="@id/balance_lbl"
+            app:layout_constraintStart_toStartOf="@id/balance_lbl"
+            app:layout_constraintTop_toTopOf="@id/balance_lbl" />
+
+        <TextView
+            android:id="@+id/balance_lbl"
+            style="?attr/textAppearanceBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:drawablePadding="4dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:text="Balance"
+            app:drawableEndCompat="@drawable/ic_balance"
+            app:drawableTint="@color/purple_500"
+            app:layout_constraintBottom_toBottomOf="@id/income_lbl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/expense_lbl"
+            app:layout_constraintTop_toTopOf="@id/income_lbl" />
+
+        <TextView
+            android:id="@+id/balance_txt"
+            style="?attr/textAppearanceHeadline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toEndOf="@id/balance_lbl"
+            app:layout_constraintStart_toStartOf="@id/balance_lbl"
+            app:layout_constraintTop_toBottomOf="@id/balance_lbl"
+            tools:text="150" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactions_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingTop="18dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/income_bg"
+            tools:listitem="@layout/item_transaction" />
+
+        <TextView
+            android:id="@+id/no_transactions_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="No transactions."
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/income_bg" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:elevation="8dp"
+        app:layout_behavior="com.google.android.material.floatingactionbutton.FloatingActionButton$Behavior"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

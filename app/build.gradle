@@ -1,0 +1,106 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id "androidx.navigation.safeargs.kotlin"
+    id "dagger.hilt.android.plugin"
+}
+
+String appName = "Money Manager"
+
+def majorVersion = "0.0"
+
+/**
+ * Function for calculating the version dynamically
+ * based on the number of commits to the repository
+ **/
+static def generateVersionCode() {
+    def result = "git rev-list --all --count".execute().text.trim()
+    if (result.empty || result == 0 || result == "0") result = 1
+    return result.toInteger()
+}
+
+android {
+
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.inFlow.moneyManager"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode generateVersionCode()
+        versionName "${majorVersion}.${generateVersionCode()}"
+
+        resValue "string", "app_name", appName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_version"
+
+    // AppCompat
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+
+    // Kotlin Core
+    implementation "androidx.core:core-ktx:$coreKtx_version"
+
+    // Material
+    implementation "com.google.android.material:material:$material_version"
+
+    // Preference
+    implementation "androidx.preference:preference-ktx:$preference_version"
+
+    // Constraint Layout
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayout_version"
+
+    // Activity and fragment
+    implementation "androidx.activity:activity-ktx:$activity_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+
+    // Architecture Components
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    // Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$navigation_version"
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    // Timber
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
+}

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="16dp"
+    tools:context=".ui.filters.FiltersDialog">
+
+    <TextView
+        android:id="@+id/period_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Period"
+        app:layout_constraintBottom_toBottomOf="@id/period_radio_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/period_radio_group" />
+
+    <RadioGroup
+        android:id="@+id/period_radio_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/lbl_barrier"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/whole_month_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Whole month"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <RadioButton
+            android:id="@+id/custom_range_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Custom range"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+    </RadioGroup>
+
+    <!--    Income or expense section-->
+    <TextView
+        android:id="@+id/type_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        app:layout_constraintBottom_toBottomOf="@id/incomes_cbx"
+        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toTopOf="@id/incomes_cbx" />
+
+    <CheckBox
+        android:id="@+id/incomes_cbx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Incomes"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/period_radio_group" />
+
+    <CheckBox
+        android:id="@+id/expenses_cbx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Expenses"
+        android:textAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintBottom_toBottomOf="@id/incomes_cbx"
+        app:layout_constraintStart_toEndOf="@id/incomes_cbx"
+        app:layout_constraintTop_toTopOf="@id/incomes_cbx" />
+
+    <!--    Month section-->
+    <TextView
+        android:id="@+id/month_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Month"
+        app:layout_constraintBottom_toBottomOf="@id/month_dropdown_layout"
+        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toTopOf="@id/month_dropdown_layout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/month_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/arrow_down"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toStartOf="@id/year_dropdown_layout"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/incomes_cbx">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/month_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    TODO: Align to end-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/year_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/arrow_down"
+        app:hintEnabled="false"
+        app:layout_constraintBottom_toBottomOf="@id/month_dropdown_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/month_dropdown_layout"
+        app:layout_constraintTop_toTopOf="@id/month_dropdown_layout">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/year_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    Range section-->
+    <TextView
+        android:id="@+id/from_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="From"
+        app:layout_constraintBottom_toBottomOf="@id/from_layout"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toTopOf="@id/from_layout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/from_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="dd/mm/yyyy"
+        android:minWidth="144dp"
+        android:textColorHint="@color/gray"
+        app:errorEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/month_dropdown_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/from_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"
+            android:maxLength="10"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    To section-->
+    <TextView
+        android:id="@+id/to_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To"
+        app:layout_constraintBottom_toBottomOf="@id/to_layout"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toTopOf="@id/to_layout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/to_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="dd/mm/yyyy"
+        android:minWidth="144dp"
+        android:textColorHint="@color/gray"
+        app:errorEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/from_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/to_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"
+            android:maxLength="10"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    Sort section-->
+    <TextView
+        android:id="@+id/sort_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sort by"
+        app:layout_constraintBottom_toBottomOf="@id/sort_dropdown_layout"
+        app:layout_constraintStart_toStartOf="@id/period_lbl"
+        app:layout_constraintTop_toTopOf="@id/sort_dropdown_layout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sort_dropdown_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxWidth="64dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/arrow_down"
+        app:hintEnabled="false"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/to_layout">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/sort_dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/order_lbl"
+        style="?attr/textAppearanceHeadline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order"
+        app:layout_constraintBottom_toBottomOf="@id/order_toggle_group"
+        app:layout_constraintStart_toStartOf="@id/sort_lbl"
+        app:layout_constraintTop_toTopOf="@id/order_toggle_group" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/lbl_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:barrierMargin="4dp"
+        app:constraint_referenced_ids="period_lbl,type_lbl,month_lbl,from_lbl,to_lbl,sort_lbl,order_lbl" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/order_toggle_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
+        app:layout_constraintTop_toBottomOf="@id/sort_dropdown_layout"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <Button
+            android:id="@+id/desc_btn"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_sort_desc" />
+
+        <Button
+            android:id="@+id/asc_btn"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_sort_asc" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/apply_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="apply"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/order_toggle_group" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancel_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="cancel"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintEnd_toStartOf="@id/apply_btn"
+        app:layout_constraintTop_toTopOf="@id/apply_btn" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/clear_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear"
+        android:textAllCaps="true"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/apply_btn"
+        app:strokeColor="@color/red"
+        app:strokeWidth="1dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
