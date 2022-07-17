@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
-import com.inFlow.moneyManager.presentation.addTransaction.CategoryType
+import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.showError
 import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage

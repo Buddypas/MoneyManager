@@ -6,7 +6,7 @@ import com.inFlow.moneyManager.presentation.addCategory.extension.updateWith
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
-import com.inFlow.moneyManager.presentation.addTransaction.CategoryType
+import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

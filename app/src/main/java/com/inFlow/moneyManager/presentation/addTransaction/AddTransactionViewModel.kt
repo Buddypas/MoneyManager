@@ -2,7 +2,11 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.db.entities.Category
+import com.inFlow.moneyManager.presentation.addTransaction.extension.updateWith
+import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiEvent
+import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiModel
+import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiState
+import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -13,36 +17,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
 import javax.inject.Inject
-
-data class AddTransactionUiModel(
-    val categoryType: CategoryType = CategoryType.EXPENSE,
-    val expenseList: List<Category>? = null,
-    val incomeList: List<Category>? = null,
-    val activeCategoryList: List<Category>? = null,
-    val selectedCategory: Category? = null,
-    val categoryErrorResId: Int? = null,
-    val descriptionErrorResId: Int? = null,
-    val amountErrorResId: Int? = null
-)
-
-sealed class AddTransactionUiState {
-    abstract val uiModel: AddTransactionUiModel
-
-    data class Idle(override val uiModel: AddTransactionUiModel = AddTransactionUiModel()) :
-        AddTransactionUiState()
-
-    data class LoadingCategories(override val uiModel: AddTransactionUiModel = AddTransactionUiModel()) :
-        AddTransactionUiState()
-
-    data class Error(override val uiModel: AddTransactionUiModel = AddTransactionUiModel()) :
-        AddTransactionUiState()
-}
-
-sealed class AddTransactionUiEvent {
-    data class ShowErrorMessage(val msgResId: Int) : AddTransactionUiEvent()
-    data class ShowSuccessMessage(val msg: String) : AddTransactionUiEvent()
-    object NavigateUp : AddTransactionUiEvent()
-}
 
 @HiltViewModel
 class AddTransactionViewModel @Inject constructor(private val repository: AppRepository) :
@@ -65,7 +39,15 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
         }
         awaitAll(loadExpensesAsync(), loadIncomesAsync()).apply {
             updateCurrentUiStateWith {
-                AddTransactionUiState.Idle(it.copy(expenseList = get(0), incomeList = get(1)))
+                AddTransactionUiState.Idle(
+                    it.copy(
+                        expenseList = get(0),
+                        incomeList = get(1),
+                        activeCategoryList =
+                        if (it.categoryType == CategoryType.EXPENSE) get(0)
+                        else get(1)
+                    )
+                )
             }
         }
     }
@@ -106,7 +88,7 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
                 if (isExpenseChecked) CategoryType.EXPENSE
                 else CategoryType.INCOME
             val newCategoryList =
-                if (uiModel.categoryType == CategoryType.EXPENSE)
+                if (newCategoryType == CategoryType.EXPENSE)
                     uiModel.expenseList
                 else
                     uiModel.incomeList
@@ -192,16 +174,4 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     }
 
     private fun requireUiState(): AddTransactionUiState = stateFlow.value
-
-    fun AddTransactionUiState.updateWith(updatedModel: AddTransactionUiModel) =
-        when (this) {
-            is AddTransactionUiState.Idle -> AddTransactionUiState.Idle(updatedModel)
-            is AddTransactionUiState.LoadingCategories ->
-                AddTransactionUiState.LoadingCategories(updatedModel)
-            is AddTransactionUiState.Error -> AddTransactionUiState.Error(updatedModel)
-        }
-}
-
-enum class CategoryType {
-    EXPENSE, INCOME;
 }

@@ -3,11 +3,11 @@ package com.inFlow.moneyManager.repository
 import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
-import com.inFlow.moneyManager.shared.kotlin.toDate
-import com.inFlow.moneyManager.presentation.addTransaction.CategoryType
+import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy
+import com.inFlow.moneyManager.shared.kotlin.toDate
 import com.inFlow.moneyManager.vo.FiltersDto
 import kotlinx.coroutines.flow.Flow
 import java.util.*

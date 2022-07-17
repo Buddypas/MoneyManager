@@ -11,6 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
+import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiEvent
+import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiState
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.*
 import dagger.hilt.android.AndroidEntryPoint
