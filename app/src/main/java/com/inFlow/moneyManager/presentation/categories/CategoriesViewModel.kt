@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.categories
+package com.inFlow.moneyManager.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import com.inFlow.moneyManager.repository.AppRepository

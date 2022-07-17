@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.dashboard
+package com.inFlow.moneyManager.presentation.dashboard
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.categories
+package com.inFlow.moneyManager.presentation.categories
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ItemCategoryBinding
 import com.inFlow.moneyManager.db.entities.Category
-import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 class CategoriesAdapter :

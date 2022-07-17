@@ -7,7 +7,7 @@
     android:paddingStart="16dp"
     android:paddingEnd="8dp"
     android:paddingBottom="16dp"
-    tools:context=".ui.filters.FiltersDialog">
+    tools:context=".presentation.filters.FiltersDialog">
 
     <TextView
         android:id="@+id/period_lbl"

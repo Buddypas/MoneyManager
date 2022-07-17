@@ -1,9 +1,9 @@
 package com.inFlow.moneyManager.vo
 
 import android.os.Parcelable
-import com.inFlow.moneyManager.ui.dashboard.PeriodMode
-import com.inFlow.moneyManager.ui.dashboard.ShowTransactions
-import com.inFlow.moneyManager.ui.dashboard.SortBy
+import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
+import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
+import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.YearMonth

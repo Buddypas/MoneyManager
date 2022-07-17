@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.add_transaction
+package com.inFlow.moneyManager.presentation.add_transaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

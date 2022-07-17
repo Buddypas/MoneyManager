@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.dashboard
+package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

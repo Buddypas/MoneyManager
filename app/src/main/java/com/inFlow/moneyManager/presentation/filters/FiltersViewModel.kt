@@ -1,13 +1,12 @@
-package com.inFlow.moneyManager.ui.filters
+package com.inFlow.moneyManager.presentation.filters
 
 import android.widget.CompoundButton
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.repository.AppRepository
 import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.shared.kotlin.toLocalDate
-import com.inFlow.moneyManager.ui.dashboard.*
+import com.inFlow.moneyManager.presentation.dashboard.*
 import com.inFlow.moneyManager.vo.FiltersDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

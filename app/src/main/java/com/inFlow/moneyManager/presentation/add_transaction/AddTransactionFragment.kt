@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.add_transaction
+package com.inFlow.moneyManager.presentation.add_transaction
 
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -16,7 +16,6 @@ import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

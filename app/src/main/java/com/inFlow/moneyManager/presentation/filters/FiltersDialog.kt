@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.ui.filters
+package com.inFlow.moneyManager.presentation.filters
 
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -16,12 +16,11 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.ui.dashboard.FieldError
-import com.inFlow.moneyManager.ui.dashboard.PeriodMode
-import com.inFlow.moneyManager.ui.dashboard.ShowTransactions
-import com.inFlow.moneyManager.ui.dashboard.SortBy
+import com.inFlow.moneyManager.presentation.dashboard.FieldError
+import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
+import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
+import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

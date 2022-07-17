@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/dashboardFragment"
-        android:name="com.inFlow.moneyManager.ui.dashboard.DashboardFragment"
+        android:name="com.inFlow.moneyManager.presentation.dashboard.DashboardFragment"
         android:label="Dashboard"
         tools:layout="@layout/fragment_dashboard">
         <action
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.inFlow.moneyManager.ui.categories.CategoriesFragment"
+        android:name="com.inFlow.moneyManager.presentation.categories.CategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_categories">
         <action
@@ -38,19 +38,19 @@
 
     <fragment
         android:id="@+id/addCategoryFragment"
-        android:name="com.inFlow.moneyManager.ui.add_category.AddCategoryFragment"
+        android:name="com.inFlow.moneyManager.presentation.addCategory.AddCategoryFragment"
         android:label="fragment_add_category"
         tools:layout="@layout/fragment_add_category" />
 
     <fragment
         android:id="@+id/addTransactionFragment"
-        android:name="com.inFlow.moneyManager.ui.add_transaction.AddTransactionFragment"
+        android:name="com.inFlow.moneyManager.presentation.add_transaction.AddTransactionFragment"
         android:label="Add Transaction"
         tools:layout="@layout/fragment_add_transaction" />
 
     <dialog
         android:id="@+id/filtersDialog"
-        android:name="com.inFlow.moneyManager.ui.filters.FiltersDialog"
+        android:name="com.inFlow.moneyManager.presentation.filters.FiltersDialog"
         android:label="Filters"
         tools:layout="@layout/dialog_filters" >
         <argument
