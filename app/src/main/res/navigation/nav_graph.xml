@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/addTransactionFragment"
-        android:name="com.inFlow.moneyManager.presentation.add_transaction.AddTransactionFragment"
+        android:name="com.inFlow.moneyManager.presentation.addTransaction.AddTransactionFragment"
         android:label="Add Transaction"
         tools:layout="@layout/fragment_add_transaction" />
 

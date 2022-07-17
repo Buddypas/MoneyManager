@@ -4,7 +4,7 @@ import com.inFlow.moneyManager.db.AppDatabase
 import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.db.entities.Transaction
 import com.inFlow.moneyManager.shared.kotlin.toDate
-import com.inFlow.moneyManager.presentation.add_transaction.CategoryType
+import com.inFlow.moneyManager.presentation.addTransaction.CategoryType
 import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy
@@ -132,6 +132,6 @@ class AppRepository @Inject constructor(private val db: AppDatabase) {
     suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
     suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
     fun getAllCategories() = db.categoriesDao().getAll()
-    fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
-    fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
+    suspend fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
+    suspend fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
 }

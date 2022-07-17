@@ -12,7 +12,7 @@
         android:theme="@style/Theme.MoneyManager">
         <activity
             android:name=".presentation.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

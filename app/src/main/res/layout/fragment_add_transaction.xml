@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="16dp"
-    tools:context=".presentation.add_transaction.AddTransactionFragment">
+    tools:context=".presentation.addTransaction.AddTransactionFragment">
 
     <TextView
         android:id="@+id/type_lbl"
@@ -55,9 +55,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:hint="Choose a category"
+        android:hint="@string/choose_a_category"
         app:endIconDrawable="@drawable/arrow_down"
         app:endIconMode="dropdown_menu"
+        app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@id/type_radio_group">
 
         <AutoCompleteTextView
@@ -76,7 +77,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:hint="Description"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
@@ -101,7 +102,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:hint="Amount"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"

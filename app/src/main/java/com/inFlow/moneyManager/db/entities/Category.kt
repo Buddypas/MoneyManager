@@ -23,10 +23,10 @@ interface CategoriesDao {
     fun getAll(): Flow<List<Category>>
 
     @Query("SELECT * FROM categories WHERE categoryType='expense'")
-    fun getAllExpenseCategories(): Flow<List<Category>>
+    suspend fun getAllExpenseCategories(): List<Category>
 
     @Query("SELECT * FROM categories WHERE categoryType='income'")
-    fun getAllIncomeCategories(): Flow<List<Category>>
+    suspend fun getAllIncomeCategories(): List<Category>
 
     @Query("SELECT * FROM categories WHERE categoryId=:id")
     fun getById(id: Int): Category

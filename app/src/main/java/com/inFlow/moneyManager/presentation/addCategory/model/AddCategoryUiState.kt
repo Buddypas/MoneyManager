@@ -5,6 +5,5 @@ sealed class AddCategoryUiState {
 
     data class Idle(override val uiModel: AddCategoryUiModel = AddCategoryUiModel()) :
         AddCategoryUiState()
-
     data class Error(override val uiModel: AddCategoryUiModel) : AddCategoryUiState()
 }
