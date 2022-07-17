@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.presentation.addCategory
+package com.inFlow.moneyManager.presentation.addCategory.model
 
 sealed class AddCategoryUiState {
     abstract val uiModel: AddCategoryUiModel

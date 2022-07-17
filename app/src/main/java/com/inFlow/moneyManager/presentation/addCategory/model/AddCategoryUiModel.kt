@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.presentation.addCategory
+package com.inFlow.moneyManager.presentation.addCategory.model
 
 import com.inFlow.moneyManager.presentation.add_transaction.CategoryType
 

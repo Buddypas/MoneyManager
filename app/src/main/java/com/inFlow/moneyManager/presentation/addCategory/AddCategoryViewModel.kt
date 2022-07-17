@@ -2,6 +2,10 @@ package com.inFlow.moneyManager.presentation.addCategory
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
+import com.inFlow.moneyManager.presentation.addCategory.extension.updateWith
+import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
+import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
+import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.add_transaction.CategoryType
 import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

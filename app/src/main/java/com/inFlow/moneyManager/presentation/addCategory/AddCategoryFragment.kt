@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
+import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
+import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.add_transaction.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.showError
