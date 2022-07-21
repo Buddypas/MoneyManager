@@ -1,7 +1,6 @@
 package com.inFlow.moneyManager.presentation.categories
 
 import androidx.lifecycle.ViewModel
-import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

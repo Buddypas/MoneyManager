@@ -1,59 +1,26 @@
-package com.inFlow.moneyManager.repository
+package com.inFlow.moneyManager.data.repository
 
-import com.inFlow.moneyManager.db.AppDatabase
-import com.inFlow.moneyManager.db.entities.Category
-import com.inFlow.moneyManager.db.entities.Transaction
-import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
+import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
+import com.inFlow.moneyManager.data.db.entities.TransactionDto
 import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
 import com.inFlow.moneyManager.vo.FiltersDto
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppRepository @Inject constructor(private val db: AppDatabase) {
-
-    suspend fun loadCategories() {
-        val expenseAsync = GlobalScope.async { }
-    }
-
-    suspend fun populateDb() {
-        db.categoriesDao().insertAll(
-            Category(
-                categoryName = "Car",
-                categoryType = "expense",
-            ),
-            Category(
-                categoryName = "Health",
-                categoryType = "expense"
-            ),
-            Category(
-                categoryName = "Salary",
-                categoryType = "income"
-            )
-        )
-    }
-
+class TransactionRepository @Inject constructor(private val db: MoneyManagerDatabase) {
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
-        withContext(Dispatchers.IO) {
-            db.transactionsDao().saveTransaction(amount, categoryId, desc)
-        }
+        db.transactionsDao().saveTransaction(amount, categoryId, desc)
 
-    suspend fun saveCategory(type: CategoryType, name: String) = withContext(Dispatchers.IO) {
-        db.categoriesDao().insertAll(
-            Category(
-                categoryName = name,
-                categoryType = if (type == CategoryType.EXPENSE) "expense" else "income"
-            )
-        )
-    }
-
-    fun getTransactions(filters: FiltersDto? = null, query: String = ""): Flow<List<Transaction>> {
+    fun getTransactions(
+        filters: FiltersDto? = null,
+        query: String = ""
+    ): Flow<List<TransactionDto>> {
         if (filters == null) return db.transactionsDao().getAll()
 
         val startDate: Date
@@ -136,10 +103,6 @@ class AppRepository @Inject constructor(private val db: AppDatabase) {
     }
 
     fun getAll() = db.transactionsDao().getAll()
-
     suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
     suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
-    fun getAllCategories() = db.categoriesDao().getAll()
-    suspend fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
-    suspend fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
 }

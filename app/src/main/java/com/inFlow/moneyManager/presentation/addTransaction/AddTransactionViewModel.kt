@@ -2,7 +2,9 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.db.entities.Category
+import com.inFlow.moneyManager.data.db.entities.CategoryDto
+import com.inFlow.moneyManager.data.repository.CategoryRepository
+import com.inFlow.moneyManager.data.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
@@ -13,7 +15,6 @@ import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionU
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiModel
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
-import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +26,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AddTransactionViewModel @Inject constructor(private val repository: AppRepository) :
+class AddTransactionViewModel @Inject constructor(private val transactionRepository: TransactionRepository, private val categoryRepository: CategoryRepository) :
     ViewModel() {
 
     private val _stateFlow = MutableStateFlow<AddTransactionUiState>(AddTransactionUiState.Idle())
@@ -95,7 +96,7 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
 
     // TODO: Make mapper
     private fun isTransactionValid(
-        selectedCategory: Category?,
+        selectedCategory: CategoryDto?,
         description: String?,
         amount: Double?
     ): FieldError? = when {
@@ -136,8 +137,8 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     }
 
     private suspend fun fetchCategories(): Categories {
-        val expenses = viewModelScope.async { repository.getAllExpenseCategories() }
-        val incomes = viewModelScope.async { repository.getAllIncomeCategories() }
+        val expenses = viewModelScope.async { categoryRepository.getAllExpenseCategories() }
+        val incomes = viewModelScope.async { categoryRepository.getAllIncomeCategories() }
         return Categories(expenses.await(), incomes.await())
     }
 
@@ -155,8 +156,8 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
                 pair.first to requireNotNull(pair.second) { "categoryId must not be null" }
             }.onSuccess { pair ->
                 // TODO: Check if save successful
-                repository.saveTransaction(pair.first, pair.second, desc)
-                AddTransactionUiEvent.ShowSuccessMessage("Transaction added.").emit()
+                transactionRepository.saveTransaction(pair.first, pair.second, desc)
+                AddTransactionUiEvent.ShowSuccessMessage("TransactionDto added.").emit()
                 AddTransactionUiEvent.NavigateUp.emit()
             }.onFailure {
                 Timber.e("Failed to save transaction: $it")

@@ -1,32 +1,27 @@
-package com.inFlow.moneyManager.db
+package com.inFlow.moneyManager.data.db
 
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.inFlow.moneyManager.db.entities.CategoriesDao
-import com.inFlow.moneyManager.db.entities.Category
-import com.inFlow.moneyManager.db.entities.Transaction
-import com.inFlow.moneyManager.db.entities.TransactionsDao
+import com.inFlow.moneyManager.data.db.entities.CategoriesDao
+import com.inFlow.moneyManager.data.db.entities.CategoryDto
+import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entities.TransactionsDao
 import com.inFlow.moneyManager.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.util.*
-import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Provider
 
-@Database(entities = [Transaction::class, Category::class], version = 2)
+@Database(entities = [TransactionDto::class, CategoryDto::class], version = 2)
 @TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase() {
+abstract class MoneyManagerDatabase : RoomDatabase() {
     abstract fun transactionsDao(): TransactionsDao
     abstract fun categoriesDao(): CategoriesDao
 
     class Callback @Inject constructor(
-        private val database: Provider<AppDatabase>,
+        private val database: Provider<MoneyManagerDatabase>,
         @ApplicationScope private val applicationScope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
@@ -38,15 +33,15 @@ abstract class AppDatabase : RoomDatabase() {
 
             applicationScope.launch {
                 categoriesDao.insertAll(
-                    Category(
+                    CategoryDto(
                         categoryName = "Car",
                         categoryType = "expense",
                     ),
-                    Category(
+                    CategoryDto(
                         categoryName = "Health",
                         categoryType = "expense"
                     ),
-                    Category(
+                    CategoryDto(
                         categoryName = "Salary",
                         categoryType = "income"
                     )

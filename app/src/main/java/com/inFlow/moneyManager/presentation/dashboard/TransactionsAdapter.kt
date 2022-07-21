@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ItemTransactionBinding
-import com.inFlow.moneyManager.db.entities.Transaction
+import com.inFlow.moneyManager.data.db.entities.TransactionDto
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 class TransactionsAdapter :
-    ListAdapter<Transaction, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+    ListAdapter<TransactionDto, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -26,7 +26,7 @@ class TransactionsAdapter :
 
     class TransactionViewHolder(val binding: ItemTransactionBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Transaction) {
+        fun bind(item: TransactionDto) {
             binding.apply {
                 nameTxt.text = item.transactionDescription
                 amountTxt.text = item.transactionAmount.toString()
@@ -44,10 +44,10 @@ class TransactionsAdapter :
     }
 }
 
-class TransactionDiffCallback : DiffUtil.ItemCallback<Transaction>() {
-    override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction) =
+class TransactionDiffCallback : DiffUtil.ItemCallback<TransactionDto>() {
+    override fun areItemsTheSame(oldItem: TransactionDto, newItem: TransactionDto) =
         oldItem.transactionId == newItem.transactionId
 
-    override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction) =
+    override fun areContentsTheSame(oldItem: TransactionDto, newItem: TransactionDto) =
         oldItem == newItem
 }

@@ -1,9 +1,6 @@
-package com.inFlow.moneyManager.db
+package com.inFlow.moneyManager.data.db
 
 import androidx.room.TypeConverter
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.*
 
 class Converters {

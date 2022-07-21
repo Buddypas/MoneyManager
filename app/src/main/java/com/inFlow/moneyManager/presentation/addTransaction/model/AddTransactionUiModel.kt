@@ -1,13 +1,13 @@
 package com.inFlow.moneyManager.presentation.addTransaction.model
 
-import com.inFlow.moneyManager.db.entities.Category
+import com.inFlow.moneyManager.data.db.entities.CategoryDto
 
 data class AddTransactionUiModel(
     val categoryType: CategoryType = CategoryType.EXPENSE,
-    val expenseList: List<Category>? = null,
-    val incomeList: List<Category>? = null,
-    val activeCategoryList: List<Category>? = null,
-    val selectedCategory: Category? = null,
+    val expenseList: List<CategoryDto>? = null,
+    val incomeList: List<CategoryDto>? = null,
+    val activeCategoryList: List<CategoryDto>? = null,
+    val selectedCategory: CategoryDto? = null,
     val categoryErrorResId: Int? = null,
     val descriptionErrorResId: Int? = null,
     val amountErrorResId: Int? = null

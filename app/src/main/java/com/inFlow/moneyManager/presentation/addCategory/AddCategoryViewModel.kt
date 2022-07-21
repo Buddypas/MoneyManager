@@ -7,7 +7,6 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
-import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +75,7 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
                 it.categoryType
             }.onSuccess { categoryType ->
                 repository.saveCategory(categoryType, name)
-                AddCategoryUiEvent.ShowSuccessMessage("Category added.").emit()
+                AddCategoryUiEvent.ShowSuccessMessage("CategoryDto added.").emit()
                 AddCategoryUiEvent.NavigateUp.emit()
             }
         }

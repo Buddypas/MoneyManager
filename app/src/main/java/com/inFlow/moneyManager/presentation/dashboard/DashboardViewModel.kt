@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.inFlow.moneyManager.repository.AppRepository
+import com.inFlow.moneyManager.data.repository.TransactionRepository
 import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.vo.FiltersDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
+class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) : ViewModel() {
     var activeFilters = MutableStateFlow(FiltersDto())
     val query = MutableStateFlow("")
 
@@ -64,6 +64,6 @@ enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
 enum class ShowTransactions { SHOW_EXPENSES, SHOW_INCOMES, SHOW_BOTH }
 enum class SortBy(val sortName: String) {
     SORT_BY_DATE("Date"),
-    SORT_BY_CATEGORY("Category"),
+    SORT_BY_CATEGORY("CategoryDto"),
     SORT_BY_AMOUNT("Amount")
 }
