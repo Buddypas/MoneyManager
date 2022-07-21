@@ -2,6 +2,7 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
+import com.inFlow.moneyManager.db.entities.Category
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
@@ -41,7 +42,7 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
         viewLifecycleOwner: LifecycleOwner,
         callback: (AddTransactionUiState) -> Unit
     ) {
-        viewModelScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 stateFlow.collectLatest { callback.invoke(it) }
             }
@@ -52,7 +53,7 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
         viewLifecycleOwner: LifecycleOwner,
         callback: (AddTransactionUiEvent) -> Unit
     ) {
-        viewModelScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 eventFlow.collectLatest { callback.invoke(it) }
             }
@@ -84,7 +85,7 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     // TODO: Remove !!
     fun onSaveClick(description: String?, amount: Double?) {
         requireUiState().uiModel.let { uiModel ->
-            uiModel.isTransactionValid(description, amount)?.let { fieldError ->
+            isTransactionValid(uiModel.selectedCategory, description, amount)?.let { fieldError ->
                 updateCurrentUiStateWith {
                     AddTransactionUiState.Error(fieldError.toErrorUiModel(it))
                 }
@@ -93,7 +94,8 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     }
 
     // TODO: Make mapper
-    private fun AddTransactionUiModel.isTransactionValid(
+    private fun isTransactionValid(
+        selectedCategory: Category?,
         description: String?,
         amount: Double?
     ): FieldError? = when {

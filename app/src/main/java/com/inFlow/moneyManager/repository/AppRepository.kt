@@ -19,7 +19,7 @@ import javax.inject.Singleton
 class AppRepository @Inject constructor(private val db: AppDatabase) {
 
     suspend fun loadCategories() {
-        val expenseAsync = GlobalScope.async {  }
+        val expenseAsync = GlobalScope.async { }
     }
 
     suspend fun populateDb() {
@@ -39,16 +39,19 @@ class AppRepository @Inject constructor(private val db: AppDatabase) {
         )
     }
 
-    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) = withContext(Dispatchers.IO) {
-        db.transactionsDao().saveTransaction(amount, categoryId, desc)
-    }
+    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
+        withContext(Dispatchers.IO) {
+            db.transactionsDao().saveTransaction(amount, categoryId, desc)
+        }
 
-    suspend fun saveCategory(type: CategoryType, name: String) = db.categoriesDao().insertAll(
-        Category(
-            categoryName = name,
-            categoryType = if (type == CategoryType.EXPENSE) "expense" else "income"
+    suspend fun saveCategory(type: CategoryType, name: String) = withContext(Dispatchers.IO) {
+        db.categoriesDao().insertAll(
+            Category(
+                categoryName = name,
+                categoryType = if (type == CategoryType.EXPENSE) "expense" else "income"
+            )
         )
-    )
+    }
 
     fun getTransactions(filters: FiltersDto? = null, query: String = ""): Flow<List<Transaction>> {
         if (filters == null) return db.transactionsDao().getAll()

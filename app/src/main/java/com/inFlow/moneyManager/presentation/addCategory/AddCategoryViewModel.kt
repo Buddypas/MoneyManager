@@ -9,14 +9,12 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +29,7 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun collectState(viewLifecycleOwner: LifecycleOwner, callback: (AddCategoryUiState) -> Unit) {
-        viewModelScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 stateFlow.collectLatest { callback.invoke(it) }
             }
@@ -39,7 +37,7 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
     }
 
     fun collectEvents(viewLifecycleOwner: LifecycleOwner, callback: (AddCategoryUiEvent) -> Unit) {
-        viewModelScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 eventFlow.collectLatest { callback.invoke(it) }
             }
@@ -58,13 +56,17 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
         }
     }
 
+    // TODO: Refactor
     fun onSaveClick(name: String?) {
-        if (name.isNullOrBlank())
+        isCategoryValid(name)?.let { errorResId ->
             updateCurrentUiStateWith {
-                AddCategoryUiState.Error(it.copy(errorMessageResId = R.string.error_empty_category_name))
+                AddCategoryUiState.Error(it.copy(errorMessageResId = errorResId))
             }
-        else saveCategory(name)
+        } ?: saveCategory(name!!)
     }
+
+    private fun isCategoryValid(name: String?) =
+        if (name.isNullOrBlank()) R.string.error_invalid_category_name else null
 
     private fun saveCategory(name: String) {
         viewModelScope.launch {
@@ -73,13 +75,9 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
             }.map {
                 it.categoryType
             }.onSuccess { categoryType ->
-                withContext(Dispatchers.IO) {
-                    repository.saveCategory(categoryType, name)
-                }
-                withContext(Dispatchers.Main) {
-                    showSuccess("Category added.")
-                    navigateUp()
-                }
+                repository.saveCategory(categoryType, name)
+                AddCategoryUiEvent.ShowSuccessMessage("Category added.").emit()
+                AddCategoryUiEvent.NavigateUp.emit()
             }
         }
     }
@@ -88,12 +86,8 @@ class AddCategoryViewModel @Inject constructor(private val repository: AppReposi
         _stateFlow.value = uiStateProvider.invoke(requireUiState().uiModel)
     }
 
-    private suspend fun showSuccess(msg: String) {
-        eventChannel.send(AddCategoryUiEvent.ShowSuccessMessage(msg))
-    }
-
-    private suspend fun navigateUp() {
-        eventChannel.send(AddCategoryUiEvent.NavigateUp)
+    private fun AddCategoryUiEvent.emit() = viewModelScope.launch {
+        eventChannel.send(this@emit)
     }
 
     private fun requireUiState(): AddCategoryUiState = stateFlow.value
