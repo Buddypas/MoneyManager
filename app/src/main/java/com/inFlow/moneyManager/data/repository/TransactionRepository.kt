@@ -6,7 +6,7 @@ import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
-import com.inFlow.moneyManager.vo.FiltersDto
+import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class TransactionRepository @Inject constructor(private val db: MoneyManagerData
         db.transactionsDao().saveTransaction(amount, categoryId, desc)
 
     fun getTransactions(
-        filters: FiltersDto? = null,
+        filters: Filters? = null,
         query: String = ""
     ): Flow<List<TransactionDto>> {
         if (filters == null) return db.transactionsDao().getAll()

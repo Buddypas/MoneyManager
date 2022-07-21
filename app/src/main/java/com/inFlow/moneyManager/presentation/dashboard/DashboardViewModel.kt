@@ -1,10 +1,11 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.inFlow.moneyManager.data.repository.TransactionRepository
-import com.inFlow.moneyManager.shared.kotlin.FieldType
-import com.inFlow.moneyManager.vo.FiltersDto
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiEvent
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiModel
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiState
+import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -14,11 +15,16 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) : ViewModel() {
-    var activeFilters = MutableStateFlow(FiltersDto())
+class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) :
+    ViewModel() {
+
+    private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
+    private val stateFlow = _stateFlow.asStateFlow()
+
+    var activeFilters = MutableStateFlow(Filters())
     val query = MutableStateFlow("")
 
-    private val eventChannel = Channel<DashboardEvent>(Channel.BUFFERED)
+    private val eventChannel = Channel<DashboardUiEvent>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
     private val _balanceData = MutableStateFlow<Pair<Double, Double>?>(null)
@@ -28,6 +34,28 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         Pair(filters, query)
     }.flatMapLatest {
         repository.getTransactions(it.first, it.second)
+    }
+
+    fun collectState(
+        viewLifecycleOwner: LifecycleOwner,
+        callback: (DashboardUiState) -> Unit
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                stateFlow.collectLatest { callback.invoke(it) }
+            }
+        }
+    }
+
+    fun collectEvents(
+        viewLifecycleOwner: LifecycleOwner,
+        callback: (DashboardUiEvent) -> Unit
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                eventFlow.collectLatest { callback.invoke(it) }
+            }
+        }
     }
 
     fun fetchBalanceData() = viewModelScope.launch {
@@ -46,24 +74,16 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
     }
 
     fun onAddClicked() = viewModelScope.launch {
-        eventChannel.send(DashboardEvent.NavigateToAddTransaction)
+        eventChannel.send(DashboardUiEvent.NavigateToAddTransaction)
     }
 
     fun openFilters() = viewModelScope.launch {
-        eventChannel.send(DashboardEvent.OpenFilters(activeFilters.value))
+        eventChannel.send(DashboardUiEvent.OpenFilters(activeFilters.value))
     }
-}
 
-sealed class DashboardEvent {
-    object NavigateToAddTransaction : DashboardEvent()
-    data class OpenFilters(val filters: FiltersDto) : DashboardEvent()
-}
+    private fun updateCurrentUiStateWith(uiStateProvider: (DashboardUiModel) -> DashboardUiState) {
+        _stateFlow.value = uiStateProvider.invoke(requireUiState().uiModel)
+    }
 
-data class FieldError(val message: String, val field: FieldType)
-enum class PeriodMode { WHOLE_MONTH, CUSTOM_RANGE }
-enum class ShowTransactions { SHOW_EXPENSES, SHOW_INCOMES, SHOW_BOTH }
-enum class SortBy(val sortName: String) {
-    SORT_BY_DATE("Date"),
-    SORT_BY_CATEGORY("CategoryDto"),
-    SORT_BY_AMOUNT("Amount")
+    private fun requireUiState(): DashboardUiState = stateFlow.value
 }

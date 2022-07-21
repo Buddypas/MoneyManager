@@ -14,10 +14,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
+import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapter
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiEvent
+import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
+import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
-import com.inFlow.moneyManager.vo.FiltersDto
+import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -107,12 +111,12 @@ class DashboardFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.eventFlow.collectLatest { event ->
                     when (event) {
-                        DashboardEvent.NavigateToAddTransaction -> {
+                        DashboardUiEvent.NavigateToAddTransaction -> {
                             val action =
                                 DashboardFragmentDirections.actionDashboardToAddTransaction()
                             findNavController().navigate(action)
                         }
-                        is DashboardEvent.OpenFilters -> {
+                        is DashboardUiEvent.OpenFilters -> {
                             val action =
                                 DashboardFragmentDirections.actionDashboardToFilters(event.filters)
                             navigateSafely(action)
@@ -123,7 +127,7 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    private fun formatFilters(data: FiltersDto?) = data?.let {
+    private fun formatFilters(data: Filters?) = data?.let {
         var content = "Showing "
         val argType = when (data.show) {
             ShowTransactions.SHOW_EXPENSES -> "all expenses"
@@ -156,7 +160,7 @@ class DashboardFragment : BaseFragment() {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
                 navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
-            ) navBackStackEntry.savedStateHandle.get<FiltersDto>(KEY_FILTERS)?.let {
+            ) navBackStackEntry.savedStateHandle.get<Filters>(KEY_FILTERS)?.let {
                 viewModel.activeFilters.value = it
             }
         }

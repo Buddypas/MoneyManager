@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.presentation.dashboard
+package com.inFlow.moneyManager.presentation.dashboard.adapter
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.databinding.ItemTransactionBinding
 import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.databinding.ItemTransactionBinding
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
+// TODO: Improve syntax
 class TransactionsAdapter :
     ListAdapter<TransactionDto, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 

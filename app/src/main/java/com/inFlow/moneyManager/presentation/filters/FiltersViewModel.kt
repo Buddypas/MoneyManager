@@ -7,7 +7,8 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.shared.kotlin.toLocalDate
 import com.inFlow.moneyManager.presentation.dashboard.*
-import com.inFlow.moneyManager.vo.FiltersDto
+import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
+import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FiltersViewModel @Inject constructor() : ViewModel() {
-    lateinit var filters: FiltersDto
+    lateinit var filters: Filters
 
     var fromDateString = MutableStateFlow("")
     var toDateString = MutableStateFlow("")
@@ -39,8 +40,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
         (LocalDate.now().year - 2).toString()
     )
 
-    fun setInitialFilters(data: FiltersDto) {
-        val f = FiltersDto(
+    fun setInitialFilters(data: Filters) {
+        val f = Filters(
             data.period,
             data.show,
             if (data.period == PeriodMode.WHOLE_MONTH) data.yearMonth!! else null,
@@ -129,7 +130,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     fun onApplyClicked() = viewModelScope.launch {
         val error = validateFilters()
         if (error == null)
-            FiltersDto(
+            Filters(
                 period = filters.period,
                 show = filters.show,
                 yearMonth =
@@ -147,13 +148,13 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onClearClicked() = viewModelScope.launch {
-        filters = FiltersDto()
+        filters = Filters()
         filtersEventChannel.send(FiltersEvent.ClearFilters)
     }
 }
 
 sealed class FiltersEvent {
     object ClearFilters : FiltersEvent()
-    data class ApplyFilters(val filtersData: FiltersDto) : FiltersEvent()
+    data class ApplyFilters(val filtersData: Filters) : FiltersEvent()
     data class ShowFieldError(val fieldError: FieldError) : FiltersEvent()
 }

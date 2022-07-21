@@ -1,15 +1,12 @@
-package com.inFlow.moneyManager.vo
+package com.inFlow.moneyManager.presentation.dashboard.model
 
 import android.os.Parcelable
-import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
-import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
-import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.YearMonth
 
 @Parcelize
-data class FiltersDto(
+data class Filters(
     var period: PeriodMode = PeriodMode.WHOLE_MONTH,
     var show: ShowTransactions? = ShowTransactions.SHOW_BOTH,
     var yearMonth: YearMonth? = YearMonth.now(),

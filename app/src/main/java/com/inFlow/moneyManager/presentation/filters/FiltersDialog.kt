@@ -16,7 +16,7 @@ import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
 import com.inFlow.moneyManager.shared.kotlin.*
-import com.inFlow.moneyManager.presentation.dashboard.FieldError
+import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
 import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy

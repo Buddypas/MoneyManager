@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
+import com.inFlow.moneyManager.presentation.categories.adapter.CategoriesAdapter
 import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiState
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
