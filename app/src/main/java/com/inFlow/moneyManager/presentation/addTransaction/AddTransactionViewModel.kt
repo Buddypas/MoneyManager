@@ -3,6 +3,8 @@ package com.inFlow.moneyManager.presentation.addTransaction
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
+import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
+import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.inferCategoryType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.updateCategoryType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.updateWith
@@ -82,11 +84,9 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     // TODO: Remove !!
     fun onSaveClick(description: String?, amount: Double?) {
         requireUiState().uiModel.let { uiModel ->
-            uiModel.isTransactionValid(description, amount)?.let { errorResId ->
+            uiModel.isTransactionValid(description, amount)?.let { fieldError ->
                 updateCurrentUiStateWith {
-                    AddTransactionUiState.Error(
-                        uiModel.copy(categoryErrorResId = errorResId)
-                    )
+                    AddTransactionUiState.Error(fieldError.toErrorUiModel(it))
                 }
             } ?: saveTransaction(description!!, amount!!)
         }
@@ -96,10 +96,19 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     private fun AddTransactionUiModel.isTransactionValid(
         description: String?,
         amount: Double?
-    ): Int? = when {
-        selectedCategory == null -> R.string.error_category_not_selected
-        description.isNullOrBlank() -> R.string.error_empty_description
-        amount == null || amount <= 0.0 -> R.string.error_amount_must_be_positive
+    ): FieldError? = when {
+        selectedCategory == null -> FieldError(
+            FieldType.CATEGORY,
+            R.string.error_category_not_selected
+        )
+        description.isNullOrBlank() -> FieldError(
+            FieldType.DESCRIPTION,
+            R.string.error_empty_description
+        )
+        amount == null || amount <= 0.0 -> FieldError(
+            FieldType.AMOUNT,
+            R.string.error_amount_must_be_positive
+        )
         else -> null
     }
 
@@ -162,4 +171,11 @@ class AddTransactionViewModel @Inject constructor(private val repository: AppRep
     }
 
     private fun requireUiState(): AddTransactionUiState = stateFlow.value
+
+    private fun FieldError.toErrorUiModel(currentUiModel: AddTransactionUiModel) =
+        when (fieldType) {
+            FieldType.CATEGORY -> currentUiModel.copy(categoryErrorResId = errorResId)
+            FieldType.DESCRIPTION -> currentUiModel.copy(descriptionErrorResId = errorResId)
+            FieldType.AMOUNT -> currentUiModel.copy(amountErrorResId = errorResId)
+        }
 }
