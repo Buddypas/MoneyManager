@@ -4,6 +4,7 @@ import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.db.entities.CategoryDto
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,7 +37,7 @@ class CategoryRepository @Inject constructor(private val db: MoneyManagerDatabas
         )
     }
 
-    fun getAllCategories() = db.categoriesDao().getAll()
+    fun getAllCategories(): Flow<List<CategoryDto>> = db.categoriesDao().getAll()
     suspend fun getAllExpenseCategories() = db.categoriesDao().getAllExpenseCategories()
     suspend fun getAllIncomeCategories() = db.categoriesDao().getAllIncomeCategories()
 

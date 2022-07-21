@@ -2,6 +2,7 @@ package com.inFlow.moneyManager.presentation.addCategory
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
+import com.inFlow.moneyManager.data.repository.CategoryRepository
 import com.inFlow.moneyManager.presentation.addCategory.extension.updateWith
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddCategoryViewModel @Inject constructor(private val repository: AppRepository) :
+class AddCategoryViewModel @Inject constructor(private val repository: CategoryRepository) :
     ViewModel() {
 
     private val _stateFlow: MutableStateFlow<AddCategoryUiState> =
