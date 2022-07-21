@@ -9,6 +9,7 @@ import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
 import com.inFlow.moneyManager.vo.FiltersDto
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 import javax.inject.Inject
@@ -16,6 +17,10 @@ import javax.inject.Singleton
 
 @Singleton
 class AppRepository @Inject constructor(private val db: AppDatabase) {
+
+    suspend fun loadCategories() {
+        val expenseAsync = GlobalScope.async {  }
+    }
 
     suspend fun populateDb() {
         db.categoriesDao().insertAll(
@@ -34,7 +39,7 @@ class AppRepository @Inject constructor(private val db: AppDatabase) {
         )
     }
 
-    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
+    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) = withContext(Dispatchers.IO) {
         db.transactionsDao().saveTransaction(amount, categoryId, desc)
     }
 

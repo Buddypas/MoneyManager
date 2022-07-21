@@ -87,13 +87,12 @@ class AddTransactionFragment : BaseFragment() {
                 categoryDropdown.text = SpannableStringBuilder(it.categoryName)
             }
             uiModel.activeCategoryList?.let { activeList ->
-                val categoryAdapter = ArrayAdapter(
+                ArrayAdapter(
                     requireContext(),
                     R.layout.item_month_dropdown,
                     R.id.dropdown_txt,
                     activeList.map { it.categoryName }
-                )
-                categoryDropdown.setAdapter(categoryAdapter)
+                ).apply { categoryDropdown.setAdapter(this) }
             }
         }
     }
