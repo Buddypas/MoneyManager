@@ -15,11 +15,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogFiltersBinding
-import com.inFlow.moneyManager.shared.kotlin.*
 import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
-import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
-import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
-import com.inFlow.moneyManager.presentation.dashboard.SortBy
+import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
+import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
+import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
+import com.inFlow.moneyManager.shared.kotlin.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -43,7 +43,8 @@ class FiltersDialog : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         isCancelable = false
@@ -177,8 +178,9 @@ class FiltersDialog : DialogFragment() {
 
     private fun displayError(fieldError: FieldError) {
         when (fieldError.field) {
-            FieldType.FIELD_DATE_FROM -> binding.fromLayout.error =
-                fieldError.message
+            FieldType.FIELD_DATE_FROM ->
+                binding.fromLayout.error =
+                    fieldError.message
             FieldType.FIELD_DATE_TO -> binding.toLayout.error = fieldError.message
             FieldType.FIELD_OTHER -> binding.root.showError(fieldError.message)
         }
@@ -201,8 +203,8 @@ class FiltersDialog : DialogFragment() {
         if (viewModel.filters.period == PeriodMode.WHOLE_MONTH) {
             if (periodRadioGroup.checkedRadioButtonId != R.id.whole_month_btn)
                 periodRadioGroup.check(R.id.whole_month_btn)
-            if(fromInput.text.toString().isNotEmpty()) fromInput.text = SpannableStringBuilder("")
-            if(toInput.text.toString().isNotEmpty()) toInput.text = SpannableStringBuilder("")
+            if (fromInput.text.toString().isNotEmpty()) fromInput.text = SpannableStringBuilder("")
+            if (toInput.text.toString().isNotEmpty()) toInput.text = SpannableStringBuilder("")
         } else {
             if (periodRadioGroup.checkedRadioButtonId != R.id.custom_range_btn)
                 periodRadioGroup.check(R.id.custom_range_btn)

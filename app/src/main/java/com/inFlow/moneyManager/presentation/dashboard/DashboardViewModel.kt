@@ -1,40 +1,35 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
-import com.inFlow.moneyManager.data.repository.TransactionRepository
-import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiEvent
-import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiModel
-import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiState
-import com.inFlow.moneyManager.presentation.dashboard.model.Filters
+import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
+import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+
+private const val QUERY_DEBOUNCE_DURATION = 2000L
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) :
+class DashboardViewModel @Inject constructor(private val repository: TransactionRepositoryImpl) :
     ViewModel() {
+
+    init {
+        updateTransactionList()
+    }
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
     private val stateFlow = _stateFlow.asStateFlow()
 
-    var activeFilters = MutableStateFlow(Filters())
-    val query = MutableStateFlow("")
-
     private val eventChannel = Channel<DashboardUiEvent>(Channel.BUFFERED)
-    val eventFlow = eventChannel.receiveAsFlow()
-
-    private val _balanceData = MutableStateFlow<Pair<Double, Double>?>(null)
-    val balanceData: StateFlow<Pair<Double, Double>?> by this::_balanceData
-
-    val transactionList = combine(activeFilters, query) { filters, query ->
-        Pair(filters, query)
-    }.flatMapLatest {
-        repository.getTransactions(it.first, it.second)
-    }
+    private val eventFlow = eventChannel.receiveAsFlow()
+    private var queryUpdateJob: Job? = null
 
     fun collectState(
         viewLifecycleOwner: LifecycleOwner,
@@ -58,29 +53,74 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         }
     }
 
-    fun fetchBalanceData() = viewModelScope.launch {
-        val expenseList = repository.getAllExpenses()
-        var expenses = 0.0
-        if (expenseList.isNotEmpty()) expenseList.forEach {
-            expenses -= it.transactionAmount
+    fun fetchBalanceData() {
+        viewModelScope.launch {
+            var expenses = 0.0
+            var incomes = 0.0
+            val expenseList = repository.getAllExpenses()
+            val incomeList = repository.getAllIncomes()
+            if (expenseList.isNotEmpty()) expenseList.forEach {
+                expenses -= it.transactionAmount
+            }
+            if (incomeList.isNotEmpty()) incomeList.forEach {
+                incomes += it.transactionAmount
+            }
+            updateCurrentUiStateWith {
+                requireUiState().updateWith(it.copy(income = incomes, expenses = expenses))
+            }
         }
+    }
 
-        val incomeList = repository.getAllIncomes()
-        var incomes = 0.0
-        if (incomeList.isNotEmpty()) incomeList.forEach {
-            incomes += it.transactionAmount
+    fun onAddClicked() {
+        viewModelScope.launch {
+            eventChannel.send(DashboardUiEvent.NavigateToAddTransaction)
         }
-        _balanceData.value = Pair(incomes, expenses)
     }
 
-    fun onAddClicked() = viewModelScope.launch {
-        eventChannel.send(DashboardUiEvent.NavigateToAddTransaction)
+    fun openFilters() {
+        viewModelScope.launch {
+            eventChannel.send(DashboardUiEvent.OpenFilters(requireUiState().uiModel.filters))
+        }
     }
 
-    fun openFilters() = viewModelScope.launch {
-        eventChannel.send(DashboardUiEvent.OpenFilters(activeFilters.value))
+    fun updateQuery(query: String) {
+        queryUpdateJob?.cancel()
+        queryUpdateJob = viewModelScope.launch {
+            delay(QUERY_DEBOUNCE_DURATION)
+            updateCurrentUiStateWith {
+                requireUiState().updateWith(it.copy(query = query))
+            }
+            updateTransactionList()
+        }
     }
 
+    fun updateFilters(filters: Filters) {
+        updateCurrentUiStateWith {
+            requireUiState().updateWith(it.copy(filters = filters))
+        }
+        updateTransactionList()
+    }
+
+    private fun updateTransactionList() {
+        viewModelScope.launch {
+            runCatching {
+                requireUiState().uiModel
+            }.map {
+                repository.getTransactions(it.filters, it.query)
+            }.onSuccess { transactionList ->
+                updateCurrentUiStateWith {
+                    requireUiState().updateWith(it.copy(transactionList = transactionList))
+                }
+                // TODO: Run these two in parallel in the init block
+                fetchBalanceData()
+            }.onFailure {
+                Timber.e("failed to update transactions: $it")
+                // TODO: Create error state
+            }
+        }
+    }
+
+    // TODO: Figure out way to not use requireUiState when updating
     private fun updateCurrentUiStateWith(uiStateProvider: (DashboardUiModel) -> DashboardUiState) {
         _stateFlow.value = uiStateProvider.invoke(requireUiState().uiModel)
     }

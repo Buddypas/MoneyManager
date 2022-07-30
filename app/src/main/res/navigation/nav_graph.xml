@@ -55,8 +55,6 @@
         tools:layout="@layout/dialog_filters" >
         <argument
             android:name="filters"
-            app:argType="com.inFlow.moneyManager.vo.FiltersDto" />
+            app:argType="com.inFlow.moneyManager.presentation.dashboard.model.Filters" />
     </dialog>
-
-
 </navigation>

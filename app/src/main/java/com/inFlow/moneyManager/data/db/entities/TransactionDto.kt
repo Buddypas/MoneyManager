@@ -1,7 +1,6 @@
 package com.inFlow.moneyManager.data.db.entities
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 // TODO: Research FTS4 - https://developer.android.com/training/data-storage/room/defining-data#fts
@@ -22,20 +21,20 @@ interface TransactionsDao {
 
     @androidx.room.Transaction
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC")
-    fun getAll(): Flow<List<TransactionDto>>
+    fun getAll(): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions " +
             "WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
             "ORDER BY transactionDate DESC"
     )
-    fun getAllIncomesSortedByDateDescending(startDate: Date, endDate: Date): Flow<List<TransactionDto>>
+    fun getAllIncomesSortedByDateDescending(startDate: Date, endDate: Date): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
             "ORDER BY transactionDate ASC"
     )
-    fun getAllIncomesSortedByDateAscending(startDate: Date, endDate: Date): Flow<List<TransactionDto>>
+    fun getAllIncomesSortedByDateAscending(startDate: Date, endDate: Date): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -44,7 +43,7 @@ interface TransactionsDao {
     fun getAllIncomesSortedByCategoryDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -53,7 +52,7 @@ interface TransactionsDao {
     fun getAllIncomesSortedByCategoryAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -62,7 +61,7 @@ interface TransactionsDao {
     fun getAllIncomesSortedByAmountDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount > 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -71,7 +70,7 @@ interface TransactionsDao {
     fun getAllIncomesSortedByAmountAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions " +
@@ -81,13 +80,13 @@ interface TransactionsDao {
     fun getAllExpensesSortedByDateDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount < 0 AND transactionDate BETWEEN :startDate AND :endDate " +
             "ORDER BY transactionDate ASC"
     )
-    fun getAllExpensesSortedByDateAscending(startDate: Date, endDate: Date): Flow<List<TransactionDto>>
+    fun getAllExpensesSortedByDateAscending(startDate: Date, endDate: Date): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount < 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -96,7 +95,7 @@ interface TransactionsDao {
     fun getAllExpensesSortedByCategoryDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount < 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -105,7 +104,7 @@ interface TransactionsDao {
     fun getAllExpensesSortedByCategoryAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount < 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -114,7 +113,7 @@ interface TransactionsDao {
     fun getAllExpensesSortedByAmountDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionAmount < 0 AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -123,7 +122,7 @@ interface TransactionsDao {
     fun getAllExpensesSortedByAmountAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions " +
@@ -133,7 +132,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByDateDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate " +
@@ -142,7 +141,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByDateAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate " +
@@ -151,7 +150,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByCategoryDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate " +
@@ -160,7 +159,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByCategoryAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate " +
@@ -169,7 +168,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByAmountDescending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDate BETWEEN :startDate AND :endDate " +
@@ -178,7 +177,7 @@ interface TransactionsDao {
     fun getAllTransactionsSortedByAmountAscending(
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query(
         "SELECT * FROM transactions WHERE transactionDescription LIKE '%' || :query || '%' AND transactionDate BETWEEN :startDate AND :endDate " +
@@ -188,7 +187,7 @@ interface TransactionsDao {
         query: String,
         startDate: Date,
         endDate: Date
-    ): Flow<List<TransactionDto>>
+    ): List<TransactionDto>
 
     @Query("SELECT * FROM transactions WHERE transactionId=:id")
     fun getById(id: Int): TransactionDto

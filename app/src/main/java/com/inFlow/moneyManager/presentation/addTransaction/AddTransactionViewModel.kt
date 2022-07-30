@@ -3,8 +3,8 @@ package com.inFlow.moneyManager.presentation.addTransaction
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.data.db.entities.CategoryDto
-import com.inFlow.moneyManager.data.repository.CategoryRepository
-import com.inFlow.moneyManager.data.repository.TransactionRepository
+import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
+import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
@@ -26,7 +26,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AddTransactionViewModel @Inject constructor(private val transactionRepository: TransactionRepository, private val categoryRepository: CategoryRepository) :
+class AddTransactionViewModel @Inject constructor(private val transactionRepository: TransactionRepositoryImpl, private val categoryRepository: CategoryRepositoryImpl) :
     ViewModel() {
 
     private val _stateFlow = MutableStateFlow<AddTransactionUiState>(AddTransactionUiState.Idle())

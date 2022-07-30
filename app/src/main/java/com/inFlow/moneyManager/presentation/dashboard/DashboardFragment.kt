@@ -9,26 +9,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapter
-import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiEvent
-import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
-import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
+import com.inFlow.moneyManager.presentation.dashboard.model.*
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
-import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+// TODO: Think about using a subgraph for dashboard and filters and share a view model
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 @AndroidEntryPoint
@@ -45,25 +39,25 @@ class DashboardFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View =
+        FragmentDashboardBinding
+            .inflate(inflater, container, false)
+            .also { _binding = it }
+            .root
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setNavObserver()
-        viewModel.fetchBalanceData()
 
         val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
 
-        binding.monthTxt.text = LocalDate.now().month.name
-
         searchView.onQueryTextChanged {
-            viewModel.query.value = it
+            viewModel.updateQuery(it)
         }
+
+        binding.monthTxt.text = LocalDate.now().month.name
 
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -82,49 +76,42 @@ class DashboardFragment : BaseFragment() {
             viewModel.onAddClicked()
         }
 
-        lifecycleScope.launch {
-            viewModel.activeFilters.collectLatest {
-                formatFilters(it)
+        viewModel.collectEvents(viewLifecycleOwner) { event ->
+            when (event) {
+                DashboardUiEvent.NavigateToAddTransaction ->
+                    findNavController().navigate(
+                        DashboardFragmentDirections.actionDashboardToAddTransaction()
+                    )
+                is DashboardUiEvent.OpenFilters ->
+                    navigateSafely(
+                        DashboardFragmentDirections.actionDashboardToFilters(event.filters)
+                    )
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.balanceData.collectLatest {
-                it?.let { data ->
-                    binding.apply {
-                        incomeTxt.text = data.first.toString()
-                        expenseTxt.text = data.second.toString()
-                        balanceTxt.text = (data.first - data.second).toString()
-                    }
-                }
+        viewModel.collectState(viewLifecycleOwner) { state ->
+            when (state) {
+                is DashboardUiState.Idle -> state.bindIdle()
+                is DashboardUiState.Loading -> Unit
             }
         }
+    }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.transactionList.collectLatest {
-                binding.noTransactionsTxt.isVisible = it.isNullOrEmpty()
-                transactionsAdapter.submitList(it)
-            }
-        }
+    // TODO: Refactor this to a binding extension, not state
+    private fun DashboardUiState.Idle.bindIdle() {
+        formatFilters(uiModel.filters)
+        binding.updateBalanceData(uiModel.income, uiModel.expenses)
+        binding.noTransactionsTxt.isVisible = uiModel.transactionList.isNullOrEmpty()
+        transactionsAdapter.submitList(uiModel.transactionList)
+    }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.eventFlow.collectLatest { event ->
-                    when (event) {
-                        DashboardUiEvent.NavigateToAddTransaction -> {
-                            val action =
-                                DashboardFragmentDirections.actionDashboardToAddTransaction()
-                            findNavController().navigate(action)
-                        }
-                        is DashboardUiEvent.OpenFilters -> {
-                            val action =
-                                DashboardFragmentDirections.actionDashboardToFilters(event.filters)
-                            navigateSafely(action)
-                        }
-                    }
-                }
-            }
-        }
+    private fun FragmentDashboardBinding.updateBalanceData(
+        income: Double,
+        expenses: Double
+    ) {
+        incomeTxt.text = income.toString()
+        expenseTxt.text = expenses.toString()
+        balanceTxt.text = (income - expenses).toString()
     }
 
     private fun formatFilters(data: Filters?) = data?.let {
@@ -161,7 +148,7 @@ class DashboardFragment : BaseFragment() {
             if (event == Lifecycle.Event.ON_RESUME &&
                 navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
             ) navBackStackEntry.savedStateHandle.get<Filters>(KEY_FILTERS)?.let {
-                viewModel.activeFilters.value = it
+                viewModel.updateFilters(it)
             }
         }
         navBackStackEntry.lifecycle.addObserver(observer)

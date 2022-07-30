@@ -2,38 +2,49 @@ package com.inFlow.moneyManager.data.repository
 
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.db.entities.TransactionDto
-import com.inFlow.moneyManager.presentation.dashboard.PeriodMode
-import com.inFlow.moneyManager.presentation.dashboard.ShowTransactions
-import com.inFlow.moneyManager.presentation.dashboard.SortBy
-import com.inFlow.moneyManager.shared.kotlin.toDate
+import com.inFlow.moneyManager.domain.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.model.Filters
-import kotlinx.coroutines.flow.Flow
+import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
+import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
+import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
+import com.inFlow.moneyManager.shared.kotlin.toDate
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TransactionRepository @Inject constructor(private val db: MoneyManagerDatabase) {
-    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
+class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManagerDatabase) :
+    TransactionRepository {
+    override suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
         db.transactionsDao().saveTransaction(amount, categoryId, desc)
 
-    fun getTransactions(
-        filters: Filters? = null,
-        query: String = ""
-    ): Flow<List<TransactionDto>> {
-        if (filters == null) return db.transactionsDao().getAll()
+    private fun getAllTransactions(): List<TransactionDto> = db.transactionsDao().getAll()
 
+    // TODO: Remove !!
+    private fun Filters.getStartAndEndDate(): Pair<Date, Date> {
         val startDate: Date
         val endDate: Date
-        if (filters.period == PeriodMode.WHOLE_MONTH) {
-            startDate = filters.yearMonth!!.atDay(1).toDate()
-            endDate = filters.yearMonth!!.atEndOfMonth().toDate()
+        if (period == PeriodMode.WHOLE_MONTH) {
+            startDate = yearMonth!!.atDay(1).toDate()
+            endDate = yearMonth!!.atEndOfMonth().toDate()
         } else {
-            startDate = filters.customRange.first!!.toDate()
-            endDate = filters.customRange.second!!.toDate()
+            startDate = customRange.first!!.toDate()
+            endDate = customRange.second!!.toDate()
         }
-        if (query.isNotBlank())
+        return Pair(startDate, endDate)
+    }
+
+    override suspend fun getTransactions(
+        filters: Filters?,
+        query: String
+    ): List<TransactionDto> {
+        filters ?: return getAllTransactions()
+
+        val (startDate, endDate) = filters.getStartAndEndDate()
+
+        query.takeIf { it.isNotBlank() }?.run {
             return db.transactionsDao().searchTransactions(query, startDate, endDate)
+        }
 
         when (filters.show) {
             ShowTransactions.SHOW_EXPENSES ->
@@ -102,7 +113,7 @@ class TransactionRepository @Inject constructor(private val db: MoneyManagerData
         }
     }
 
-    fun getAll() = db.transactionsDao().getAll()
-    suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
-    suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
+    override suspend fun getAll(): List<TransactionDto> = db.transactionsDao().getAll()
+    override suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
+    override suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
 }

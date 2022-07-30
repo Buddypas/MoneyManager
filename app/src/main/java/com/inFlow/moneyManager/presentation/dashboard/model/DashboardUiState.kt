@@ -8,3 +8,4 @@ sealed class DashboardUiState {
     data class Loading(override val uiModel: DashboardUiModel = DashboardUiModel()) :
         DashboardUiState()
 }
+
