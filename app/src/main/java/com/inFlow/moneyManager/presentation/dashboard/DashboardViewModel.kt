@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
+import com.inFlow.moneyManager.data.db.entities.TransactionDto
 import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import javax.inject.Inject
 private const val QUERY_DEBOUNCE_DURATION = 2000L
 
 // TODO: Prepopulate database with categories and transactions
+// TODO: Fetch entire balance data from db instead of incomes and expenses separately
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class DashboardViewModel @Inject constructor(private val repository: TransactionRepositoryImpl) :
@@ -20,13 +22,12 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
     private val stateFlow = _stateFlow.asStateFlow()
-
     private val eventChannel = Channel<DashboardUiEvent>(Channel.BUFFERED)
     private val eventFlow = eventChannel.receiveAsFlow()
     private var queryUpdateJob: Job? = null
 
     init {
-        updateTransactionList()
+        updateTransactionListAndBalance()
     }
 
     fun collectState(
@@ -47,37 +48,12 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         }
     }
 
-    // TODO: Move asyncs to repository
-    private fun fetchBalanceData() {
-        viewModelScope.launch {
-            runCatching {
-                async { repository.calculateExpenses() } to async { repository.calculateIncomes() }
-            }.mapCatching {
-                awaitAll(it.first, it.second)
-            }.mapCatching {
-                it[0] to it[1]
-            }.onSuccess { (expenses, incomes) ->
-                updateCurrentUiStateWith {
-                    DashboardUiState.Idle(
-                        it.copy(income = incomes, expenses = expenses)
-                    )
-                }
-            }.onFailure {
-                Timber.e("failed to fetch balance data: $it")
-            }
-        }
-    }
-
     fun onAddClicked() {
-        viewModelScope.launch {
-            eventChannel.send(DashboardUiEvent.NavigateToAddTransaction)
-        }
+        DashboardUiEvent.NavigateToAddTransaction.emitEvent()
     }
 
     fun openFilters() {
-        viewModelScope.launch {
-            eventChannel.send(DashboardUiEvent.OpenFilters(requireUiState().uiModel.filters))
-        }
+        DashboardUiEvent.OpenFilters(requireUiState().uiModel.filters).emitEvent()
     }
 
     fun updateQuery(query: String) {
@@ -87,7 +63,7 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
             updateCurrentUiStateWith {
                 requireUiState().updateWith(it.copy(query = query))
             }
-            updateTransactionList()
+            updateTransactionListAndBalance()
         }
     }
 
@@ -95,25 +71,56 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         updateCurrentUiStateWith {
             requireUiState().updateWith(it.copy(filters = filters))
         }
-        updateTransactionList()
+        updateTransactionListAndBalance()
     }
 
-    private fun updateTransactionList() {
+    private fun updateTransactionListAndBalance() {
         viewModelScope.launch {
+            runCatching {
+                fetchTransactionListAsync() to fetchBalanceDataAsync()
+            }.mapCatching {
+                it.first.await() to it.second.await()
+            }.onSuccess { (transactionList, balanceData) ->
+                updateCurrentUiStateWith {
+                    DashboardUiState.Idle(
+                        it.copy(
+                            income = balanceData.second,
+                            expenses = balanceData.first,
+                            transactionList = transactionList
+                        )
+                    )
+                }
+            }.onFailure {
+                Timber.e("updateTransactionListAndBalance: $it")
+                // TODO: Create error state
+            }
+        }
+    }
+
+    // TODO: Move asyncs to repository
+    private fun CoroutineScope.fetchBalanceDataAsync(): Deferred<Pair<Double, Double>> =
+        async {
+            runCatching {
+                async { repository.calculateExpenses() } to async { repository.calculateIncomes() }
+            }.mapCatching {
+                awaitAll(it.first, it.second)
+            }.map {
+                it[0] to it[1]
+            }.getOrThrow()
+        }
+
+    private fun CoroutineScope.fetchTransactionListAsync(): Deferred<List<TransactionDto>> =
+        async {
             runCatching {
                 requireUiState().uiModel
             }.mapCatching {
                 repository.getTransactions(it.filters, it.query)
-            }.onSuccess { transactionList ->
-                updateCurrentUiStateWith {
-                    requireUiState().updateWith(it.copy(transactionList = transactionList))
-                }
-                // TODO: Run these two in parallel in the init block
-                fetchBalanceData()
-            }.onFailure {
-                Timber.e("failed to update transactions: $it")
-                // TODO: Create error state
-            }
+            }.getOrThrow()
+        }
+
+    private fun DashboardUiEvent.emitEvent() {
+        viewModelScope.launch {
+            eventChannel.send(this@emitEvent)
         }
     }
 

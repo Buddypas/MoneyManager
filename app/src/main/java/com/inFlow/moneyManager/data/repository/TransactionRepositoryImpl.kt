@@ -121,7 +121,7 @@ class TransactionRepositoryImpl @Inject constructor(
 
     override suspend fun getAll(): List<TransactionDto> = db.transactionsDao().getAll()
     override suspend fun calculateExpenses(): Double = withContext(ioDispatcher) {
-        return@withContext db.transactionsDao().getExpenses().sumOf { -it.transactionAmount }
+        db.transactionsDao().getExpenses().sumOf { -it.transactionAmount }
     }
 
     override suspend fun calculateIncomes(): Double = withContext(ioDispatcher) {

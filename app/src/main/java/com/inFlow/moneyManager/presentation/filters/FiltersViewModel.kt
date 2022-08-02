@@ -87,11 +87,12 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSortOrderChecked(checkedId: Int, isChecked: Boolean) {
-        if (isChecked)
+        if (isChecked) {
             filters.isDescending = when (checkedId) {
                 R.id.desc_btn -> true
                 else -> false
             }
+        }
     }
 
     /**
@@ -127,7 +128,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
 
     fun onApplyClicked() = viewModelScope.launch {
         val error = validateFilters()
-        if (error == null)
+        if (error == null) {
             Filters(
                 period = filters.period,
                 show = filters.show,
@@ -142,7 +143,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             ).also {
                 filtersEventChannel.send(FiltersEvent.ApplyFilters(it))
             }
-        else filtersEventChannel.send(FiltersEvent.ShowFieldError(error))
+        } else filtersEventChannel.send(FiltersEvent.ShowFieldError(error))
     }
 
     fun onClearClicked() = viewModelScope.launch {

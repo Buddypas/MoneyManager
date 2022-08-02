@@ -13,4 +13,9 @@
     <string name="income">Income</string>
     <string name="balance">Balance</string>
     <string name="no_transactions">No transactions.</string>
+    <string name="descending">descending</string>
+    <string name="ascending">ascending</string>
+    <string name="all_expenses">all expenses</string>
+    <string name="all_incomes">all incomes</string>
+    <string name="all_transactions">all transactions</string>
 </resources>

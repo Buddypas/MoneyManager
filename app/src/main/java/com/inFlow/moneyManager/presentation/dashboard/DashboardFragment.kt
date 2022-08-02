@@ -35,18 +35,16 @@ class DashboardFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DashboardViewModel by viewModels()
-
     private var transactionsAdapter: TransactionsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        FragmentDashboardBinding
-            .inflate(inflater, container, false)
-            .also { _binding = it }
-            .root
+    ): View = FragmentDashboardBinding
+        .inflate(inflater, container, false)
+        .also { _binding = it }
+        .root
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,6 +53,11 @@ class DashboardFragment : BaseFragment() {
         binding.setUpUi()
         handleEvents()
         handleState()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun handleEvents() {
@@ -89,11 +92,14 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
+    // TODO: Extract
+    private fun SearchView.setQueryChangedListener(callback: (String) -> Unit) {
+        onQueryTextChanged { callback.invoke(it) }
+    }
+
     private fun FragmentDashboardBinding.setUpUi() {
-        (toolbar.menu.findItem(R.id.action_search).actionView as? SearchView)?.let { searchView ->
-            searchView.onQueryTextChanged {
-                viewModel.updateQuery(it)
-            }
+        (toolbar.menu.findItem(R.id.action_search).actionView as? SearchView)?.setQueryChangedListener {
+            viewModel.updateQuery(it)
         }
 
         textMonth.text = LocalDate.now().month.name
@@ -107,16 +113,14 @@ class DashboardFragment : BaseFragment() {
                 else -> false
             }
         }
-
         transactionsAdapter = TransactionsAdapter()
         recyclerTransactions.adapter = transactionsAdapter
-
         buttonAdd.setOnClickListener { viewModel.onAddClicked() }
     }
 
     // TODO: Refactor this to a binding extension, not state
     private fun DashboardUiState.Idle.bindIdle() {
-        formatFilters(uiModel.filters)
+        binding.textFilters.text = uiModel.filters.toFiltersString()
         binding.updateBalanceData(uiModel.income, uiModel.expenses)
         binding.textNoTransactions.isVisible = uiModel.transactionList.isNullOrEmpty()
         transactionsAdapter?.submitList(uiModel.transactionList)
@@ -131,31 +135,27 @@ class DashboardFragment : BaseFragment() {
         textBalance.text = (income - expenses).toString()
     }
 
-    private fun formatFilters(data: Filters?) = data?.let {
-        var content = "Showing "
-        val argType = when (data.show) {
-            ShowTransactions.SHOW_EXPENSES -> "all expenses"
-            ShowTransactions.SHOW_INCOMES -> "all incomes"
-            else -> "all transactions"
-        }
-        content += "$argType "
+    // TODO: Remove !!
+    private fun Filters.toFiltersString(): String {
+        var content = getString(R.string.showing)
+        content += "${show.toArgumentTypeString()} "
         val segmentPeriod =
-            if (it.period == PeriodMode.WHOLE_MONTH) getString(
+            if (period == PeriodMode.WHOLE_MONTH && yearMonth != null) getString(
                 R.string.month_template,
-                it.yearMonth!!.month,
-                it.yearMonth!!.year
+                yearMonth!!.month,
+                yearMonth!!.year
             )
             else getString(
                 R.string.range_template,
-                it.customRange.first,
-                it.customRange.second
+                customRange.first,
+                customRange.second
             )
         content += "$segmentPeriod "
-        val argSort = it.sortBy.sortName
-        val argOrder = if (it.isDescending) "descending" else "ascending"
+        val argSort = sortBy.sortName
+        val argOrder = isDescending.toArgumentOrderString()
         val segmentSort = getString(R.string.sorted_by_template, argSort, argOrder)
         content += segmentSort
-        binding.textFilters.text = content
+        return content
     }
 
     private fun configureNavObserver() {
@@ -179,14 +179,18 @@ class DashboardFragment : BaseFragment() {
         viewLifecycleOwner.lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_DESTROY) {
-                    this.lifecycle.removeObserver(observer)
+                    lifecycle.removeObserver(observer)
                 }
             }
         )
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun ShowTransactions?.toArgumentTypeString() = when (this) {
+        ShowTransactions.SHOW_EXPENSES -> getString(R.string.all_expenses)
+        ShowTransactions.SHOW_INCOMES -> getString(R.string.all_incomes)
+        else -> getString(R.string.all_transactions)
     }
+
+    private fun Boolean.toArgumentOrderString() =
+        if (this) getString(R.string.descending) else getString(R.string.ascending)
 }
