@@ -10,4 +10,7 @@
     <string name="choose_a_category">Choose a category</string>
     <string name="error_empty_description">You must enter a description.</string>
     <string name="error_amount_must_be_positive">Amount must be larger than 0.</string>
+    <string name="income">Income</string>
+    <string name="balance">Balance</string>
+    <string name="no_transactions">No transactions.</string>
 </resources>

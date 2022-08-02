@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
@@ -30,10 +31,9 @@ class DashboardFragment : BaseFragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    @ExperimentalCoroutinesApi
     private val viewModel: DashboardViewModel by viewModels()
 
-    private lateinit var transactionsAdapter: TransactionsAdapter
+    private var transactionsAdapter: TransactionsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,33 +48,8 @@ class DashboardFragment : BaseFragment() {
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setNavObserver()
-
-        val searchItem = binding.toolbar.menu.findItem(R.id.action_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.onQueryTextChanged {
-            viewModel.updateQuery(it)
-        }
-
-        binding.monthTxt.text = LocalDate.now().month.name
-
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_filter -> {
-                    viewModel.openFilters()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        transactionsAdapter = TransactionsAdapter()
-        binding.transactionsRecycler.adapter = transactionsAdapter
-
-        binding.addBtn.setOnClickListener {
-            viewModel.onAddClicked()
-        }
+        configureNavObserver()
+        binding.setUpUi()
 
         viewModel.collectEvents(viewLifecycleOwner) { event ->
             when (event) {
@@ -97,21 +72,46 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
+    private fun FragmentDashboardBinding.setUpUi() {
+        (toolbar.menu.findItem(R.id.action_search).actionView as? SearchView)?.let { searchView ->
+            searchView.onQueryTextChanged {
+                viewModel.updateQuery(it)
+            }
+        }
+
+        textMonth.text = LocalDate.now().month.name
+
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_filter -> {
+                    viewModel.openFilters()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        transactionsAdapter = TransactionsAdapter()
+        recyclerTransactions.adapter = transactionsAdapter
+
+        buttonAdd.setOnClickListener { viewModel.onAddClicked() }
+    }
+
     // TODO: Refactor this to a binding extension, not state
     private fun DashboardUiState.Idle.bindIdle() {
         formatFilters(uiModel.filters)
         binding.updateBalanceData(uiModel.income, uiModel.expenses)
-        binding.noTransactionsTxt.isVisible = uiModel.transactionList.isNullOrEmpty()
-        transactionsAdapter.submitList(uiModel.transactionList)
+        binding.textNoTransactions.isVisible = uiModel.transactionList.isNullOrEmpty()
+        transactionsAdapter?.submitList(uiModel.transactionList)
     }
 
     private fun FragmentDashboardBinding.updateBalanceData(
         income: Double,
         expenses: Double
     ) {
-        incomeTxt.text = income.toString()
-        expenseTxt.text = expenses.toString()
-        balanceTxt.text = (income - expenses).toString()
+        textIncome.text = income.toString()
+        textExpense.text = expenses.toString()
+        textBalance.text = (income - expenses).toString()
     }
 
     private fun formatFilters(data: Filters?) = data?.let {
@@ -138,24 +138,31 @@ class DashboardFragment : BaseFragment() {
         val argOrder = if (it.isDescending) "descending" else "ascending"
         val segmentSort = getString(R.string.sorted_by_template, argSort, argOrder)
         content += segmentSort
-        binding.filtersTxt.text = content
+        binding.textFilters.text = content
     }
 
-    private fun setNavObserver() {
-        val navController = findNavController()
-        val navBackStackEntry = navController.getBackStackEntry(R.id.dashboardFragment)
-        val observer = LifecycleEventObserver { _, event ->
+    private fun configureNavObserver() {
+        findNavController().getBackStackEntry(R.id.dashboardFragment).apply {
+            val observer = createFilterObserver()
+            lifecycle.addObserver(observer)
+            setRemovalObserver(observer)
+        }
+    }
+
+    private fun NavBackStackEntry.createFilterObserver(): LifecycleEventObserver =
+        LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
-                navBackStackEntry.savedStateHandle.contains(KEY_FILTERS)
-            ) navBackStackEntry.savedStateHandle.get<Filters>(KEY_FILTERS)?.let {
+                savedStateHandle.contains(KEY_FILTERS)
+            ) savedStateHandle.get<Filters>(KEY_FILTERS)?.let {
                 viewModel.updateFilters(it)
             }
         }
-        navBackStackEntry.lifecycle.addObserver(observer)
+
+    private fun NavBackStackEntry.setRemovalObserver(observer: LifecycleEventObserver) {
         viewLifecycleOwner.lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_DESTROY)
-                    navBackStackEntry.lifecycle.removeObserver(observer)
+                    this.lifecycle.removeObserver(observer)
             }
         )
     }

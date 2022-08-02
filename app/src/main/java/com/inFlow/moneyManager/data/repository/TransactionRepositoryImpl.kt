@@ -8,13 +8,18 @@ import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManagerDatabase) :
-    TransactionRepository {
+class TransactionRepositoryImpl @Inject constructor(
+    private val db: MoneyManagerDatabase,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : TransactionRepository {
     override suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
         db.transactionsDao().saveTransaction(amount, categoryId, desc)
 
@@ -37,18 +42,18 @@ class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManager
     override suspend fun getTransactions(
         filters: Filters?,
         query: String
-    ): List<TransactionDto> {
-        filters ?: return getAllTransactions()
+    ): List<TransactionDto> = withContext(ioDispatcher) {
+        filters ?: return@withContext getAllTransactions()
 
         val (startDate, endDate) = filters.getStartAndEndDate()
 
         query.takeIf { it.isNotBlank() }?.run {
-            return db.transactionsDao().searchTransactions(query, startDate, endDate)
+            return@withContext db.transactionsDao().searchTransactions(query, startDate, endDate)
         }
 
         when (filters.show) {
             ShowTransactions.SHOW_EXPENSES ->
-                return when (filters.sortBy) {
+                return@withContext when (filters.sortBy) {
                     SortBy.SORT_BY_DATE -> {
                         if (filters.isDescending) db.transactionsDao()
                             .getAllExpensesSortedByDateDescending(startDate, endDate)
@@ -69,7 +74,7 @@ class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManager
                     }
                 }
             ShowTransactions.SHOW_INCOMES ->
-                return when (filters.sortBy) {
+                return@withContext when (filters.sortBy) {
                     SortBy.SORT_BY_DATE -> {
                         if (filters.isDescending) db.transactionsDao()
                             .getAllIncomesSortedByDateDescending(startDate, endDate)
@@ -90,7 +95,7 @@ class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManager
                     }
                 }
             else ->
-                return when (filters.sortBy) {
+                return@withContext when (filters.sortBy) {
                     SortBy.SORT_BY_DATE -> {
                         if (filters.isDescending) db.transactionsDao()
                             .getAllTransactionsSortedByDateDescending(startDate, endDate)
@@ -114,6 +119,11 @@ class TransactionRepositoryImpl @Inject constructor(private val db: MoneyManager
     }
 
     override suspend fun getAll(): List<TransactionDto> = db.transactionsDao().getAll()
-    override suspend fun getAllExpenses() = db.transactionsDao().getExpenses()
-    override suspend fun getAllIncomes() = db.transactionsDao().getIncomes()
+    override suspend fun getAllExpenses() = withContext(ioDispatcher) {
+        db.transactionsDao().getExpenses()
+    }
+
+    override suspend fun getAllIncomes() = withContext(ioDispatcher) {
+        db.transactionsDao().getIncomes()
+    }
 }

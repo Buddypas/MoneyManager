@@ -7,5 +7,5 @@ data class DashboardUiModel(
     val transactionList: List<TransactionDto>? = null,
     val filters: Filters = Filters(),
     val income: Double = 0.0,
-    val expenses: Double = 0.0,
+    val expenses: Double = 0.0
 )

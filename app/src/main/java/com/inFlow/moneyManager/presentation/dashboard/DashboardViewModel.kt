@@ -15,14 +15,11 @@ import javax.inject.Inject
 
 private const val QUERY_DEBOUNCE_DURATION = 2000L
 
+// TODO: Pass coroutine scope instead of viewLifecycleOwner
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class DashboardViewModel @Inject constructor(private val repository: TransactionRepositoryImpl) :
     ViewModel() {
-
-    init {
-        updateTransactionList()
-    }
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
     private val stateFlow = _stateFlow.asStateFlow()
@@ -30,6 +27,10 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
     private val eventChannel = Channel<DashboardUiEvent>(Channel.BUFFERED)
     private val eventFlow = eventChannel.receiveAsFlow()
     private var queryUpdateJob: Job? = null
+
+    init {
+        updateTransactionList()
+    }
 
     fun collectState(
         viewLifecycleOwner: LifecycleOwner,
@@ -53,7 +54,7 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         }
     }
 
-    fun fetchBalanceData() {
+    private fun fetchBalanceData() {
         viewModelScope.launch {
             var expenses = 0.0
             var incomes = 0.0
@@ -66,7 +67,9 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
                 incomes += it.transactionAmount
             }
             updateCurrentUiStateWith {
-                requireUiState().updateWith(it.copy(income = incomes, expenses = expenses))
+                DashboardUiState.Idle(
+                    it.copy(income = incomes, expenses = expenses)
+                )
             }
         }
     }
@@ -105,7 +108,7 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         viewModelScope.launch {
             runCatching {
                 requireUiState().uiModel
-            }.map {
+            }.mapCatching {
                 repository.getTransactions(it.filters, it.query)
             }.onSuccess { transactionList ->
                 updateCurrentUiStateWith {
