@@ -9,6 +9,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.R
@@ -21,6 +23,7 @@ import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 // TODO: Think about using a subgraph for dashboard and filters and share a view model
@@ -50,24 +53,38 @@ class DashboardFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         configureNavObserver()
         binding.setUpUi()
+        handleEvents()
+        handleState()
+    }
 
-        viewModel.collectEvents(viewLifecycleOwner) { event ->
-            when (event) {
-                DashboardUiEvent.NavigateToAddTransaction ->
-                    findNavController().navigate(
-                        DashboardFragmentDirections.actionDashboardToAddTransaction()
-                    )
-                is DashboardUiEvent.OpenFilters ->
-                    navigateSafely(
-                        DashboardFragmentDirections.actionDashboardToFilters(event.filters)
-                    )
+    private fun handleEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectEvents(this) { event ->
+                    when (event) {
+                        DashboardUiEvent.NavigateToAddTransaction ->
+                            findNavController().navigate(
+                                DashboardFragmentDirections.actionDashboardToAddTransaction()
+                            )
+                        is DashboardUiEvent.OpenFilters ->
+                            navigateSafely(
+                                DashboardFragmentDirections.actionDashboardToFilters(event.filters)
+                            )
+                    }
+                }
             }
         }
+    }
 
-        viewModel.collectState(viewLifecycleOwner) { state ->
-            when (state) {
-                is DashboardUiState.Idle -> state.bindIdle()
-                is DashboardUiState.Loading -> Unit
+    private fun handleState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectState(this) { state ->
+                    when (state) {
+                        is DashboardUiState.Idle -> state.bindIdle()
+                        is DashboardUiState.Loading -> Unit
+                    }
+                }
             }
         }
     }
@@ -131,7 +148,7 @@ class DashboardFragment : BaseFragment() {
             else getString(
                 R.string.range_template,
                 it.customRange.first,
-                it.customRange.second,
+                it.customRange.second
             )
         content += "$segmentPeriod "
         val argSort = it.sortBy.sortName
@@ -161,8 +178,9 @@ class DashboardFragment : BaseFragment() {
     private fun NavBackStackEntry.setRemovalObserver(observer: LifecycleEventObserver) {
         viewLifecycleOwner.lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_DESTROY)
+                if (event == Lifecycle.Event.ON_DESTROY) {
                     this.lifecycle.removeObserver(observer)
+                }
             }
         )
     }

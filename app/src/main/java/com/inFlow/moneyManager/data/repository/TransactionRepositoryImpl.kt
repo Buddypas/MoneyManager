@@ -10,6 +10,7 @@ import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -119,11 +120,11 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAll(): List<TransactionDto> = db.transactionsDao().getAll()
-    override suspend fun getAllExpenses() = withContext(ioDispatcher) {
-        db.transactionsDao().getExpenses()
+    override suspend fun calculateExpenses(): Double = withContext(ioDispatcher) {
+        return@withContext db.transactionsDao().getExpenses().sumOf { -it.transactionAmount }
     }
 
-    override suspend fun getAllIncomes() = withContext(ioDispatcher) {
-        db.transactionsDao().getIncomes()
+    override suspend fun calculateIncomes(): Double = withContext(ioDispatcher) {
+        db.transactionsDao().getIncomes().sumOf { it.transactionAmount }
     }
 }

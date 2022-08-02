@@ -7,6 +7,6 @@ interface TransactionRepository {
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String)
     suspend fun getTransactions(filters: Filters? = null, query: String = ""): List<TransactionDto>
     suspend fun getAll(): List<TransactionDto>
-    suspend fun getAllExpenses(): List<TransactionDto>
-    suspend fun getAllIncomes(): List<TransactionDto>
+    suspend fun calculateExpenses(): Double
+    suspend fun calculateIncomes(): Double
 }

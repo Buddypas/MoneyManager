@@ -4,18 +4,15 @@ import androidx.lifecycle.*
 import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 private const val QUERY_DEBOUNCE_DURATION = 2000L
 
-// TODO: Pass coroutine scope instead of viewLifecycleOwner
+// TODO: Prepopulate database with categories and transactions
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class DashboardViewModel @Inject constructor(private val repository: TransactionRepositoryImpl) :
@@ -33,43 +30,40 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
     }
 
     fun collectState(
-        viewLifecycleOwner: LifecycleOwner,
+        coroutineScope: CoroutineScope,
         callback: (DashboardUiState) -> Unit
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stateFlow.collectLatest { callback.invoke(it) }
-            }
+        coroutineScope.launch {
+            stateFlow.collectLatest { callback.invoke(it) }
         }
     }
 
     fun collectEvents(
-        viewLifecycleOwner: LifecycleOwner,
+        coroutineScope: CoroutineScope,
         callback: (DashboardUiEvent) -> Unit
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                eventFlow.collectLatest { callback.invoke(it) }
-            }
+        coroutineScope.launch {
+            eventFlow.collectLatest { callback.invoke(it) }
         }
     }
 
+    // TODO: Move asyncs to repository
     private fun fetchBalanceData() {
         viewModelScope.launch {
-            var expenses = 0.0
-            var incomes = 0.0
-            val expenseList = repository.getAllExpenses()
-            val incomeList = repository.getAllIncomes()
-            if (expenseList.isNotEmpty()) expenseList.forEach {
-                expenses -= it.transactionAmount
-            }
-            if (incomeList.isNotEmpty()) incomeList.forEach {
-                incomes += it.transactionAmount
-            }
-            updateCurrentUiStateWith {
-                DashboardUiState.Idle(
-                    it.copy(income = incomes, expenses = expenses)
-                )
+            runCatching {
+                async { repository.calculateExpenses() } to async { repository.calculateIncomes() }
+            }.mapCatching {
+                awaitAll(it.first, it.second)
+            }.mapCatching {
+                it[0] to it[1]
+            }.onSuccess { (expenses, incomes) ->
+                updateCurrentUiStateWith {
+                    DashboardUiState.Idle(
+                        it.copy(income = incomes, expenses = expenses)
+                    )
+                }
+            }.onFailure {
+                Timber.e("failed to fetch balance data: $it")
             }
         }
     }
