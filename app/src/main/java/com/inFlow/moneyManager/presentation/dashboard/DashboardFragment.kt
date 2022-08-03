@@ -13,13 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapter
+import com.inFlow.moneyManager.presentation.dashboard.extensions.roundToDecimals
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
-import com.inFlow.moneyManager.shared.kotlin.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 // TODO: Think about using a subgraph for dashboard and filters and share a view model
+// TODO: Add progress bar
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 @AndroidEntryPoint
@@ -53,6 +55,11 @@ class DashboardFragment : BaseFragment() {
         binding.setUpUi()
         handleEvents()
         handleState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateTransactionListAndBalance()
     }
 
     override fun onDestroyView() {
@@ -84,7 +91,7 @@ class DashboardFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectState(this) { state ->
                     when (state) {
-                        is DashboardUiState.Idle -> state.bindIdle()
+                        is DashboardUiState.Idle -> binding.bindIdle(state)
                         is DashboardUiState.Loading -> Unit
                     }
                 }
@@ -92,47 +99,42 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    // TODO: Extract
-    private fun SearchView.setQueryChangedListener(callback: (String) -> Unit) {
-        onQueryTextChanged { callback.invoke(it) }
-    }
-
     private fun FragmentDashboardBinding.setUpUi() {
-        (toolbar.menu.findItem(R.id.action_search).actionView as? SearchView)?.setQueryChangedListener {
-            viewModel.updateQuery(it)
-        }
-
         textMonth.text = LocalDate.now().month.name
-
-        toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_filter -> {
-                    viewModel.openFilters()
-                    true
-                }
-                else -> false
-            }
+        toolbar.setUpToolbar()
+        transactionsAdapter = TransactionsAdapter().also {
+            recyclerTransactions.adapter = it
         }
-        transactionsAdapter = TransactionsAdapter()
-        recyclerTransactions.adapter = transactionsAdapter
         buttonAdd.setOnClickListener { viewModel.onAddClicked() }
     }
 
+    private fun MaterialToolbar.setUpToolbar() {
+        (menu.findItem(R.id.action_search).actionView as? SearchView)?.setQueryChangedListener {
+            viewModel.updateQuery(it)
+        }
+        setOnMenuItemClickListener { item ->
+            item.takeIf { it.itemId == R.id.action_filter }?.run {
+                viewModel.openFilters()
+                true
+            } ?: false
+        }
+    }
+
     // TODO: Refactor this to a binding extension, not state
-    private fun DashboardUiState.Idle.bindIdle() {
-        binding.textFilters.text = uiModel.filters.toFiltersString()
-        binding.updateBalanceData(uiModel.income, uiModel.expenses)
-        binding.textNoTransactions.isVisible = uiModel.transactionList.isNullOrEmpty()
-        transactionsAdapter?.submitList(uiModel.transactionList)
+    private fun FragmentDashboardBinding.bindIdle(state: DashboardUiState.Idle) {
+        textFilters.text = state.uiModel.filters.toFiltersString()
+        updateBalanceData(state.uiModel.income, state.uiModel.expenses)
+        textNoTransactions.isVisible = state.uiModel.transactionList.isNullOrEmpty()
+        transactionsAdapter?.submitList(state.uiModel.transactionList)
     }
 
     private fun FragmentDashboardBinding.updateBalanceData(
         income: Double,
         expenses: Double
     ) {
-        textIncome.text = income.toString()
-        textExpense.text = expenses.toString()
-        textBalance.text = (income - expenses).toString()
+        textIncome.text = income.roundToDecimals().toString()
+        textExpense.text = expenses.roundToDecimals().toString()
+        textBalance.text = (income - expenses).roundToDecimals().toString()
     }
 
     // TODO: Remove !!

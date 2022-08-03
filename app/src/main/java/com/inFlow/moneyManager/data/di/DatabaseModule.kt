@@ -10,29 +10,41 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object DatabaseModule {
-    // TODO: Try with separate module
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext appContext: Context): MoneyManagerDatabase {
-        return Room
+    fun provideDatabase(
+        @ApplicationContext appContext: Context,
+        callback: MoneyManagerDatabase.RoomCallback
+    ): MoneyManagerDatabase =
+        Room
             .databaseBuilder(appContext, MoneyManagerDatabase::class.java, "app.db")
+            .addCallback(callback)
             .fallbackToDestructiveMigration()
             .build()
-    }
 
     @Provides
-    fun provideTransactionsDao(database: MoneyManagerDatabase): TransactionsDao {
-        return database.transactionsDao()
-    }
+    fun provideTransactionsDao(database: MoneyManagerDatabase): TransactionsDao =
+        database.transactionsDao()
 
     @Provides
-    fun provideCategoriesDao(database: MoneyManagerDatabase): CategoriesDao {
-        return database.categoriesDao()
-    }
+    fun provideCategoriesDao(database: MoneyManagerDatabase): CategoriesDao =
+        database.categoriesDao()
+
+    @ApplicationScope
+    @Provides
+    @Singleton
+    fun provideApplicationScope() = CoroutineScope(SupervisorJob())
 }
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class ApplicationScope

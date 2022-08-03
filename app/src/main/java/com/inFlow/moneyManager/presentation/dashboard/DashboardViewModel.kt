@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val QUERY_DEBOUNCE_DURATION = 2000L
+private const val QUERY_DEBOUNCE_DURATION = 1500L
 
 // TODO: Prepopulate database with categories and transactions
 // TODO: Fetch entire balance data from db instead of incomes and expenses separately
@@ -26,9 +26,9 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
     private val eventFlow = eventChannel.receiveAsFlow()
     private var queryUpdateJob: Job? = null
 
-    init {
-        updateTransactionListAndBalance()
-    }
+//    init {
+//        updateTransactionListAndBalance()
+//    }
 
     fun collectState(
         coroutineScope: CoroutineScope,
@@ -74,7 +74,7 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         updateTransactionListAndBalance()
     }
 
-    private fun updateTransactionListAndBalance() {
+    fun updateTransactionListAndBalance() {
         viewModelScope.launch {
             runCatching {
                 fetchTransactionListAsync() to fetchBalanceDataAsync()
