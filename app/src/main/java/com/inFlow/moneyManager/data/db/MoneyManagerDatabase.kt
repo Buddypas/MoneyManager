@@ -4,10 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.inFlow.moneyManager.data.db.entities.CategoriesDao
-import com.inFlow.moneyManager.data.db.entities.CategoryDto
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
-import com.inFlow.moneyManager.data.db.entities.TransactionsDao
+import com.inFlow.moneyManager.data.db.dao.CategoriesDao
+import com.inFlow.moneyManager.data.db.entity.CategoryDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
+import com.inFlow.moneyManager.data.db.dao.TransactionsDao
 import com.inFlow.moneyManager.data.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

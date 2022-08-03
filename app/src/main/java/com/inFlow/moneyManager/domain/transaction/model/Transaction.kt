@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.domain.transaction
+package com.inFlow.moneyManager.domain.transaction.model
 
 import java.util.*
 

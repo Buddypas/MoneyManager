@@ -1,6 +1,6 @@
-package com.inFlow.moneyManager.domain.repository
+package com.inFlow.moneyManager.domain.transaction.repository
 
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 
 interface TransactionRepository {

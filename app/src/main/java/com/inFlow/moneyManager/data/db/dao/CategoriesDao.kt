@@ -1,28 +1,13 @@
-package com.inFlow.moneyManager.data.db.entities
+package com.inFlow.moneyManager.data.db.dao
 
 import androidx.room.*
+import com.inFlow.moneyManager.data.db.entity.CategoryDto
 import kotlinx.coroutines.flow.Flow
-
-@Entity(
-    tableName = "categories",
-    indices = [
-        Index(
-            value = ["categoryName"],
-            unique = true
-        )
-    ]
-)
-data class CategoryDto(
-    @PrimaryKey(autoGenerate = true) val categoryId: Int = 0,
-    val categoryName: String,
-    val categoryType: String, // will be either income or expense
-    val categoryIconUrl: String? = null
-)
 
 @Dao
 interface CategoriesDao {
     @Query("SELECT * FROM categories")
-    fun getAll(): Flow<List<CategoryDto>>
+    suspend fun getAll(): List<CategoryDto>
 
     @Query("SELECT * FROM categories WHERE categoryType='expense'")
     suspend fun getAllExpenseCategories(): List<CategoryDto>

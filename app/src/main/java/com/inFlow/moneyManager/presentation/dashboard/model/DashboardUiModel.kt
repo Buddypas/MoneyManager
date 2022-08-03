@@ -1,6 +1,6 @@
 package com.inFlow.moneyManager.presentation.dashboard.model
 
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 
 data class DashboardUiModel(
     val query: String = "",

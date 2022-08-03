@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.db.entities.CategoryDto
+import com.inFlow.moneyManager.data.db.entity.CategoryDto
 import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
 import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories

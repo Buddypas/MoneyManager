@@ -3,16 +3,20 @@ package com.inFlow.moneyManager.presentation.categories.adapter
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.db.entities.CategoryDto
 import com.inFlow.moneyManager.databinding.ItemCategoryBinding
+import com.inFlow.moneyManager.domain.category.model.Category
+import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
+import com.inFlow.moneyManager.presentation.shared.extension.setExpense
+import com.inFlow.moneyManager.presentation.shared.extension.setIncome
 import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 class CategoriesAdapter :
-    ListAdapter<CategoryDto, CategoriesAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
+    ListAdapter<Category, CategoriesAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -24,29 +28,23 @@ class CategoriesAdapter :
         holder.bind(getItem(position))
     }
 
-    class CategoryViewHolder(val binding: ItemCategoryBinding) :
+    class CategoryViewHolder(private val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: CategoryDto) {
-            binding.apply {
-                nameTxt.text = item.categoryName
-                if (item.categoryType == "income") typeImg.apply {
-                    setImageResource(R.drawable.arrow_down_right)
-                    imageTintList =
-                        ColorStateList.valueOf(context.getContextColor(R.color.green))
-                } else typeImg.apply {
-                    setImageResource(R.drawable.arrow_up_left)
-                    imageTintList =
-                        ColorStateList.valueOf(context.getContextColor(R.color.red))
+        fun bind(item: Category) {
+            with(binding) {
+                nameTxt.text = item.name
+                typeImg.apply {
+                    takeIf { item.type == CategoryType.INCOME }?.setIncome() ?: setExpense()
                 }
             }
         }
     }
 }
 
-class CategoryDiffCallback : DiffUtil.ItemCallback<CategoryDto>() {
-    override fun areItemsTheSame(oldItem: CategoryDto, newItem: CategoryDto) =
-        oldItem.categoryId == newItem.categoryId
+class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
+    override fun areItemsTheSame(oldItem: Category, newItem: Category) =
+        oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: CategoryDto, newItem: CategoryDto) =
+    override fun areContentsTheSame(oldItem: Category, newItem: Category) =
         oldItem == newItem
 }

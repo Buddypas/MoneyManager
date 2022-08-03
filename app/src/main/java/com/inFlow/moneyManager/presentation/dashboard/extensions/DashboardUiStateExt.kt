@@ -1,4 +1,7 @@
-package com.inFlow.moneyManager.presentation.dashboard.model
+package com.inFlow.moneyManager.presentation.dashboard.extensions
+
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiModel
+import com.inFlow.moneyManager.presentation.dashboard.model.DashboardUiState
 
 fun DashboardUiState.updateWith(updatedModel: DashboardUiModel) =
     when (this) {

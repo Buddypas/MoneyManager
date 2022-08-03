@@ -1,25 +1,12 @@
-package com.inFlow.moneyManager.data.db.entities
+package com.inFlow.moneyManager.data.db.dao
 
 import androidx.room.*
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import java.util.*
-
-// TODO: Research FTS4 - https://developer.android.com/training/data-storage/room/defining-data#fts
-@Entity(tableName = "transactions")
-data class TransactionDto(
-    @PrimaryKey(autoGenerate = true) val transactionId: Int = 0,
-    val transactionAmount: Double,
-    val transactionDate: Date,
-    val transactionDescription: String,
-    // category id
-    val transactionCategoryId: Int,
-    // balance after this transaction
-    val transactionBalanceAfter: Double
-)
 
 @Dao
 interface TransactionsDao {
-
-    @androidx.room.Transaction
+    @Transaction
     @Query("SELECT * FROM transactions ORDER BY transactionDate DESC")
     fun getAll(): List<TransactionDto>
 
@@ -228,7 +215,7 @@ interface TransactionsDao {
     @Query("SELECT * FROM transactions WHERE transactionAmount > 0")
     suspend fun getIncomes(): List<TransactionDto>
 
-    @androidx.room.Transaction
+    @Transaction
     suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
         val lastTransaction = getMostRecentTransaction()
         val previousBalance: Double = lastTransaction?.transactionBalanceAfter ?: 0.0

@@ -1,24 +1,27 @@
 package com.inFlow.moneyManager.data.repository
 
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
-import com.inFlow.moneyManager.data.db.entities.CategoryDto
-import com.inFlow.moneyManager.domain.repository.CategoryRepository
+import com.inFlow.moneyManager.data.db.entity.CategoryDto
+import com.inFlow.moneyManager.data.mapper.CategoryDtoToCategoryMapper
+import com.inFlow.moneyManager.domain.category.model.Category
+import com.inFlow.moneyManager.domain.category.repository.CategoryRepository
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CategoryRepositoryImpl @Inject constructor(private val db: MoneyManagerDatabase) :
-    CategoryRepository {
+class CategoryRepositoryImpl @Inject constructor(
+    private val db: MoneyManagerDatabase,
+    private val categoryDtoToCategoryMapper: CategoryDtoToCategoryMapper
+) : CategoryRepository {
 
     private suspend fun populateCategories() {
         db.categoriesDao().insertAll(
             CategoryDto(
                 categoryName = "Car",
-                categoryType = "expense",
+                categoryType = "expense"
             ),
             CategoryDto(
                 categoryName = "Health",
@@ -41,7 +44,13 @@ class CategoryRepositoryImpl @Inject constructor(private val db: MoneyManagerDat
             )
         }
 
-    override fun getAllCategories(): Flow<List<CategoryDto>> = db.categoriesDao().getAll()
+    override suspend fun getAllCategories(): List<Category> =
+        runCatching {
+            db.categoriesDao().getAll()
+        }.mapCatching {
+            categoryDtoToCategoryMapper.mapList(it)
+        }.getOrThrow()
+
     override suspend fun getAllExpenseCategories(): List<CategoryDto> =
         db.categoriesDao().getAllExpenseCategories()
 

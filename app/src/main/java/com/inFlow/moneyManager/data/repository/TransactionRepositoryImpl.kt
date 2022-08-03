@@ -1,8 +1,8 @@
 package com.inFlow.moneyManager.data.repository
 
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
-import com.inFlow.moneyManager.domain.repository.TransactionRepository
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
+import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
@@ -10,7 +10,6 @@ import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
 import com.inFlow.moneyManager.shared.kotlin.toDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject

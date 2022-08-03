@@ -7,12 +7,16 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
 import com.inFlow.moneyManager.presentation.categories.adapter.CategoriesAdapter
 import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiState
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 // TODO: Add pagination
 // TODO: Add keyboard closing to main activity
@@ -38,10 +42,14 @@ class CategoriesFragment : BaseFragment() {
 
         binding.setUpUi()
 
-        viewModel.collectState(viewLifecycleOwner) { state ->
-            when (state) {
-                is CategoriesUiState.Idle -> state.bindIdle()
-                is CategoriesUiState.Loading -> state.bindLoading()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectState(this) { state ->
+                    when (state) {
+                        is CategoriesUiState.Idle -> binding.bindIdle(state)
+                        is CategoriesUiState.Loading -> binding.bindLoading()
+                    }
+                }
             }
         }
     }
@@ -52,17 +60,15 @@ class CategoriesFragment : BaseFragment() {
         }
     }
 
-    private fun CategoriesUiState.Loading.bindLoading() {
-        binding.progressBar.isVisible = true
+    private fun FragmentCategoriesBinding.bindLoading() {
+        progressBar.isVisible = true
     }
 
-    private fun CategoriesUiState.Idle.bindIdle() {
-        with(binding) {
-            progressBar.isGone = true
-            CategoriesAdapter().also {
-                categoriesRecycler.adapter = it
-                it.submitList(this@bindIdle.uiModel.categoryList)
-            }
+    private fun FragmentCategoriesBinding.bindIdle(state: CategoriesUiState.Idle) {
+        progressBar.isGone = true
+        CategoriesAdapter().also {
+            categoriesRecycler.adapter = it
+            it.submitList(state.uiModel.categoryList)
         }
     }
 }

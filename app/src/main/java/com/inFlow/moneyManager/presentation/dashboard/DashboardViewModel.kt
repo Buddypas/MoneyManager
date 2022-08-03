@@ -1,8 +1,9 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
+import com.inFlow.moneyManager.presentation.dashboard.extensions.updateWith
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -13,7 +14,6 @@ import javax.inject.Inject
 
 private const val QUERY_DEBOUNCE_DURATION = 1500L
 
-// TODO: Prepopulate database with categories and transactions
 // TODO: Fetch entire balance data from db instead of incomes and expenses separately
 @ExperimentalCoroutinesApi
 @HiltViewModel
@@ -25,10 +25,6 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
     private val eventChannel = Channel<DashboardUiEvent>(Channel.BUFFERED)
     private val eventFlow = eventChannel.receiveAsFlow()
     private var queryUpdateJob: Job? = null
-
-//    init {
-//        updateTransactionListAndBalance()
-//    }
 
     fun collectState(
         coroutineScope: CoroutineScope,

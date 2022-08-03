@@ -1,18 +1,22 @@
 package com.inFlow.moneyManager.presentation.categories
 
 import androidx.lifecycle.*
-import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
+import com.inFlow.moneyManager.domain.category.usecase.GetCategoriesUseCase
 import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiModel
 import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoriesViewModel @Inject constructor(private val repository: CategoryRepositoryImpl) :
+class CategoriesViewModel @Inject constructor(
+    private val getCategoriesUseCase: GetCategoriesUseCase
+) :
     ViewModel() {
     private val _stateFlow = MutableStateFlow<CategoriesUiState>(CategoriesUiState.Loading())
     private val stateFlow = _stateFlow.asStateFlow()
@@ -25,22 +29,24 @@ class CategoriesViewModel @Inject constructor(private val repository: CategoryRe
     }
 
     fun collectState(
-        viewLifecycleOwner: LifecycleOwner,
+        coroutineScope: CoroutineScope,
         callback: (CategoriesUiState) -> Unit
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stateFlow.collectLatest { callback.invoke(it) }
-            }
+        coroutineScope.launch {
+            stateFlow.collectLatest { callback.invoke(it) }
         }
     }
 
     private fun fetchCategories() {
         viewModelScope.launch {
-            repository.getAllCategories().collectLatest { categoryList ->
+            runCatching {
+                getCategoriesUseCase.execute()
+            }.onSuccess { categoryList ->
                 updateCurrentUiStateWith {
                     CategoriesUiState.Idle(CategoriesUiModel(categoryList))
                 }
+            }.onFailure {
+                Timber.e("Failed to fetch categories: $it")
             }
         }
     }

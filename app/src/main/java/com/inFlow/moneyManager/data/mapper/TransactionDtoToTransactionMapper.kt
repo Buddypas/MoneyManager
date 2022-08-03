@@ -1,8 +1,8 @@
 package com.inFlow.moneyManager.data.mapper
 
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import com.inFlow.moneyManager.domain.SuspendingMapper
-import com.inFlow.moneyManager.domain.transaction.Transaction
+import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import kotlinx.coroutines.CoroutineDispatcher
 
 class TransactionDtoToTransactionMapper(

@@ -1,6 +1,6 @@
 package com.inFlow.moneyManager.presentation.addTransaction.model
 
-import com.inFlow.moneyManager.data.db.entities.CategoryDto
+import com.inFlow.moneyManager.data.db.entity.CategoryDto
 
 data class AddTransactionUiModel(
     val categoryType: CategoryType = CategoryType.EXPENSE,

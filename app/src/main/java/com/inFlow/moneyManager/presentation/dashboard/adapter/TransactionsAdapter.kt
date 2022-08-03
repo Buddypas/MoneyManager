@@ -1,15 +1,14 @@
 package com.inFlow.moneyManager.presentation.dashboard.adapter
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.db.entities.TransactionDto
+import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import com.inFlow.moneyManager.databinding.ItemTransactionBinding
-import com.inFlow.moneyManager.shared.kotlin.getContextColor
+import com.inFlow.moneyManager.presentation.shared.extension.setExpense
+import com.inFlow.moneyManager.presentation.shared.extension.setIncome
 
 // TODO: Improve syntax
 class TransactionsAdapter :
@@ -31,14 +30,8 @@ class TransactionsAdapter :
             binding.apply {
                 nameTxt.text = item.transactionDescription
                 amountTxt.text = item.transactionAmount.toString()
-                if (item.transactionAmount > 0) typeImg.apply {
-                    setImageResource(R.drawable.arrow_down_right)
-                    imageTintList =
-                        ColorStateList.valueOf(context.getContextColor(R.color.green))
-                } else typeImg.apply {
-                    setImageResource(R.drawable.arrow_up_left)
-                    imageTintList =
-                        ColorStateList.valueOf(context.getContextColor(R.color.red))
+                typeImg.apply {
+                    takeIf { item.transactionAmount > 0 }?.setIncome() ?: setExpense()
                 }
             }
         }

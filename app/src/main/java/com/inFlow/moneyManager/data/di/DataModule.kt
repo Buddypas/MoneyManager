@@ -3,8 +3,11 @@ package com.inFlow.moneyManager.data.di
 import android.content.Context
 import androidx.room.Room
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
-import com.inFlow.moneyManager.data.db.entities.CategoriesDao
-import com.inFlow.moneyManager.data.db.entities.TransactionsDao
+import com.inFlow.moneyManager.data.db.dao.CategoriesDao
+import com.inFlow.moneyManager.data.db.dao.TransactionsDao
+import com.inFlow.moneyManager.data.mapper.CategoryDtoToCategoryMapper
+import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
+import com.inFlow.moneyManager.domain.category.repository.CategoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +20,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DatabaseModule {
+object DataModule {
 
     @Provides
     @Singleton
@@ -38,6 +41,13 @@ object DatabaseModule {
     @Provides
     fun provideCategoriesDao(database: MoneyManagerDatabase): CategoriesDao =
         database.categoriesDao()
+
+    @Singleton
+    @Provides
+    fun provideCategoryRepository(
+        database: MoneyManagerDatabase,
+        categoryDtoToCategoryMapper: CategoryDtoToCategoryMapper
+    ): CategoryRepository = CategoryRepositoryImpl(database, categoryDtoToCategoryMapper)
 
     @ApplicationScope
     @Provides
