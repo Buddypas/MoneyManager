@@ -157,7 +157,7 @@ class AddTransactionViewModel @Inject constructor(private val transactionReposit
             }.onSuccess { pair ->
                 // TODO: Check if save successful
                 transactionRepository.saveTransaction(pair.first, pair.second, desc)
-                AddTransactionUiEvent.ShowSuccessMessage("TransactionDto added.").emit()
+                AddTransactionUiEvent.ShowSuccessMessage("Transaction added.").emit()
                 AddTransactionUiEvent.NavigateUp.emit()
             }.onFailure {
                 Timber.e("Failed to save transaction: $it")

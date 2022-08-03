@@ -41,7 +41,20 @@ class CategoriesFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.setUpUi()
+        handleState()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchCategories()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun handleState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectState(this) { state ->

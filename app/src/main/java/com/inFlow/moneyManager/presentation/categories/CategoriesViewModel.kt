@@ -13,9 +13,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+// TODO: Add edit category
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase,
 ) :
     ViewModel() {
     private val _stateFlow = MutableStateFlow<CategoriesUiState>(CategoriesUiState.Loading())
@@ -23,10 +24,6 @@ class CategoriesViewModel @Inject constructor(
 
 //    private val eventChannel = Channel<CategoriesUiEvent>()
 //    private val eventFlow = eventChannel.receiveAsFlow()
-
-    init {
-        fetchCategories()
-    }
 
     fun collectState(
         coroutineScope: CoroutineScope,
@@ -37,7 +34,7 @@ class CategoriesViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCategories() {
+    fun fetchCategories() {
         viewModelScope.launch {
             runCatching {
                 getCategoriesUseCase.execute()

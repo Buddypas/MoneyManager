@@ -17,21 +17,15 @@ import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.ZoneId
@@ -49,14 +43,6 @@ fun LocalDate.toDate(): Date = Date.from(
         .atZone(ZoneId.systemDefault())
         .toInstant()
 )
-
-fun View.showSuccessMessage(msg: String) {
-    Snackbar.make(
-        this,
-        msg,
-        Snackbar.LENGTH_SHORT
-    ).show()
-}
 
 fun Context.getLoadingDialog(): AlertDialog = AlertDialog.Builder(this)
     .setView(R.layout.popup_loading)
@@ -172,9 +158,12 @@ fun View.setAsRootView() {
     }
 }
 
-fun View.showError(mError: String?) {
-    val error = if (mError.isNullOrEmpty()) "An error occured"
-    else mError
+fun View.showSnackbar(msg: String? = null, @StringRes msgResId: Int? = null) {
+    val error = when {
+        msgResId != null -> context.getString(msgResId)
+        !msg.isNullOrEmpty() -> msg
+        else -> context.getString(R.string.error_default)
+    }
     Snackbar.make(
         this,
         error,
@@ -193,7 +182,7 @@ fun Context.showInfoDialog(messageResId: Int) {
 }
 
 fun View.showWithAnimation() {
-    if (visibility != View.VISIBLE)
+    if (visibility != View.VISIBLE) {
         this.apply {
             alpha = 0f
             visibility = View.VISIBLE
@@ -203,6 +192,7 @@ fun View.showWithAnimation() {
                 .setDuration(150)
                 .setListener(null)
         }
+    }
 }
 
 fun View.hideWithAnimation() {

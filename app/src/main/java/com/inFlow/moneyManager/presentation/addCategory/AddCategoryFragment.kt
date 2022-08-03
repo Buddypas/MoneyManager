@@ -11,10 +11,10 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
-import com.inFlow.moneyManager.shared.kotlin.showError
-import com.inFlow.moneyManager.shared.kotlin.showSuccessMessage
+import com.inFlow.moneyManager.shared.kotlin.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 
+// TODO: Add loading states
 @AndroidEntryPoint
 class AddCategoryFragment : BaseFragment() {
     private var _binding: FragmentAddCategoryBinding? = null
@@ -27,9 +27,10 @@ class AddCategoryFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View =
-        FragmentAddCategoryBinding.inflate(inflater, container, false).also {
-            _binding = it
-        }.root
+        FragmentAddCategoryBinding
+            .inflate(inflater, container, false)
+            .also { _binding = it }
+            .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,16 +38,16 @@ class AddCategoryFragment : BaseFragment() {
 
         viewModel.collectState(viewLifecycleOwner) { state ->
             when (state) {
-                is AddCategoryUiState.Idle -> state.bindIdle()
-                is AddCategoryUiState.Error -> state.bindError()
+                is AddCategoryUiState.Idle -> binding.bindIdle(state)
+                is AddCategoryUiState.Error -> binding.bindError(state)
             }
         }
 
         viewModel.collectEvents(viewLifecycleOwner) { event ->
             when (event) {
-                is AddCategoryUiEvent.ShowErrorMessage -> binding.root.showError(event.msg)
-                is AddCategoryUiEvent.ShowSuccessMessage ->
-                    binding.root.showSuccessMessage(event.msg)
+                is AddCategoryUiEvent.ShowErrorMessage -> binding.root.showSnackbar(msgResId = event.msgResId)
+                is AddCategoryUiEvent.ShowMessage ->
+                    binding.root.showSnackbar(msgResId = event.msgResId)
                 AddCategoryUiEvent.NavigateUp -> findNavController().navigateUp()
             }
         }
@@ -60,15 +61,13 @@ class AddCategoryFragment : BaseFragment() {
         }
     }
 
-    private fun AddCategoryUiState.Idle.bindIdle() {
-        with(binding) {
-            expenseRadio.isChecked = uiModel.categoryType == CategoryType.EXPENSE
-            incomeRadio.isChecked = uiModel.categoryType == CategoryType.INCOME
-        }
+    private fun FragmentAddCategoryBinding.bindIdle(state: AddCategoryUiState.Idle) {
+        expenseRadio.isChecked = state.uiModel.categoryType == CategoryType.EXPENSE
+        incomeRadio.isChecked = state.uiModel.categoryType == CategoryType.INCOME
     }
 
-    private fun AddCategoryUiState.Error.bindError() {
-        binding.nameLayout.error = getString(uiModel.errorMessageResId)
+    private fun FragmentAddCategoryBinding.bindError(state: AddCategoryUiState.Error) {
+        nameLayout.error = getString(state.uiModel.errorMessageResId)
     }
 
     private fun onSaveClick() {

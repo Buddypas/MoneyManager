@@ -182,7 +182,7 @@ class FiltersDialog : DialogFragment() {
                 binding.fromLayout.error =
                     fieldError.message
             FieldType.FIELD_DATE_TO -> binding.toLayout.error = fieldError.message
-            FieldType.FIELD_OTHER -> binding.root.showError(fieldError.message)
+            FieldType.FIELD_OTHER -> binding.root.showSnackbar(fieldError.message)
         }
     }
 

@@ -16,7 +16,6 @@ class CategoryDtoToCategoryMapper(
             id = categoryId,
             name = categoryName,
             type = categoryType.resolveCategoryType(),
-            iconUrl = categoryIconUrl
         )
 
     private fun String.resolveCategoryType() =

@@ -2,7 +2,8 @@ package com.inFlow.moneyManager.presentation.addCategory
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
+import com.inFlow.moneyManager.domain.category.model.Category
+import com.inFlow.moneyManager.domain.category.usecase.SaveCategoryUseCase
 import com.inFlow.moneyManager.presentation.addCategory.extension.updateWith
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
@@ -15,18 +16,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AddCategoryViewModel @Inject constructor(private val repository: CategoryRepositoryImpl) :
-    ViewModel() {
+class AddCategoryViewModel @Inject constructor(
+    private val saveCategoryUseCase: SaveCategoryUseCase
+) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<AddCategoryUiState> =
         MutableStateFlow(AddCategoryUiState.Idle())
     private val stateFlow = _stateFlow.asStateFlow()
 
     private val eventChannel = Channel<AddCategoryUiEvent>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val eventFlow = eventChannel.receiveAsFlow()
 
     fun collectState(viewLifecycleOwner: LifecycleOwner, callback: (AddCategoryUiState) -> Unit) {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -56,7 +59,6 @@ class AddCategoryViewModel @Inject constructor(private val repository: CategoryR
         }
     }
 
-    // TODO: Refactor
     fun onSaveClick(name: String?) {
         isCategoryValid(name)?.let { errorResId ->
             updateCurrentUiStateWith {
@@ -71,13 +73,17 @@ class AddCategoryViewModel @Inject constructor(private val repository: CategoryR
     private fun saveCategory(name: String) {
         viewModelScope.launch {
             runCatching {
-                requireUiState().uiModel
-            }.map {
-                it.categoryType
-            }.onSuccess { categoryType ->
-                repository.saveCategory(categoryType, name)
-                AddCategoryUiEvent.ShowSuccessMessage("CategoryDto added.").emit()
+                requireUiState().uiModel.categoryType
+            }.map { categoryType ->
+                Category(name = name, type = categoryType)
+            }.mapCatching { category ->
+                saveCategoryUseCase.execute(category)
+            }.onSuccess {
+                AddCategoryUiEvent.ShowMessage(R.string.category_added).emit()
                 AddCategoryUiEvent.NavigateUp.emit()
+            }.onFailure {
+                Timber.e("Failed to add category: $it")
+                AddCategoryUiEvent.ShowErrorMessage(R.string.error_adding_category).emit()
             }
         }
     }

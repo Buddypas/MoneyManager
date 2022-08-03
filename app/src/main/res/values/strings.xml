@@ -1,5 +1,6 @@
 <resources>
     <!--    <string name="app_name">MoneyManager</string>-->
+    <!--    TODO: Sort by screen-->
     <string name="filters_template">Showing %1$s %2$s sorted by %3$s in %4$s order.</string>
     <string name="showing">Showing </string>
     <string name="month_template">in %1$s of %2$d </string>
@@ -18,4 +19,8 @@
     <string name="all_expenses">all expenses</string>
     <string name="all_incomes">all incomes</string>
     <string name="all_transactions">all transactions</string>
+    <string name="category_added">Category added.</string>
+    <string name="error_adding_category">Error adding category.</string>
+    <string name="error_default">An error occurred.</string>
+    <string name="custom_range">Custom range</string>
 </resources>

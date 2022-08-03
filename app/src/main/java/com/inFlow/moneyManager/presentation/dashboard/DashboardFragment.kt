@@ -100,7 +100,6 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun FragmentDashboardBinding.setUpUi() {
-        textMonth.text = LocalDate.now().month.name
         toolbar.setUpToolbar()
         transactionsAdapter = TransactionsAdapter().also {
             recyclerTransactions.adapter = it
@@ -120,8 +119,11 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    // TODO: Refactor this to a binding extension, not state
     private fun FragmentDashboardBinding.bindIdle(state: DashboardUiState.Idle) {
+        textMonth.text =
+            if (state.uiModel.filters.period == PeriodMode.WHOLE_MONTH) {
+                state.uiModel.filters.yearMonth?.month?.name
+            } else getString(R.string.custom_range)
         textFilters.text = state.uiModel.filters.toFiltersString()
         updateBalanceData(state.uiModel.income, state.uiModel.expenses)
         textNoTransactions.isVisible = state.uiModel.transactionList.isNullOrEmpty()

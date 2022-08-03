@@ -47,9 +47,13 @@ class AddTransactionFragment : BaseFragment() {
 
         viewModel.collectEvents(viewLifecycleOwner) { event ->
             when (event) {
-                is AddTransactionUiEvent.ShowErrorMessage -> binding.root.showError(getString(event.msgResId))
+                is AddTransactionUiEvent.ShowErrorMessage -> binding.root.showSnackbar(
+                    getString(
+                        event.msgResId
+                    )
+                )
                 is AddTransactionUiEvent.ShowSuccessMessage ->
-                    binding.root.showSuccessMessage(event.msg)
+                    binding.root.showSnackbar(msg = event.msg)
                 AddTransactionUiEvent.NavigateUp -> findNavController().navigateUp()
             }
         }
