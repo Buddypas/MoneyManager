@@ -19,6 +19,7 @@ import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapter
 import com.inFlow.moneyManager.presentation.dashboard.extensions.roundToDecimals
 import com.inFlow.moneyManager.presentation.dashboard.model.*
+import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import dagger.hilt.android.AndroidEntryPoint
@@ -120,7 +121,7 @@ class DashboardFragment : BaseFragment() {
 
     private fun FragmentDashboardBinding.bindIdle(state: DashboardUiState.Idle) {
         textMonth.text =
-            if (state.uiModel.filters.period == PeriodMode.WHOLE_MONTH) {
+            if (state.uiModel.filters.periodMode == PeriodMode.WHOLE_MONTH) {
                 state.uiModel.filters.yearMonth?.month?.name
             } else getString(R.string.custom_range)
         textFilters.text = state.uiModel.filters.toFiltersString()
@@ -139,19 +140,19 @@ class DashboardFragment : BaseFragment() {
     }
 
     // TODO: Remove !!
-    private fun Filters.toFiltersString(): String {
+    private fun FiltersUiModel.toFiltersString(): String {
         var content = getString(R.string.showing)
-        content += "${showTransactionsOfType.toArgumentTypeString()} "
+        content += "${showTransactions.toArgumentTypeString()} "
         val segmentPeriod =
-            if (period == PeriodMode.WHOLE_MONTH && yearMonth != null) getString(
+            if (periodMode == PeriodMode.WHOLE_MONTH && yearMonth != null) getString(
                 R.string.month_template,
-                yearMonth!!.month,
-                yearMonth!!.year
+                yearMonth.month,
+                yearMonth.year
             )
             else getString(
                 R.string.range_template,
-                customRange.first,
-                customRange.second
+                dateFrom,
+                dateTo
             )
         content += "$segmentPeriod "
         val argSort = sortBy.sortName
@@ -173,7 +174,7 @@ class DashboardFragment : BaseFragment() {
         LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
                 savedStateHandle.contains(KEY_FILTERS)
-            ) savedStateHandle.get<Filters>(KEY_FILTERS)?.let {
+            ) savedStateHandle.get<FiltersUiModel>(KEY_FILTERS)?.let {
                 viewModel.updateFilters(it)
             }
         }
@@ -195,5 +196,6 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun Boolean.toArgumentOrderString() =
-        if (this) getString(R.string.descending) else getString(R.string.ascending)
+        if (this) getString(R.string.descending)
+        else getString(R.string.ascending)
 }

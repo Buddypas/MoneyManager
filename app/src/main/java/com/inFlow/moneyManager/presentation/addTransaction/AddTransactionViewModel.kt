@@ -59,7 +59,7 @@ class AddTransactionViewModel @Inject constructor(
         callback: (AddTransactionUiEvent) -> Unit
     ) {
         coroutineScope.launch {
-            eventFlow.collectLatest { callback.invoke(it) }
+            eventFlow.collect { callback.invoke(it) }
         }
     }
 

@@ -4,11 +4,10 @@ import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.mapper.TransactionDtoToTransactionMapper
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
-import com.inFlow.moneyManager.presentation.dashboard.model.Filters
-import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
-import com.inFlow.moneyManager.shared.kotlin.toDate
+import com.inFlow.moneyManager.presentation.filters.extension.getStartAndEndDate
+import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -17,28 +16,16 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO: Create filte model for each layer
 @Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val db: MoneyManagerDatabase,
     private val transactionDtoToTransactionMapper: TransactionDtoToTransactionMapper,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TransactionRepository {
+
     override suspend fun saveTransaction(transaction: Transaction) =
         db.transactionsDao().saveTransaction(transaction)
-
-    // TODO: Remove !!
-    private fun Filters.getStartAndEndDate(): Pair<Date, Date> {
-        val startDate: Date
-        val endDate: Date
-        if (period == PeriodMode.WHOLE_MONTH) {
-            startDate = yearMonth!!.atDay(1).toDate()
-            endDate = yearMonth!!.atEndOfMonth().toDate()
-        } else {
-            startDate = customRange.first!!.toDate()
-            endDate = customRange.second!!.toDate()
-        }
-        return Pair(startDate, endDate)
-    }
 
     override suspend fun searchTransactions(
         query: String,
@@ -51,11 +38,12 @@ class TransactionRepositoryImpl @Inject constructor(
     }.getOrThrow()
 
     override suspend fun getTransactions(
-        filters: Filters?,
+        filters: FiltersUiModel?,
         query: String
     ): List<Transaction> = withContext(ioDispatcher) {
         filters ?: return@withContext getAllTransactions()
 
+        // TODO: Figure out different way for this to not create modular dependencies
         val (startDate, endDate) = filters.getStartAndEndDate()
 
         query.takeIf { it.isNotBlank() }?.run {
@@ -87,10 +75,10 @@ class TransactionRepositoryImpl @Inject constructor(
             }.getOrThrow()
         }
 
-    private suspend fun Filters.handleTransactions(
+    private suspend fun FiltersUiModel.handleTransactions(
         startDate: Date,
         endDate: Date
-    ): List<Transaction> = when (showTransactionsOfType) {
+    ): List<Transaction> = when (showTransactions) {
         ShowTransactions.SHOW_EXPENSES -> sortBy.getSortedExpenses(
             isDescending,
             startDate,

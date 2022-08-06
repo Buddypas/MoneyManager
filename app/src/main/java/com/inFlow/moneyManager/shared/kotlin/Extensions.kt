@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.inFlow.moneyManager.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
+import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -43,6 +44,14 @@ fun LocalDate.toDate(): Date = Date.from(
         .atZone(ZoneId.systemDefault())
         .toInstant()
 )
+
+fun LocalDate.toFormattedDate(pattern: String = "dd/MM/yyyy"): String? = try {
+    val formatter = DateTimeFormatter.ofPattern(pattern)
+    this.format(formatter).orEmpty()
+} catch (e: DateTimeException) {
+    Timber.e("Failed to format date: $e")
+    null
+}
 
 fun Context.getLoadingDialog(): AlertDialog = AlertDialog.Builder(this)
     .setView(R.layout.popup_loading)
@@ -115,6 +124,8 @@ fun String?.isValidEmail(): Boolean {
     else android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
+
+// TODO: Use runCatching and throw
 /**
  * Returns null if string is not a valid date
  */

@@ -9,7 +9,7 @@
     tools:context=".presentation.addTransaction.AddTransactionFragment">
 
     <TextView
-        android:id="@+id/type_lbl"
+        android:id="@+id/textTypeLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_marginTop="48dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/type_lbl"
+        app:layout_constraintStart_toEndOf="@id/textTypeLabel"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
@@ -134,7 +134,7 @@
         app:layout_constraintTop_toBottomOf="@id/amount_layout" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/cancel_btn"
+        android:id="@+id/buttonCancel"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

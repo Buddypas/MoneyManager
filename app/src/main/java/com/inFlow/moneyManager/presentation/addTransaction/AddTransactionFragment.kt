@@ -87,7 +87,7 @@ class AddTransactionFragment : BaseFragment() {
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 viewModel.onCategoryClick(position)
             }
-        cancelBtn.setOnClickListener { findNavController().navigateUp() }
+        buttonCancel.setOnClickListener { findNavController().navigateUp() }
         saveBtn.setOnClickListener { onSaveClick() }
     }
 

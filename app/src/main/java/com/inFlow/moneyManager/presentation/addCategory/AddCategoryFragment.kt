@@ -73,7 +73,7 @@ class AddCategoryFragment : BaseFragment() {
     }
 
     private fun FragmentAddCategoryBinding.setUpUi() {
-        cancelBtn.setOnClickListener { findNavController().navigateUp() }
+        buttonCancel.setOnClickListener { findNavController().navigateUp() }
         saveBtn.setOnClickListener { onSaveClick() }
         expenseRadio.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onCategoryTypeChanged(isChecked)

@@ -52,9 +52,9 @@
         android:id="@+id/filtersDialog"
         android:name="com.inFlow.moneyManager.presentation.filters.FiltersDialog"
         android:label="Filters"
-        tools:layout="@layout/dialog_filters" >
+        tools:layout="@layout/dialog_filters">
         <argument
             android:name="filters"
-            app:argType="com.inFlow.moneyManager.presentation.dashboard.model.Filters" />
+            app:argType="com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel" />
     </dialog>
 </navigation>

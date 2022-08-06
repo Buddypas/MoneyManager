@@ -24,4 +24,17 @@
     <string name="error_default">An error occurred.</string>
     <string name="custom_range">Custom range</string>
     <string name="transaction_added">Transaction added.</string>
+    <string name="period">Period</string>
+    <string name="whole_month">Whole month</string>
+    <string name="show">Show</string>
+    <string name="expenses">Expenses</string>
+    <string name="month">Month</string>
+    <string name="from">From</string>
+    <string name="date_template">dd/mm/yyyy</string>
+    <string name="to">To</string>
+    <string name="sort_by">Sort by</string>
+    <string name="order">Order</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">cancel</string>
+    <string name="clear">clear</string>
 </resources>

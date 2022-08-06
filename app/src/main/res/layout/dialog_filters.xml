@@ -10,95 +10,95 @@
     tools:context=".presentation.filters.FiltersDialog">
 
     <TextView
-        android:id="@+id/period_lbl"
+        android:id="@+id/textPeriodLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Period"
-        app:layout_constraintBottom_toBottomOf="@id/period_radio_group"
+        android:text="@string/period"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroupPeriod"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/period_radio_group" />
+        app:layout_constraintTop_toTopOf="@id/radioGroupPeriod" />
 
     <RadioGroup
-        android:id="@+id/period_radio_group"
+        android:id="@+id/radioGroupPeriod"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/lbl_barrier"
+        app:layout_constraintStart_toStartOf="@id/barrierLabel"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/whole_month_btn"
+            android:id="@+id/buttonWholeMonth"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="Whole month"
+            android:text="@string/whole_month"
             android:textAppearance="?attr/textAppearanceBody1" />
 
         <RadioButton
-            android:id="@+id/custom_range_btn"
+            android:id="@+id/buttonCustomRange"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Custom range"
+            android:text="@string/custom_range"
             android:textAppearance="?attr/textAppearanceBody1" />
 
     </RadioGroup>
 
     <!--    Income or expense section-->
     <TextView
-        android:id="@+id/type_lbl"
+        android:id="@+id/textTypeLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show"
-        app:layout_constraintBottom_toBottomOf="@id/incomes_cbx"
-        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        android:text="@string/show"
+        app:layout_constraintBottom_toBottomOf="@id/cbxIncomes"
+        app:layout_constraintEnd_toStartOf="@id/dropdownLayoutMonth"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toTopOf="@id/incomes_cbx" />
+        app:layout_constraintStart_toStartOf="@id/textPeriodLabel"
+        app:layout_constraintTop_toTopOf="@id/cbxIncomes" />
 
     <CheckBox
-        android:id="@+id/incomes_cbx"
+        android:id="@+id/cbxIncomes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Incomes"
+        android:text="@string/income"
         android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/period_radio_group" />
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupPeriod" />
 
     <CheckBox
-        android:id="@+id/expenses_cbx"
+        android:id="@+id/cbxExpenses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Expenses"
+        android:text="@string/expenses"
         android:textAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintBottom_toBottomOf="@id/incomes_cbx"
-        app:layout_constraintStart_toEndOf="@id/incomes_cbx"
-        app:layout_constraintTop_toTopOf="@id/incomes_cbx" />
+        app:layout_constraintBottom_toBottomOf="@id/cbxIncomes"
+        app:layout_constraintStart_toEndOf="@id/cbxIncomes"
+        app:layout_constraintTop_toTopOf="@id/cbxIncomes" />
 
     <!--    Month section-->
     <TextView
-        android:id="@+id/month_lbl"
+        android:id="@+id/textMonthLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Month"
-        app:layout_constraintBottom_toBottomOf="@id/month_dropdown_layout"
-        app:layout_constraintEnd_toStartOf="@id/month_dropdown_layout"
+        android:text="@string/month"
+        app:layout_constraintBottom_toBottomOf="@id/dropdownLayoutMonth"
+        app:layout_constraintEnd_toStartOf="@id/dropdownLayoutMonth"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toTopOf="@id/month_dropdown_layout" />
+        app:layout_constraintStart_toStartOf="@id/textPeriodLabel"
+        app:layout_constraintTop_toTopOf="@id/dropdownLayoutMonth" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/month_dropdown_layout"
+        android:id="@+id/dropdownLayoutMonth"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -107,12 +107,12 @@
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
         app:hintEnabled="false"
-        app:layout_constraintEnd_toStartOf="@id/year_dropdown_layout"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/incomes_cbx">
+        app:layout_constraintEnd_toStartOf="@id/dropdownLayoutYear"
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/cbxIncomes">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/month_dropdown"
+            android:id="@+id/dropdownMonth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
@@ -123,7 +123,7 @@
 
     <!--    TODO: Align to end-->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/year_dropdown_layout"
+        android:id="@+id/dropdownLayoutYear"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -132,13 +132,13 @@
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
         app:hintEnabled="false"
-        app:layout_constraintBottom_toBottomOf="@id/month_dropdown_layout"
+        app:layout_constraintBottom_toBottomOf="@id/dropdownLayoutMonth"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/month_dropdown_layout"
-        app:layout_constraintTop_toTopOf="@id/month_dropdown_layout">
+        app:layout_constraintStart_toEndOf="@id/dropdownLayoutMonth"
+        app:layout_constraintTop_toTopOf="@id/dropdownLayoutMonth">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/year_dropdown"
+            android:id="@+id/dropdownYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
@@ -149,32 +149,32 @@
 
     <!--    Range section-->
     <TextView
-        android:id="@+id/from_lbl"
+        android:id="@+id/textFromLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="From"
-        app:layout_constraintBottom_toBottomOf="@id/from_layout"
-        app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toTopOf="@id/from_layout" />
+        android:text="@string/from"
+        app:layout_constraintBottom_toBottomOf="@id/editTextLayoutFrom"
+        app:layout_constraintStart_toStartOf="@id/textPeriodLabel"
+        app:layout_constraintTop_toTopOf="@id/editTextLayoutFrom" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/from_layout"
+        android:id="@+id/editTextLayoutFrom"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="dd/mm/yyyy"
+        android:hint="@string/date_template"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
         app:errorEnabled="true"
         app:hintEnabled="true"
         app:hintTextAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/month_dropdown_layout">
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/dropdownLayoutMonth">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/from_input"
+            android:id="@+id/editTextFrom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="date"
@@ -186,32 +186,32 @@
 
     <!--    To section-->
     <TextView
-        android:id="@+id/to_lbl"
+        android:id="@+id/textToLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="To"
-        app:layout_constraintBottom_toBottomOf="@id/to_layout"
-        app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toTopOf="@id/to_layout" />
+        android:text="@string/to"
+        app:layout_constraintBottom_toBottomOf="@id/editTextLayoutTo"
+        app:layout_constraintStart_toStartOf="@id/textPeriodLabel"
+        app:layout_constraintTop_toTopOf="@id/editTextLayoutTo" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/to_layout"
+        android:id="@+id/editTextLayoutTo"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="dd/mm/yyyy"
+        android:hint="@string/date_template"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
         app:errorEnabled="true"
         app:hintEnabled="true"
         app:hintTextAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/from_layout">
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutFrom">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/to_input"
+            android:id="@+id/editTextTo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="date"
@@ -223,17 +223,17 @@
 
     <!--    Sort section-->
     <TextView
-        android:id="@+id/sort_lbl"
+        android:id="@+id/textSortLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sort by"
-        app:layout_constraintBottom_toBottomOf="@id/sort_dropdown_layout"
-        app:layout_constraintStart_toStartOf="@id/period_lbl"
-        app:layout_constraintTop_toTopOf="@id/sort_dropdown_layout" />
+        android:text="@string/sort_by"
+        app:layout_constraintBottom_toBottomOf="@id/dropdownLayoutSort"
+        app:layout_constraintStart_toStartOf="@id/textPeriodLabel"
+        app:layout_constraintTop_toTopOf="@id/dropdownLayoutSort" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/sort_dropdown_layout"
+        android:id="@+id/dropdownLayoutSort"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -243,11 +243,11 @@
         app:boxStrokeWidthFocused="0dp"
         app:endIconDrawable="@drawable/arrow_down"
         app:hintEnabled="false"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/to_layout">
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutTo">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/sort_dropdown"
+            android:id="@+id/dropdownSort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="none"
@@ -257,42 +257,42 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/order_lbl"
+        android:id="@+id/textOrderLabel"
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Order"
-        app:layout_constraintBottom_toBottomOf="@id/order_toggle_group"
-        app:layout_constraintStart_toStartOf="@id/sort_lbl"
-        app:layout_constraintTop_toTopOf="@id/order_toggle_group" />
+        android:text="@string/order"
+        app:layout_constraintBottom_toBottomOf="@id/toggleGroupOrder"
+        app:layout_constraintStart_toStartOf="@id/textSortLabel"
+        app:layout_constraintTop_toTopOf="@id/toggleGroupOrder" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/lbl_barrier"
+        android:id="@+id/barrierLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
         app:barrierMargin="4dp"
-        app:constraint_referenced_ids="period_lbl,type_lbl,month_lbl,from_lbl,to_lbl,sort_lbl,order_lbl" />
+        app:constraint_referenced_ids="textPeriodLabel,textTypeLabel,textMonthLabel,textFromLabel,textToLabel,textSortLabel,textOrderLabel" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/order_toggle_group"
+        android:id="@+id/toggleGroupOrder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/lbl_barrier"
-        app:layout_constraintTop_toBottomOf="@id/sort_dropdown_layout"
+        app:layout_constraintStart_toEndOf="@id/barrierLabel"
+        app:layout_constraintTop_toBottomOf="@id/dropdownLayoutSort"
         app:selectionRequired="true"
         app:singleSelection="true">
 
         <Button
-            android:id="@+id/desc_btn"
+            android:id="@+id/buttonDescending"
             style="@style/Widget.App.Button.OutlinedButton.IconOnly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_sort_desc" />
 
         <Button
-            android:id="@+id/asc_btn"
+            android:id="@+id/buttonAscending"
             style="@style/Widget.App.Button.OutlinedButton.IconOnly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -300,41 +300,39 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/apply_btn"
+        android:id="@+id/buttonApply"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="apply"
+        android:text="@string/apply"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_toggle_group" />
+        app:layout_constraintTop_toBottomOf="@id/toggleGroupOrder" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/cancel_btn"
+        android:id="@+id/buttonCancel"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:text="cancel"
+        android:text="@string/cancel"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
-        app:layout_constraintEnd_toStartOf="@id/apply_btn"
-        app:layout_constraintTop_toTopOf="@id/apply_btn" />
+        app:layout_constraintBottom_toBottomOf="@id/buttonApply"
+        app:layout_constraintEnd_toStartOf="@id/buttonApply"
+        app:layout_constraintTop_toTopOf="@id/buttonApply" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/clear_btn"
+        android:id="@+id/buttonClear"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="clear"
+        android:text="@string/clear"
         android:textAllCaps="true"
         android:textColor="@color/red"
-        app:layout_constraintBottom_toBottomOf="@id/apply_btn"
+        app:layout_constraintBottom_toBottomOf="@id/buttonApply"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/apply_btn"
+        app:layout_constraintTop_toTopOf="@id/buttonApply"
         app:strokeColor="@color/red"
         app:strokeWidth="1dp" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,7 +40,7 @@ class AddCategoryViewModel @Inject constructor(
 
     fun collectEvents(coroutineScope: CoroutineScope, callback: (AddCategoryUiEvent) -> Unit) {
         coroutineScope.launch {
-            eventFlow.collectLatest { callback.invoke(it) }
+            eventFlow.collect { callback.invoke(it) }
         }
     }
 

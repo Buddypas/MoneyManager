@@ -2,11 +2,11 @@ package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
-import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.domain.transaction.usecase.GetExpensesAndIncomesUseCase
 import com.inFlow.moneyManager.domain.transaction.usecase.GetTransactionsUseCase
 import com.inFlow.moneyManager.presentation.dashboard.extensions.updateWith
 import com.inFlow.moneyManager.presentation.dashboard.model.*
+import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -45,7 +45,7 @@ class DashboardViewModel @Inject constructor(
         callback: (DashboardUiEvent) -> Unit
     ) {
         coroutineScope.launch {
-            eventFlow.collectLatest { callback.invoke(it) }
+            eventFlow.collect { callback.invoke(it) }
         }
     }
 
@@ -68,7 +68,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun updateFilters(filters: Filters) {
+    fun updateFilters(filters: FiltersUiModel) {
         updateCurrentUiStateWith {
             requireUiState().updateWith(it.copy(filters = filters))
         }
