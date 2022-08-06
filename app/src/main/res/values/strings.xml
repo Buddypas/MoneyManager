@@ -23,4 +23,5 @@
     <string name="error_adding_category">Error adding category.</string>
     <string name="error_default">An error occurred.</string>
     <string name="custom_range">Custom range</string>
+    <string name="transaction_added">Transaction added.</string>
 </resources>

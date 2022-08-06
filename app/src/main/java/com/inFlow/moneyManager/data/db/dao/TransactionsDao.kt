@@ -4,6 +4,8 @@ import androidx.room.*
 import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import java.util.*
 
+// TODO: Add save for specific date
+// TODO: Move to kotlinx.datetime
 @Dao
 interface TransactionsDao {
     @Transaction
@@ -216,16 +218,16 @@ interface TransactionsDao {
     suspend fun getIncomes(): List<TransactionDto>
 
     @Transaction
-    suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) {
+    suspend fun saveTransaction(transaction: com.inFlow.moneyManager.domain.transaction.model.Transaction) {
         val lastTransaction = getMostRecentTransaction()
         val previousBalance: Double = lastTransaction?.transactionBalanceAfter ?: 0.0
-        val transaction = TransactionDto(
-            transactionAmount = amount,
+        val newTransaction = TransactionDto(
+            transactionAmount = transaction.amount,
             transactionDate = Date(),
-            transactionDescription = desc.trim(),
-            transactionCategoryId = categoryId,
-            transactionBalanceAfter = previousBalance + amount
+            transactionDescription = transaction.description.trim(),
+            transactionCategoryId = transaction.categoryId,
+            transactionBalanceAfter = previousBalance + transaction.amount
         )
-        insertAll(transaction)
+        insertAll(newTransaction)
     }
 }

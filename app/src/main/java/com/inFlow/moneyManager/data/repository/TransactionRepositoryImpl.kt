@@ -2,6 +2,7 @@ package com.inFlow.moneyManager.data.repository
 
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.db.entity.TransactionDto
+import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.model.Filters
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
@@ -20,8 +21,8 @@ class TransactionRepositoryImpl @Inject constructor(
     private val db: MoneyManagerDatabase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TransactionRepository {
-    override suspend fun saveTransaction(amount: Double, categoryId: Int, desc: String) =
-        db.transactionsDao().saveTransaction(amount, categoryId, desc)
+    override suspend fun saveTransaction(transaction: Transaction) =
+        db.transactionsDao().saveTransaction(transaction)
 
     private fun getAllTransactions(): List<TransactionDto> = db.transactionsDao().getAll()
 

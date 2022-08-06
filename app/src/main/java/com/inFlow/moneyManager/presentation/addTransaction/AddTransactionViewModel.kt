@@ -2,10 +2,11 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
 import com.inFlow.moneyManager.domain.category.model.Category
-import com.inFlow.moneyManager.domain.category.repository.CategoryRepository
-import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
+import com.inFlow.moneyManager.domain.category.usecase.GetExpenseCategoriesUseCase
+import com.inFlow.moneyManager.domain.category.usecase.GetIncomeCategoriesUseCase
+import com.inFlow.moneyManager.domain.transaction.model.Transaction
+import com.inFlow.moneyManager.domain.transaction.usecase.SaveTransactionUseCase
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
@@ -28,8 +29,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddTransactionViewModel @Inject constructor(
-    private val transactionRepository: TransactionRepository,
-    private val categoryRepository: CategoryRepository
+    private val saveTransactionUseCase: SaveTransactionUseCase,
+    private val getIncomeCategoriesUseCase: GetIncomeCategoriesUseCase,
+    private val getExpenseCategoriesUseCase: GetExpenseCategoriesUseCase
 ) :
     ViewModel() {
 
@@ -137,11 +139,12 @@ class AddTransactionViewModel @Inject constructor(
     }
 
     private suspend fun fetchCategories(): Categories {
-        val expenses = viewModelScope.async { categoryRepository.getAllExpenseCategories() }
-        val incomes = viewModelScope.async { categoryRepository.getAllIncomeCategories() }
+        val expenses = viewModelScope.async { getExpenseCategoriesUseCase.execute() }
+        val incomes = viewModelScope.async { getIncomeCategoriesUseCase.execute() }
         return Categories(expenses.await(), incomes.await())
     }
 
+    // TODO: Remove !!
     private fun saveTransaction(desc: String, amount: Double) {
         viewModelScope.launch {
             runCatching {
@@ -150,17 +153,21 @@ class AddTransactionViewModel @Inject constructor(
                 val realAmount =
                     if (uiModel.categoryType == CategoryType.EXPENSE) -amount
                     else amount
-                val categoryId = uiModel.selectedCategory!!.categoryId
+                val categoryId = uiModel.selectedCategory!!.id
                 realAmount to categoryId
             }.mapCatching { pair ->
                 pair.first to requireNotNull(pair.second) { "categoryId must not be null" }
-            }.onSuccess { pair ->
+            }.onSuccess { (amount, categoryId) ->
                 // TODO: Check if save successful
-                transactionRepository.saveTransaction(pair.first, pair.second, desc)
-                AddTransactionUiEvent.ShowSuccessMessage("Transaction added.").emit()
+                saveTransactionUseCase.execute(
+                    Transaction(
+                        amount = amount,
+                        description = desc,
+                        categoryId = categoryId
+                    )
+                )
+                AddTransactionUiEvent.ShowSuccessMessage(R.string.transaction_added).emit()
                 AddTransactionUiEvent.NavigateUp.emit()
-            }.onFailure {
-                Timber.e("Failed to save transaction: $it")
             }
         }
     }

@@ -71,7 +71,7 @@ class AddTransactionFragment : BaseFragment() {
                             )
                         )
                         is AddTransactionUiEvent.ShowSuccessMessage ->
-                            binding.root.showSnackbar(msg = event.msg)
+                            binding.root.showSnackbar(msgResId = event.msgResId)
                         AddTransactionUiEvent.NavigateUp -> findNavController().navigateUp()
                     }
                 }
@@ -108,14 +108,14 @@ class AddTransactionFragment : BaseFragment() {
     private fun AddTransactionUiState.Idle.bindIdle() {
         with(binding) {
             uiModel.selectedCategory?.let {
-                categoryDropdown.text = SpannableStringBuilder(it.categoryName)
+                categoryDropdown.text = SpannableStringBuilder(it.name)
             }
             uiModel.activeCategoryList?.let { activeList ->
                 ArrayAdapter(
                     requireContext(),
                     R.layout.item_month_dropdown,
                     R.id.dropdown_txt,
-                    activeList.map { it.categoryName }
+                    activeList.map { it.name }
                 ).apply { categoryDropdown.setAdapter(this) }
             }
         }
