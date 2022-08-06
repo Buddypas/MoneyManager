@@ -5,6 +5,10 @@ import com.inFlow.moneyManager.domain.category.usecase.GetCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.GetExpenseCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.GetIncomeCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.SaveCategoryUseCase
+import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
+import com.inFlow.moneyManager.domain.transaction.usecase.GetExpensesAndIncomesUseCase
+import com.inFlow.moneyManager.domain.transaction.usecase.GetTransactionsUseCase
+import com.inFlow.moneyManager.domain.transaction.usecase.SaveTransactionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +32,16 @@ object UseCaseModule {
     @Provides
     fun provideSaveCategoryUseCase(categoryRepository: CategoryRepository) =
         SaveCategoryUseCase(categoryRepository)
+
+    @Provides
+    fun provideGetTransactionsUseCase(transactionRepository: TransactionRepository) =
+        GetTransactionsUseCase(transactionRepository)
+
+    @Provides
+    fun provideSaveTransactionUseCase(transactionRepository: TransactionRepository) =
+        SaveTransactionUseCase(transactionRepository)
+
+    @Provides
+    fun provideGetExpensesAndIncomesUseCase(transactionRepository: TransactionRepository) =
+        GetExpensesAndIncomesUseCase(transactionRepository)
 }

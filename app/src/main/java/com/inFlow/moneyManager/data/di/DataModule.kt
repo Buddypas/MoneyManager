@@ -6,8 +6,11 @@ import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.db.dao.CategoriesDao
 import com.inFlow.moneyManager.data.db.dao.TransactionsDao
 import com.inFlow.moneyManager.data.mapper.CategoryDtoToCategoryMapper
+import com.inFlow.moneyManager.data.mapper.TransactionDtoToTransactionMapper
 import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
+import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
 import com.inFlow.moneyManager.domain.category.repository.CategoryRepository
+import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,6 +51,14 @@ object DataModule {
         database: MoneyManagerDatabase,
         categoryDtoToCategoryMapper: CategoryDtoToCategoryMapper
     ): CategoryRepository = CategoryRepositoryImpl(database, categoryDtoToCategoryMapper)
+
+
+    @Singleton
+    @Provides
+    fun provideTransactionRepository(
+        database: MoneyManagerDatabase,
+        transactionDtoToTransactionMapper: TransactionDtoToTransactionMapper
+    ): TransactionRepository = TransactionRepositoryImpl(database, transactionDtoToTransactionMapper)
 
     @ApplicationScope
     @Provides

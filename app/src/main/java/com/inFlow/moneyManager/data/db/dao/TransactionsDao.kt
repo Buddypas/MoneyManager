@@ -172,7 +172,7 @@ interface TransactionsDao {
         "SELECT * FROM transactions WHERE transactionDescription LIKE '%' || :query || '%' AND transactionDate BETWEEN :startDate AND :endDate " +
             "ORDER BY transactionDate DESC"
     )
-    fun searchTransactions(
+    suspend fun searchTransactions(
         query: String,
         startDate: Date,
         endDate: Date

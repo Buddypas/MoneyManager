@@ -41,7 +41,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     fun setInitialFilters(data: Filters) {
         val f = Filters(
             data.period,
-            data.show,
+            data.showTransactionsOfType,
             if (data.period == PeriodMode.WHOLE_MONTH) data.yearMonth!! else null,
             if (data.period == PeriodMode.CUSTOM_RANGE) data.customRange else Pair(null, null),
             data.sortBy,
@@ -66,22 +66,22 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
 
     fun onTypeChecked(btn: CompoundButton, isChecked: Boolean) {
         when (btn.id) {
-            R.id.incomes_cbx -> when (filters.show) {
-                ShowTransactions.SHOW_EXPENSES -> if (isChecked) filters.show =
+            R.id.incomes_cbx -> when (filters.showTransactionsOfType) {
+                ShowTransactions.SHOW_EXPENSES -> if (isChecked) filters.showTransactionsOfType =
                     ShowTransactions.SHOW_BOTH
-                ShowTransactions.SHOW_INCOMES -> if (!isChecked) filters.show = null
-                ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.show =
+                ShowTransactions.SHOW_INCOMES -> if (!isChecked) filters.showTransactionsOfType = null
+                ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.showTransactionsOfType =
                     ShowTransactions.SHOW_EXPENSES
-                null -> if (isChecked) filters.show = ShowTransactions.SHOW_INCOMES
+                null -> if (isChecked) filters.showTransactionsOfType = ShowTransactions.SHOW_INCOMES
             }
-            R.id.expenses_cbx -> when (filters.show) {
-                ShowTransactions.SHOW_EXPENSES -> if (!isChecked) filters.show =
+            R.id.expenses_cbx -> when (filters.showTransactionsOfType) {
+                ShowTransactions.SHOW_EXPENSES -> if (!isChecked) filters.showTransactionsOfType =
                     null
-                ShowTransactions.SHOW_INCOMES -> if (isChecked) filters.show =
+                ShowTransactions.SHOW_INCOMES -> if (isChecked) filters.showTransactionsOfType =
                     ShowTransactions.SHOW_BOTH
-                ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.show =
+                ShowTransactions.SHOW_BOTH -> if (!isChecked) filters.showTransactionsOfType =
                     ShowTransactions.SHOW_INCOMES
-                null -> if (isChecked) filters.show = ShowTransactions.SHOW_EXPENSES
+                null -> if (isChecked) filters.showTransactionsOfType = ShowTransactions.SHOW_EXPENSES
             }
         }
     }
@@ -99,7 +99,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
      * Returns null if there is no error. Won't validate dates that are after today and will instead return no data
      */
     private fun validateFilters(): FieldError? {
-        if (filters.show == null) return FieldError(
+        if (filters.showTransactionsOfType == null) return FieldError(
             "Incomes or expenses must be selected",
             FieldType.FIELD_OTHER
         )
@@ -131,7 +131,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
         if (error == null) {
             Filters(
                 period = filters.period,
-                show = filters.show,
+                showTransactionsOfType = filters.showTransactionsOfType,
                 yearMonth =
                 if (filters.period == PeriodMode.WHOLE_MONTH) filters.yearMonth
                 else null,

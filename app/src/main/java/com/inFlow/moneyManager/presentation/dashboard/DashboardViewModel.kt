@@ -1,8 +1,10 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
-import com.inFlow.moneyManager.data.db.entity.TransactionDto
+import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
+import com.inFlow.moneyManager.domain.transaction.usecase.GetExpensesAndIncomesUseCase
+import com.inFlow.moneyManager.domain.transaction.usecase.GetTransactionsUseCase
 import com.inFlow.moneyManager.presentation.dashboard.extensions.updateWith
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +19,10 @@ private const val QUERY_DEBOUNCE_DURATION = 1500L
 // TODO: Fetch entire balance data from db instead of incomes and expenses separately
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) :
+class DashboardViewModel @Inject constructor(
+    private val getTransactionsUseCase: GetTransactionsUseCase,
+    private val getExpensesAndIncomesUseCase: GetExpensesAndIncomesUseCase
+) :
     ViewModel() {
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
@@ -93,24 +98,15 @@ class DashboardViewModel @Inject constructor(private val repository: Transaction
         }
     }
 
-    // TODO: Move asyncs to repository
     private fun CoroutineScope.fetchBalanceDataAsync(): Deferred<Pair<Double, Double>> =
-        async {
-            runCatching {
-                async { repository.calculateExpenses() } to async { repository.calculateIncomes() }
-            }.mapCatching {
-                awaitAll(it.first, it.second)
-            }.map {
-                it[0] to it[1]
-            }.getOrThrow()
-        }
+        async { getExpensesAndIncomesUseCase.execute() }
 
-    private fun CoroutineScope.fetchTransactionListAsync(): Deferred<List<TransactionDto>> =
+    private fun CoroutineScope.fetchTransactionListAsync(): Deferred<List<Transaction>> =
         async {
             runCatching {
                 requireUiState().uiModel
-            }.mapCatching {
-                repository.getTransactions(it.filters, it.query)
+            }.mapCatching { uiModel ->
+                getTransactionsUseCase.execute(uiModel.filters to uiModel.query)
             }.getOrThrow()
         }
 

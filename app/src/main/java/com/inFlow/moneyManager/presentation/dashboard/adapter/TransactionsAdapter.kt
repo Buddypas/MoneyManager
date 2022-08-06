@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.inFlow.moneyManager.data.db.entity.TransactionDto
 import com.inFlow.moneyManager.databinding.ItemTransactionBinding
+import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.presentation.shared.extension.setExpense
 import com.inFlow.moneyManager.presentation.shared.extension.setIncome
 
 // TODO: Improve syntax
 class TransactionsAdapter :
-    ListAdapter<TransactionDto, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+    ListAdapter<Transaction, TransactionsAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -26,22 +27,22 @@ class TransactionsAdapter :
 
     class TransactionViewHolder(val binding: ItemTransactionBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: TransactionDto) {
-            binding.apply {
-                nameTxt.text = item.transactionDescription
-                amountTxt.text = item.transactionAmount.toString()
+        fun bind(item: Transaction) {
+            with(binding) {
+                nameTxt.text = item.description
+                amountTxt.text = item.amount.toString()
                 typeImg.apply {
-                    takeIf { item.transactionAmount > 0 }?.setIncome() ?: setExpense()
+                    takeIf { item.amount > 0 }?.setIncome() ?: setExpense()
                 }
             }
         }
     }
 }
 
-class TransactionDiffCallback : DiffUtil.ItemCallback<TransactionDto>() {
-    override fun areItemsTheSame(oldItem: TransactionDto, newItem: TransactionDto) =
-        oldItem.transactionId == newItem.transactionId
+class TransactionDiffCallback : DiffUtil.ItemCallback<Transaction>() {
+    override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction) =
+        oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: TransactionDto, newItem: TransactionDto) =
+    override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction) =
         oldItem == newItem
 }

@@ -224,7 +224,7 @@ class FiltersDialog : DialogFragment() {
             fromInput.text = SpannableStringBuilder(fromString)
             toInput.text = SpannableStringBuilder(toString)
         }
-        when (viewModel.filters.show) {
+        when (viewModel.filters.showTransactionsOfType) {
             ShowTransactions.SHOW_BOTH -> {
                 incomesCbx.isChecked = true
                 expensesCbx.isChecked = true

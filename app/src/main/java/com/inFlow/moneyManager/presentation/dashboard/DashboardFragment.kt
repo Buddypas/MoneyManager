@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 // TODO: Think about using a subgraph for dashboard and filters and share a view model
 // TODO: Add progress bar
@@ -142,7 +141,7 @@ class DashboardFragment : BaseFragment() {
     // TODO: Remove !!
     private fun Filters.toFiltersString(): String {
         var content = getString(R.string.showing)
-        content += "${show.toArgumentTypeString()} "
+        content += "${showTransactionsOfType.toArgumentTypeString()} "
         val segmentPeriod =
             if (period == PeriodMode.WHOLE_MONTH && yearMonth != null) getString(
                 R.string.month_template,
