@@ -10,6 +10,7 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,19 +32,15 @@ class AddCategoryViewModel @Inject constructor(
     private val eventChannel = Channel<AddCategoryUiEvent>()
     private val eventFlow = eventChannel.receiveAsFlow()
 
-    fun collectState(viewLifecycleOwner: LifecycleOwner, callback: (AddCategoryUiState) -> Unit) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stateFlow.collectLatest { callback.invoke(it) }
-            }
+    fun collectState(coroutineScope: CoroutineScope, callback: (AddCategoryUiState) -> Unit) {
+        coroutineScope.launch {
+            stateFlow.collectLatest { callback.invoke(it) }
         }
     }
 
-    fun collectEvents(viewLifecycleOwner: LifecycleOwner, callback: (AddCategoryUiEvent) -> Unit) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                eventFlow.collectLatest { callback.invoke(it) }
-            }
+    fun collectEvents(coroutineScope: CoroutineScope, callback: (AddCategoryUiEvent) -> Unit) {
+        coroutineScope.launch {
+            eventFlow.collectLatest { callback.invoke(it) }
         }
     }
 

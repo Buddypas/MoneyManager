@@ -2,9 +2,10 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.data.db.entity.CategoryDto
 import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
-import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
+import com.inFlow.moneyManager.domain.category.model.Category
+import com.inFlow.moneyManager.domain.category.repository.CategoryRepository
+import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
 import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
@@ -26,7 +27,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AddTransactionViewModel @Inject constructor(private val transactionRepository: TransactionRepositoryImpl, private val categoryRepository: CategoryRepositoryImpl) :
+class AddTransactionViewModel @Inject constructor(
+    private val transactionRepository: TransactionRepository,
+    private val categoryRepository: CategoryRepository
+) :
     ViewModel() {
 
     private val _stateFlow = MutableStateFlow<AddTransactionUiState>(AddTransactionUiState.Idle())
@@ -40,24 +44,20 @@ class AddTransactionViewModel @Inject constructor(private val transactionReposit
     }
 
     fun collectState(
-        viewLifecycleOwner: LifecycleOwner,
+        coroutineScope: CoroutineScope,
         callback: (AddTransactionUiState) -> Unit
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stateFlow.collectLatest { callback.invoke(it) }
-            }
+        coroutineScope.launch {
+            stateFlow.collectLatest { callback.invoke(it) }
         }
     }
 
     fun collectEvents(
-        viewLifecycleOwner: LifecycleOwner,
+        coroutineScope: CoroutineScope,
         callback: (AddTransactionUiEvent) -> Unit
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                eventFlow.collectLatest { callback.invoke(it) }
-            }
+        coroutineScope.launch {
+            eventFlow.collectLatest { callback.invoke(it) }
         }
     }
 
@@ -71,9 +71,9 @@ class AddTransactionViewModel @Inject constructor(private val transactionReposit
 
     fun onCategoryClick(position: Int) {
         requireUiState().uiModel.runCatching {
-            if (categoryType == CategoryType.EXPENSE)
+            if (categoryType == CategoryType.EXPENSE) {
                 expenseList?.getOrNull(position)
-            else incomeList?.getOrNull(position)
+            } else incomeList?.getOrNull(position)
         }.mapCatching {
             requireNotNull(it) { "Selected category cannot be null" }
         }.onSuccess { newCategory ->
@@ -96,7 +96,7 @@ class AddTransactionViewModel @Inject constructor(private val transactionReposit
 
     // TODO: Make mapper
     private fun isTransactionValid(
-        selectedCategory: CategoryDto?,
+        selectedCategory: Category?,
         description: String?,
         amount: Double?
     ): FieldError? = when {

@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
@@ -13,6 +16,7 @@ import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.kotlin.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 // TODO: Add loading states
 @AndroidEntryPoint
@@ -36,19 +40,34 @@ class AddCategoryFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.setUpUi()
 
-        viewModel.collectState(viewLifecycleOwner) { state ->
-            when (state) {
-                is AddCategoryUiState.Idle -> binding.bindIdle(state)
-                is AddCategoryUiState.Error -> binding.bindError(state)
+        handleState()
+        handleEvents()
+    }
+
+    private fun handleEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectEvents(this) { event ->
+                    when (event) {
+                        is AddCategoryUiEvent.ShowErrorMessage -> binding.root.showSnackbar(msgResId = event.msgResId)
+                        is AddCategoryUiEvent.ShowMessage ->
+                            binding.root.showSnackbar(msgResId = event.msgResId)
+                        AddCategoryUiEvent.NavigateUp -> findNavController().navigateUp()
+                    }
+                }
             }
         }
+    }
 
-        viewModel.collectEvents(viewLifecycleOwner) { event ->
-            when (event) {
-                is AddCategoryUiEvent.ShowErrorMessage -> binding.root.showSnackbar(msgResId = event.msgResId)
-                is AddCategoryUiEvent.ShowMessage ->
-                    binding.root.showSnackbar(msgResId = event.msgResId)
-                AddCategoryUiEvent.NavigateUp -> findNavController().navigateUp()
+    private fun handleState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectState(this) { state ->
+                    when (state) {
+                        is AddCategoryUiState.Idle -> binding.bindIdle(state)
+                        is AddCategoryUiState.Error -> binding.bindError(state)
+                    }
+                }
             }
         }
     }

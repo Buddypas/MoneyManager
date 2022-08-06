@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.presentation.dashboard
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.data.db.entity.TransactionDto
-import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
+import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.extensions.updateWith
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ private const val QUERY_DEBOUNCE_DURATION = 1500L
 // TODO: Fetch entire balance data from db instead of incomes and expenses separately
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val repository: TransactionRepositoryImpl) :
+class DashboardViewModel @Inject constructor(private val repository: TransactionRepository) :
     ViewModel() {
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())

@@ -51,9 +51,17 @@ class CategoryRepositoryImpl @Inject constructor(
             categoryDtoToCategoryMapper.mapList(it)
         }.getOrThrow()
 
-    override suspend fun getAllExpenseCategories(): List<CategoryDto> =
-        db.categoriesDao().getAllExpenseCategories()
+    override suspend fun getAllExpenseCategories(): List<Category> =
+        runCatching {
+            db.categoriesDao().getAllExpenseCategories()
+        }.mapCatching {
+            categoryDtoToCategoryMapper.mapList(it)
+        }.getOrThrow()
 
-    override suspend fun getAllIncomeCategories(): List<CategoryDto> =
-        db.categoriesDao().getAllIncomeCategories()
+    override suspend fun getAllIncomeCategories(): List<Category> =
+        runCatching {
+            db.categoriesDao().getAllIncomeCategories()
+        }.mapCatching {
+            categoryDtoToCategoryMapper.mapList(it)
+        }.getOrThrow()
 }
