@@ -2,9 +2,7 @@ package com.inFlow.moneyManager.presentation.filters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.dashboard.model.*
-import com.inFlow.moneyManager.presentation.filters.extension.updateWith
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiEvent
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
@@ -23,6 +21,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 
+// TODO: Move dates timeline error below second date field
 @HiltViewModel
 class FiltersViewModel @Inject constructor() : ViewModel() {
     private val _stateFlow: MutableStateFlow<FiltersUiState> =
@@ -30,7 +29,7 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     private val stateFlow = _stateFlow.asStateFlow()
 
     private val eventChannel = Channel<FiltersUiEvent>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val eventFlow = eventChannel.receiveAsFlow()
 
     val sortOptions = listOf(
         SortBy.SORT_BY_DATE.sortName,
@@ -62,39 +61,17 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onFromDateChanged(dateString: String) {
-        runCatching {
-            requireUiState().uiModel
-        }.onSuccess {
-            updateCurrentUiStateWith {
-                requireUiState().updateWith(it.copy(dateFrom = dateString.toLocalDate()))
-            }
-        }.onFailure {
-            Timber.e("Failed to update period mode: $it")
-        }
-    }
-
     fun onPeriodModeChanged(newPeriodMode: PeriodMode) {
-        runCatching {
-            requireUiState().uiModel
-        }.onSuccess {
-            updateCurrentUiStateWith {
-                requireUiState().updateWith(it.copy(periodMode = newPeriodMode))
-            }
-        }.onFailure {
-            Timber.e("Failed to update period mode: $it")
+        updateCurrentUiStateWith {
+            FiltersUiState.Idle(
+                it.copy(periodMode = newPeriodMode, fieldError = null)
+            )
         }
     }
 
     fun onSortByChanged(newSortBy: SortBy) {
-        runCatching {
-            requireUiState().uiModel
-        }.onSuccess {
-            updateCurrentUiStateWith {
-                requireUiState().updateWith(it.copy(sortBy = newSortBy))
-            }
-        }.onFailure {
-            Timber.e("Failed to update period mode: $it")
+        updateCurrentUiStateWith {
+            FiltersUiState.Idle(it.copy(sortBy = newSortBy, fieldError = null))
         }
     }
 
@@ -107,8 +84,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             YearMonth.of(year, prevMonth)
         }.onSuccess { newYearMonth ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(yearMonth = newYearMonth)
+                FiltersUiState.Idle(
+                    it.copy(yearMonth = newYearMonth, fieldError = null)
                 )
             }
         }.onFailure {
@@ -125,8 +102,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             YearMonth.of(prevYear, monthPosition + 1)
         }.onSuccess { newYearMonth ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(yearMonth = newYearMonth)
+                FiltersUiState.Idle(
+                    it.copy(yearMonth = newYearMonth, fieldError = null)
                 )
             }
         }.onFailure {
@@ -146,8 +123,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             requireNotNull(newShowTransactionsType) { "Unable to check incomes - invalid previous value" }
         }.onSuccess { newShowTransactionsType ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(showTransactions = newShowTransactionsType)
+                FiltersUiState.Idle(
+                    it.copy(showTransactions = newShowTransactionsType, fieldError = null)
                 )
             }
         }.onFailure {
@@ -167,8 +144,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             requireNotNull(newShowTransactionsType) { "Unable to check incomes - invalid previous value" }
         }.onSuccess { newShowTransactionsType ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(showTransactions = newShowTransactionsType)
+                FiltersUiState.Idle(
+                    it.copy(showTransactions = newShowTransactionsType, fieldError = null)
                 )
             }
         }.onFailure {
@@ -188,8 +165,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             requireNotNull(newShowTransactionsType) { "Unable to check incomes - invalid previous value" }
         }.onSuccess { newShowTransactionsType ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(showTransactions = newShowTransactionsType)
+                FiltersUiState.Idle(
+                    it.copy(showTransactions = newShowTransactionsType, fieldError = null)
                 )
             }
         }.onFailure {
@@ -209,8 +186,8 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             requireNotNull(newShowTransactionsType) { "Unable to check incomes - invalid previous value" }
         }.onSuccess { newShowTransactionsType ->
             updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(showTransactions = newShowTransactionsType)
+                FiltersUiState.Idle(
+                    it.copy(showTransactions = newShowTransactionsType, fieldError = null)
                 )
             }
         }.onFailure {
@@ -219,97 +196,87 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onDescendingSelected() {
-        runCatching {
-            requireUiState().uiModel
-        }.onSuccess { uiModel ->
-            updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(isDescending = true)
-                )
-            }
-        }.onFailure {
-            Timber.e("Failed to update sort order: $it")
+        updateCurrentUiStateWith {
+            FiltersUiState.Idle(
+                it.copy(isDescending = true, fieldError = null)
+            )
         }
     }
 
     fun onAscendingSelected() {
-        runCatching {
-            requireUiState().uiModel
-        }.onSuccess { uiModel ->
-            updateCurrentUiStateWith {
-                requireUiState().updateWith(
-                    it.copy(isDescending = false)
-                )
-            }
-        }.onFailure {
-            Timber.e("Failed to update sort order: $it")
+        updateCurrentUiStateWith {
+            FiltersUiState.Idle(
+                it.copy(isDescending = false, fieldError = null)
+            )
         }
     }
 
     /**
      * Returns null if there is no error. Won't validate dates that are after today and will instead return no data
      */
-    private fun validateFilters(): FieldError? {
-        runCatching {
-            requireUiState().uiModel
-        }.map { uiModel ->
-            when {
-                uiModel.showTransactions == ShowTransactions.SHOW_NONE -> return@validateFilters FieldError(
-                    "Incomes or expenses must be selected",
+    private fun FiltersUiModel.validateFilters(): FieldError? {
+        when {
+            showTransactions == ShowTransactions.SHOW_NONE -> return FieldError(
+                "Incomes or expenses must be selected",
+                FieldType.FIELD_OTHER
+            )
+            periodMode == PeriodMode.WHOLE_MONTH ->
+                yearMonth ?: return FieldError(
+                    "Month is not valid",
                     FieldType.FIELD_OTHER
                 )
-                uiModel.periodMode == PeriodMode.WHOLE_MONTH && uiModel.yearMonth == null ->
-                    return@validateFilters FieldError(
-                        "Month is not valid",
-                        FieldType.FIELD_OTHER
-                    )
-                else -> {
-                    uiModel.dateFrom ?: return FieldError(
-                        "Date is not valid",
-                        FieldType.FIELD_DATE_FROM
-                    )
-                    uiModel.dateTo ?: return FieldError(
-                        "Date is not valid",
-                        FieldType.FIELD_DATE_TO
-                    )
-                    if(uiModel.dateFrom.isAfter(uiModel.dateTo)) return@validateFilters FieldError(
-                        "Dates are not valid",
-                        FieldType.FIELD_OTHER
-                    )
-                }
+            else -> {
+                dateFrom ?: return FieldError(
+                    "Date is not valid",
+                    FieldType.FIELD_DATE_FROM
+                )
+                dateTo ?: return FieldError(
+                    "Date is not valid",
+                    FieldType.FIELD_DATE_TO
+                )
+                if (dateFrom.isAfter(dateTo)) return FieldError(
+                    "Dates are not valid",
+                    FieldType.FIELD_OTHER
+                )
             }
         }
         return null
-    }
-
-    fun onApplyClicked() = viewModelScope.launch {
-        validateFilters()?.let { error ->
-            updateCurrentUiStateWith {
-                FiltersUiState.Error(
-                    it.copy(fieldError = error)
-                )
-            }
-        }
-//            ?: Filters(
-//            period = filters.period,
-//            showTransactionsOfType = filters.showTransactionsOfType,
-//            yearMonth =
-//            if (filters.period == PeriodMode.WHOLE_MONTH) filters.yearMonth
-//            else null,
-//            customRange =
-//            if (filters.period == PeriodMode.CUSTOM_RANGE) filters.customRange
-//            else Pair(null, null),
-//            sortBy = filters.sortBy,
-//            isDescending = filters.isDescending
-//        ).also {
-//            eventChannel.send(FiltersUiEvent.ApplyFilters(it))
-//        }
     }
 
     fun onClearClicked() = viewModelScope.launch {
         updateCurrentUiStateWith {
             FiltersUiState.Idle(FiltersUiModel())
         }
+    }
+
+    fun onApplyClicked(fromDateString: String, toDateString: String) {
+        runCatching {
+            requireUiState().uiModel
+        }.map {
+            it.copy(
+                dateFrom = fromDateString.toLocalDate(),
+                dateTo = toDateString.toLocalDate()
+            )
+        }.map { newUiModel ->
+            updateCurrentUiStateWith {
+                FiltersUiState.Idle(newUiModel)
+            }
+            newUiModel to newUiModel.validateFilters()
+        }.onSuccess { (newUiModel, fieldError) ->
+            fieldError.handleError(newUiModel)
+        }.onFailure {
+            Timber.e("Failed to apply filters: $it")
+        }
+    }
+
+    private fun FieldError?.handleError(newUiModel: FiltersUiModel) {
+        this?.let { error ->
+            updateCurrentUiStateWith {
+                FiltersUiState.Error(
+                    it.copy(fieldError = error)
+                )
+            }
+        } ?: FiltersUiEvent.NavigateUp(newUiModel).emit()
     }
 
     private fun updateCurrentUiStateWith(uiStateProvider: (FiltersUiModel) -> FiltersUiState) {

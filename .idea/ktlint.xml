@@ -4,6 +4,7 @@
     <disabledRules>
       <list>
         <option value="no-wildcard-imports" />
+        <option value="multiline-if-else" />
       </list>
     </disabledRules>
   </component>

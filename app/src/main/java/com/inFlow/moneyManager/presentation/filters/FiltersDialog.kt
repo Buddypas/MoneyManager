@@ -21,6 +21,7 @@ import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
+import com.inFlow.moneyManager.presentation.filters.extension.*
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiEvent
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
 import com.inFlow.moneyManager.presentation.shared.extension.clear
@@ -89,12 +90,12 @@ class FiltersDialog : DialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectEvents(this) { event ->
                     when (event) {
-                        is FiltersUiEvent.ApplyFilters -> {
-                            findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                        is FiltersUiEvent.NavigateUp -> findNavController().apply {
+                            previousBackStackEntry?.savedStateHandle?.set(
                                 KEY_FILTERS,
-                                event.filtersData
+                                event.newFilters
                             )
-                            dismiss()
+                            navigateUp()
                         }
                     }
                 }
@@ -187,7 +188,12 @@ class FiltersDialog : DialogFragment() {
                 )
             }
 
-        buttonApply.setOnClickListener { viewModel.onApplyClicked() }
+        buttonApply.setOnClickListener {
+            viewModel.onApplyClicked(
+                editTextFrom.text?.toString().orEmpty(),
+                editTextTo.text?.toString().orEmpty()
+            )
+        }
         buttonCancel.setOnClickListener { dismiss() }
         buttonClear.setOnClickListener { viewModel.onClearClicked() }
 
@@ -222,13 +228,11 @@ class FiltersDialog : DialogFragment() {
                 if (before < count) {
                     if (newText.length == 2 || newText.length == 5) {
                         newText += '/'
-//                        viewModel.onFromDateChanged(newText)
                         editTextFrom.text = SpannableStringBuilder(newText)
-                        editTextFrom.setSelection(editTextFrom.text!!.length)
+                        editTextFrom.setSelection(newText.length)
                     }
                 }
             }
-//            viewModel.fromDateString.value = editTextFrom.text.toString()
             editTextLayoutFrom.error = null
         }
         editTextTo.doOnTextChanged { text, start, before, count ->
@@ -238,46 +242,25 @@ class FiltersDialog : DialogFragment() {
                     if (newText.length == 2 || newText.length == 5) {
                         newText += '/'
                         editTextTo.text = SpannableStringBuilder(newText)
-                        editTextTo.setSelection(editTextTo.text!!.length)
+                        editTextTo.setSelection(newText.length)
                     }
                 }
             }
-//            viewModel.toDateString.value = editTextTo.text.toString()
             editTextLayoutFrom.error = null
         }
     }
 
-    private fun displayError(fieldError: FieldError) {
+    private fun DialogFiltersBinding.displayError(fieldError: FieldError) {
         when (fieldError.field) {
             FieldType.FIELD_DATE_FROM ->
-                binding.editTextLayoutFrom.error = fieldError.message
-            FieldType.FIELD_DATE_TO -> binding.editTextLayoutTo.error = fieldError.message
-            FieldType.FIELD_OTHER -> binding.root.showSnackbar(fieldError.message)
+                editTextLayoutFrom.error = fieldError.message
+            FieldType.FIELD_DATE_TO -> editTextLayoutTo.error = fieldError.message
+            FieldType.FIELD_OTHER -> root.showSnackbar(fieldError.message)
         }
     }
 
-    private fun DialogFiltersBinding.selectWholeMonth() {
-        textFromLabel.setTextColor(requireContext().getContextColor(R.color.gray))
-        textToLabel.setTextColor(requireContext().getContextColor(R.color.gray))
-        editTextLayoutFrom.isEnabled = false
-        editTextLayoutTo.isEnabled = false
-        textMonthLabel.setTextColor(requireContext().getContextColor(R.color.black))
-        dropdownLayoutMonth.isEnabled = true
-        dropdownLayoutYear.isEnabled = true
-    }
-
-    private fun DialogFiltersBinding.selectCustomRange() {
-        textFromLabel.setTextColor(requireContext().getContextColor(R.color.black))
-        textToLabel.setTextColor(requireContext().getContextColor(R.color.black))
-        editTextLayoutFrom.isEnabled = true
-        editTextLayoutTo.isEnabled = true
-        textMonthLabel.setTextColor(requireContext().getContextColor(R.color.gray))
-        dropdownLayoutMonth.isEnabled = false
-        dropdownLayoutYear.isEnabled = false
-    }
-
     private fun DialogFiltersBinding.managePeriodFields(period: PeriodMode) =
-        if (period == PeriodMode.WHOLE_MONTH) {
+        if (period == PeriodMode.WHOLE_MONTH)
             selectWholeMonth()
-        } else selectCustomRange()
+        else selectCustomRange()
 }
