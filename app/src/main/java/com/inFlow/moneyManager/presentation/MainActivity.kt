@@ -16,14 +16,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val detailFragmentIds = listOf(R.id.addTransactionFragment, R.id.addCategoryFragment)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        configureNavController().also { navController ->
+        getNavController()?.let { navController ->
             binding.bottomNav.setupWithNavController(navController)
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -37,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         else showWithAnimation()
     }
 
-    private fun configureNavController(): NavController =
-        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+    private fun getNavController(): NavController? =
+        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment)?.navController
+
+    private companion object {
+        val detailFragmentIds = listOf(R.id.addTransactionFragment, R.id.addCategoryFragment)
+    }
 }

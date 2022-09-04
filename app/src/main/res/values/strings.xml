@@ -2,7 +2,7 @@
     <!--    <string name="app_name">MoneyManager</string>-->
     <!--    TODO: Sort by screen-->
     <string name="filters_template">Showing %1$s %2$s sorted by %3$s in %4$s order.</string>
-    <string name="showing">Showing </string>
+    <string name="showing">"Showing "</string>
     <string name="month_template">in %1$s of %2$d </string>
     <string name="range_template">from %1$s to %2$s </string>
     <string name="sorted_by_template">sorted by %1$s in %2$s order.</string>
@@ -36,5 +36,6 @@
     <string name="order">Order</string>
     <string name="apply">Apply</string>
     <string name="cancel">cancel</string>
+    <string name="search">Search</string>
     <string name="clear">clear</string>
 </resources>

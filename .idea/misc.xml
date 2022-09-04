@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/arrow_up_left.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/fragment_add_transaction.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/fragment_categories.xml" value="0.20833333333333334" />
-        <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.165" />
         <entry key="app/src/main/res/layout/item_month_dropdown.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/item_transaction.xml" value="0.25" />
+        <entry key="app/src/main/res/menu/dashboard_menu.xml" value="0.19479166666666667" />
       </map>
     </option>
   </component>

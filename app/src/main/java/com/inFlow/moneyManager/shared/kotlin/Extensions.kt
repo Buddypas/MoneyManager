@@ -16,10 +16,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
@@ -60,51 +58,18 @@ fun Context.getLoadingDialog(): AlertDialog = AlertDialog.Builder(this)
     .apply { window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) }
 
 /**
- * This method is zero based, i.e. January returns 0, December returns 11
- */
-fun String.getMonthPosition(): Int {
-    return when (this) {
-        "Jan" -> 0
-        "Feb" -> 1
-        "Mar" -> 2
-        "Apr" -> 3
-        "May" -> 4
-        "Jun" -> 5
-        "Jul" -> 6
-        "Aug" -> 7
-        "Sep" -> 8
-        "Oct" -> 9
-        "Nov" -> 10
-        else -> 11
-    }
-}
-
-/**
  * Call this method (in onActivityCreated or later) to set
  * the width of the dialog to a percentage of the current
  * screen width.
  */
 fun DialogFragment.setFullWidth() {
-    if (dialog != null && dialog?.window != null) {
-        val params = dialog!!.window!!.attributes.apply {
+    dialog?.window?.attributes?.let {
+        val params = it.apply {
             width = ViewGroup.LayoutParams.MATCH_PARENT
             height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
-        dialog!!.window!!.attributes = params as WindowManager.LayoutParams
+        dialog?.window?.attributes = params
     }
-}
-
-inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit) {
-    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-        override fun onQueryTextSubmit(query: String?): Boolean {
-            return true
-        }
-
-        override fun onQueryTextChange(newText: String?): Boolean {
-            listener(newText.orEmpty())
-            return true
-        }
-    })
 }
 
 inline fun AutoCompleteTextView.onSelectedItemChanged(crossinline listener: (Int) -> Unit) {
@@ -227,10 +192,6 @@ fun View.changeBackgroundAnimated(drawableId: Int) {
     val transitionDrawable = TransitionDrawable(colorDrawables)
     background = transitionDrawable
     transitionDrawable.startTransition(200)
-}
-
-fun SearchView.getSearchText(): TextView {
-    return findViewById(androidx.appcompat.R.id.search_src_text)
 }
 
 fun PopupWindow.setElementOnClick(id: Int, function: () -> Unit) {

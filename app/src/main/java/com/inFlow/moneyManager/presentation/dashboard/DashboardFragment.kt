@@ -1,5 +1,7 @@
 package com.inFlow.moneyManager.presentation.dashboard
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +19,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentDashboardBinding
 import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapter
-import com.inFlow.moneyManager.presentation.dashboard.extensions.roundToDecimals
+import com.inFlow.moneyManager.presentation.dashboard.extensions.*
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import com.inFlow.moneyManager.shared.base.BaseFragment
@@ -108,8 +110,10 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun MaterialToolbar.setUpToolbar() {
-        (menu.findItem(R.id.action_search).actionView as? SearchView)?.setQueryChangedListener {
-            viewModel.updateQuery(it)
+        (menu.findItem(R.id.action_search).actionView as? SearchView)?.apply {
+            getSearchText().setTextColor(Color.WHITE)
+//            getCloseButton().imageTintList = ColorStateList.valueOf(Color.WHITE)
+            setQueryChangedListener { viewModel.updateQuery(it) }
         }
         setOnMenuItemClickListener { item ->
             item.takeIf { it.itemId == R.id.action_filter }?.run {
