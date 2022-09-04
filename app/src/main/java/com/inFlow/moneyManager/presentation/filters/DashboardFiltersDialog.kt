@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.databinding.DialogFiltersBinding
+import com.inFlow.moneyManager.databinding.DialogDashboardFiltersBinding
 import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
@@ -32,12 +32,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @AndroidEntryPoint
-class FiltersDialog : DialogFragment() {
-    private var _binding: DialogFiltersBinding? = null
+class DashboardFiltersDialog : DialogFragment() {
+    private var _binding: DialogDashboardFiltersBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: FiltersViewModel by viewModels()
-    private val args: FiltersDialogArgs by navArgs()
+    private val args: DashboardFiltersDialogArgs by navArgs()
 
     private var sortAdapter: ArrayAdapter<String>? = null
     private var monthAdapter: ArrayAdapter<String>? = null
@@ -47,7 +47,7 @@ class FiltersDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = DialogFiltersBinding
+    ): View = DialogDashboardFiltersBinding
         .inflate(inflater, container, false)
         .also {
             isCancelable = false
@@ -103,11 +103,11 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun DialogFiltersBinding.bindError(state: FiltersUiState.Error) {
+    private fun DialogDashboardFiltersBinding.bindError(state: FiltersUiState.Error) {
         state.uiModel.fieldError?.let { displayError(it) }
     }
 
-    private fun DialogFiltersBinding.bindIdle(state: FiltersUiState.Idle) {
+    private fun DialogDashboardFiltersBinding.bindIdle(state: FiltersUiState.Idle) {
         managePeriodFields(state.uiModel.periodMode)
         val monthPosition = state.uiModel.yearMonth?.monthValue ?: (LocalDate.now().monthValue)
         dropdownMonth.setText(
@@ -156,7 +156,7 @@ class FiltersDialog : DialogFragment() {
         else toggleGroupOrder.check(R.id.buttonAscending)
     }
 
-    private fun DialogFiltersBinding.setUpUi() {
+    private fun DialogDashboardFiltersBinding.setUpUi() {
         // TODO: Remove extension
         root.setAsRootView()
         sortAdapter =
@@ -250,7 +250,7 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun DialogFiltersBinding.displayError(fieldError: FieldError) {
+    private fun DialogDashboardFiltersBinding.displayError(fieldError: FieldError) {
         when (fieldError.field) {
             FieldType.FIELD_DATE_FROM ->
                 editTextLayoutFrom.error = fieldError.message
@@ -259,7 +259,7 @@ class FiltersDialog : DialogFragment() {
         }
     }
 
-    private fun DialogFiltersBinding.managePeriodFields(period: PeriodMode) =
+    private fun DialogDashboardFiltersBinding.managePeriodFields(period: PeriodMode) =
         if (period == PeriodMode.WHOLE_MONTH)
             selectWholeMonth()
         else selectCustomRange()

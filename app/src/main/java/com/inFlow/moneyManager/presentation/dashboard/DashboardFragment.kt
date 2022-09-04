@@ -30,6 +30,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 
 // TODO: Think about using a subgraph for dashboard and filters and share a view model
+// TODO: Add date for transactions
 // TODO: Add progress bar
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
@@ -110,17 +111,19 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun MaterialToolbar.setUpToolbar() {
-        (menu.findItem(R.id.action_search).actionView as? SearchView)?.apply {
-            getSearchText().setTextColor(Color.WHITE)
-//            getCloseButton().imageTintList = ColorStateList.valueOf(Color.WHITE)
-            setQueryChangedListener { viewModel.updateQuery(it) }
-        }
+        (menu.findItem(R.id.action_search).actionView as? SearchView)?.setUpSearchView()
         setOnMenuItemClickListener { item ->
             item.takeIf { it.itemId == R.id.action_filter }?.run {
                 viewModel.openFilters()
                 true
             } ?: false
         }
+    }
+
+    private fun SearchView.setUpSearchView() {
+        getSearchText().setTextColor(Color.WHITE)
+        getCloseButton().imageTintList = ColorStateList.valueOf(Color.WHITE)
+        setQueryChangedListener { viewModel.updateQuery(it) }
     }
 
     private fun FragmentDashboardBinding.bindIdle(state: DashboardUiState.Idle) {

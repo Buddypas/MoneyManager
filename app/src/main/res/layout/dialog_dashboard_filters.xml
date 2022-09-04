@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="8dp"
-    android:paddingBottom="16dp"
-    tools:context=".presentation.filters.FiltersDialog">
+    android:paddingBottom="16dp">
 
     <TextView
         android:id="@+id/textPeriodLabel"
