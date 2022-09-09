@@ -11,6 +11,7 @@
     <string name="choose_a_category">Choose a category</string>
     <string name="error_empty_description">You must enter a description.</string>
     <string name="error_amount_must_be_positive">Amount must be larger than 0.</string>
+    <string name="error_invalid_date">Date must be in dd/mm/yyyy format.</string>
     <string name="income">Income</string>
     <string name="balance">Balance</string>
     <string name="no_transactions">No transactions.</string>
@@ -38,4 +39,9 @@
     <string name="cancel">cancel</string>
     <string name="search">Search</string>
     <string name="clear">clear</string>
+    <string name="amount">Amount</string>
+    <string name="save">Save</string>
+    <string name="type">Type</string>
+    <string name="expense">Expense</string>
+    <string name="description">Description</string>
 </resources>

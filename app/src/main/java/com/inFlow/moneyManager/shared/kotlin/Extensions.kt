@@ -9,6 +9,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
+import android.text.SpannableStringBuilder
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -20,8 +21,10 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.inFlow.moneyManager.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -88,7 +91,6 @@ fun String?.isValidEmail(): Boolean {
     return if (this.isNullOrEmpty()) false
     else android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
-
 
 // TODO: Use runCatching and throw
 /**
@@ -235,4 +237,23 @@ fun String?.formatDateAndTime(): String? {
         return "$day.$month.$year - $time" + "h"
     }
     return null
+}
+
+// TODO: Fix first slash deleted error
+fun TextInputLayout.addLiveDateFormatter() {
+    editText?.let { inputField ->
+        inputField.doOnTextChanged { text, _, before, count ->
+            text?.let {
+                var newText = it.toString()
+                if (before < count) {
+                    if (newText.length == 2 || newText.length == 5) {
+                        newText += '/'
+                        inputField.text = SpannableStringBuilder(newText)
+                        inputField.setSelection(newText.length)
+                    }
+                }
+            }
+            this.error = null
+        }
+    }
 }

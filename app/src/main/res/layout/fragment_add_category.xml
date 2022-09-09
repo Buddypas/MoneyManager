@@ -13,12 +13,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Type"
-        app:layout_constraintBottom_toBottomOf="@id/type_radio_group"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroupType"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/type_radio_group" />
+        app:layout_constraintTop_toTopOf="@id/radioGroupType" />
 
     <RadioGroup
-        android:id="@+id/type_radio_group"
+        android:id="@+id/radioGroupType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -60,7 +60,7 @@
         app:errorEnabled="true"
         app:hintEnabled="true"
         app:hintTextAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintTop_toBottomOf="@id/type_radio_group">
+        app:layout_constraintTop_toBottomOf="@id/radioGroupType">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/name_input"
@@ -74,7 +74,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/save_btn"
+        android:id="@+id/buttonSave"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
         android:layout_marginEnd="4dp"
         android:text="cancel"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="@id/save_btn"
-        app:layout_constraintEnd_toStartOf="@id/save_btn"
-        app:layout_constraintTop_toTopOf="@id/save_btn" />
+        app:layout_constraintBottom_toBottomOf="@id/buttonSave"
+        app:layout_constraintEnd_toStartOf="@id/buttonSave"
+        app:layout_constraintTop_toTopOf="@id/buttonSave" />
 </androidx.constraintlayout.widget.ConstraintLayout>

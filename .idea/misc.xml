@@ -5,6 +5,8 @@
       <map>
         <entry key="app/src/main/res/drawable/arrow_up_left.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/dialog_dashboard_filters.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/fragment_add_category.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_add_transaction.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/fragment_categories.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.165" />

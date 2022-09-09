@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,8 +33,7 @@ class AddTransactionViewModel @Inject constructor(
     private val saveTransactionUseCase: SaveTransactionUseCase,
     private val getIncomeCategoriesUseCase: GetIncomeCategoriesUseCase,
     private val getExpenseCategoriesUseCase: GetExpenseCategoriesUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow<AddTransactionUiState>(AddTransactionUiState.Idle())
     private val stateFlow = _stateFlow.asStateFlow()
@@ -85,22 +85,26 @@ class AddTransactionViewModel @Inject constructor(
         }
     }
 
-    // TODO: Remove !!
-    fun onSaveClick(description: String?, amount: Double?) {
-        requireUiState().uiModel.let { uiModel ->
-            isTransactionValid(uiModel.selectedCategory, description, amount)?.let { fieldError ->
-                updateCurrentUiStateWith {
-                    AddTransactionUiState.Error(fieldError.toErrorUiModel(it))
-                }
-            } ?: saveTransaction(description!!, amount!!)
-        }
+    // TODO: Remove !!, validate model instead of fields
+    fun onSaveClick(description: String?, amount: Double?, date: LocalDate?) {
+        isTransactionValid(
+            requireUiState().uiModel.selectedCategory,
+            description,
+            amount,
+            date
+        )?.let { fieldError ->
+            updateCurrentUiStateWith {
+                AddTransactionUiState.Error(fieldError.toErrorUiModel(it))
+            }
+        } ?: saveTransaction(description!!, amount!!)
     }
 
     // TODO: Make mapper
     private fun isTransactionValid(
         selectedCategory: Category?,
         description: String?,
-        amount: Double?
+        amount: Double?,
+        date: LocalDate?
     ): FieldError? = when {
         selectedCategory == null -> FieldError(
             FieldType.CATEGORY,
@@ -113,6 +117,10 @@ class AddTransactionViewModel @Inject constructor(
         amount == null || amount <= 0.0 -> FieldError(
             FieldType.AMOUNT,
             R.string.error_amount_must_be_positive
+        )
+        date == null || date.isAfter(LocalDate.now()) -> FieldError(
+            FieldType.DATE,
+            R.string.error_invalid_date
         )
         else -> null
     }
@@ -144,7 +152,6 @@ class AddTransactionViewModel @Inject constructor(
         return Categories(expenses.await(), incomes.await())
     }
 
-    // TODO: Remove !!
     private fun saveTransaction(desc: String, amount: Double) {
         viewModelScope.launch {
             runCatching {
@@ -153,10 +160,7 @@ class AddTransactionViewModel @Inject constructor(
                 val realAmount =
                     if (uiModel.categoryType == CategoryType.EXPENSE) -amount
                     else amount
-                val categoryId = uiModel.selectedCategory!!.id
-                realAmount to categoryId
-            }.mapCatching { pair ->
-                pair.first to requireNotNull(pair.second) { "categoryId must not be null" }
+                realAmount to requireNotNull(uiModel.selectedCategory?.id) { "categoryId must not be null" }
             }.onSuccess { (amount, categoryId) ->
                 // TODO: Check if save successful
                 saveTransactionUseCase.execute(
@@ -187,5 +191,6 @@ class AddTransactionViewModel @Inject constructor(
             FieldType.CATEGORY -> currentUiModel.copy(categoryErrorResId = errorResId)
             FieldType.DESCRIPTION -> currentUiModel.copy(descriptionErrorResId = errorResId)
             FieldType.AMOUNT -> currentUiModel.copy(amountErrorResId = errorResId)
+            FieldType.DATE -> currentUiModel.copy(amountErrorResId = errorResId)
         }
 }

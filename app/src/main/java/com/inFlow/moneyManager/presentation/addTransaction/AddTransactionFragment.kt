@@ -50,8 +50,8 @@ class AddTransactionFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectState(this) { state ->
                     when (state) {
-                        is AddTransactionUiState.Idle -> state.bindIdle()
-                        is AddTransactionUiState.Error -> state.bindError()
+                        is AddTransactionUiState.Idle -> binding.bindIdle(state)
+                        is AddTransactionUiState.Error -> binding.bindError(state)
                         is AddTransactionUiState.LoadingCategories -> Unit
                     }
                 }
@@ -65,11 +65,10 @@ class AddTransactionFragment : BaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectEvents(this) { event ->
                     when (event) {
-                        is AddTransactionUiEvent.ShowErrorMessage -> binding.root.showSnackbar(
-                            getString(
-                                event.msgResId
+                        is AddTransactionUiEvent.ShowErrorMessage ->
+                            binding.root.showSnackbar(
+                                getString(event.msgResId)
                             )
-                        )
                         is AddTransactionUiEvent.ShowSuccessMessage ->
                             binding.root.showSnackbar(msgResId = event.msgResId)
                         AddTransactionUiEvent.NavigateUp -> findNavController().navigateUp()
@@ -80,50 +79,51 @@ class AddTransactionFragment : BaseFragment() {
     }
 
     private fun FragmentAddTransactionBinding.setUpUi() {
-        expenseBtn.setOnCheckedChangeListener { _, isExpensesChecked ->
+        buttonExpense.setOnCheckedChangeListener { _, isExpensesChecked ->
             viewModel.onTypeClick(isExpensesChecked)
         }
-        categoryDropdown.onItemClickListener =
+        dropdownCategory.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 viewModel.onCategoryClick(position)
             }
+        editTextLayoutDate.addLiveDateFormatter()
         buttonCancel.setOnClickListener { findNavController().navigateUp() }
-        saveBtn.setOnClickListener { onSaveClick() }
+        buttonSave.setOnClickListener { onSaveClick() }
     }
 
-    private fun AddTransactionUiState.Error.bindError() {
-        with(binding) {
-            uiModel.categoryErrorResId?.let {
-                categoryLayout.error = getString(it)
-            }
-            uiModel.descriptionErrorResId?.let {
-                descriptionLayout.error = getString(it)
-            }
-            uiModel.amountErrorResId?.let {
-                amountLayout.error = getString(it)
-            }
+    private fun FragmentAddTransactionBinding.bindError(state: AddTransactionUiState.Error) {
+        state.uiModel.categoryErrorResId?.let {
+            editTextLayoutCategory.error = getString(it)
+        }
+        state.uiModel.descriptionErrorResId?.let {
+            editTextLayoutDescription.error = getString(it)
+        }
+        state.uiModel.amountErrorResId?.let {
+            editTextLayoutAmount.error = getString(it)
+        }
+        state.uiModel.dateErrorResId?.let {
+            editTextLayoutDate.error = getString(it)
         }
     }
 
-    private fun AddTransactionUiState.Idle.bindIdle() {
-        with(binding) {
-            uiModel.selectedCategory?.let {
-                categoryDropdown.text = SpannableStringBuilder(it.name)
-            }
-            uiModel.activeCategoryList?.let { activeList ->
-                ArrayAdapter(
-                    requireContext(),
-                    R.layout.item_month_dropdown,
-                    R.id.dropdown_txt,
-                    activeList.map { it.name }
-                ).apply { categoryDropdown.setAdapter(this) }
-            }
+    private fun FragmentAddTransactionBinding.bindIdle(state: AddTransactionUiState.Idle) {
+        state.uiModel.selectedCategory?.let {
+            dropdownCategory.text = SpannableStringBuilder(it.name)
+        }
+        state.uiModel.activeCategoryList?.let { activeList ->
+            ArrayAdapter(
+                requireContext(),
+                R.layout.item_month_dropdown,
+                R.id.dropdown_txt,
+                activeList.map { it.name }
+            ).apply { dropdownCategory.setAdapter(this) }
         }
     }
 
     private fun onSaveClick() {
-        val desc = binding.descriptionInput.text?.toString()
-        val amountString = binding.amountInput.text?.toString()?.toDoubleOrNull()
-        viewModel.onSaveClick(desc, amountString)
+        val desc = binding.editTextDescription.text?.toString()
+        val amount = binding.editTextAmount.text?.toString()?.toDoubleOrNull()
+        val date = binding.editTextDate.text?.toString()?.toLocalDate()
+        viewModel.onSaveClick(desc, amount, date)
     }
 }

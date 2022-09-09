@@ -1,13 +1,11 @@
 package com.inFlow.moneyManager.presentation.filters
 
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -157,8 +155,6 @@ class DashboardFiltersDialog : DialogFragment() {
     }
 
     private fun DialogDashboardFiltersBinding.setUpUi() {
-        // TODO: Remove extension
-        root.setAsRootView()
         sortAdapter =
             ArrayAdapter(requireContext(), R.layout.item_month_dropdown, viewModel.sortOptions)
         monthAdapter = ArrayAdapter(requireContext(), R.layout.item_month_dropdown, MONTHS)
@@ -221,39 +217,13 @@ class DashboardFiltersDialog : DialogFragment() {
             }
         }
 
-        editTextFrom.doOnTextChanged { text, _, before, count ->
-            //  if before > count -> char deleted
-            text?.let {
-                var newText = it.toString()
-                if (before < count) {
-                    if (newText.length == 2 || newText.length == 5) {
-                        newText += '/'
-                        editTextFrom.text = SpannableStringBuilder(newText)
-                        editTextFrom.setSelection(newText.length)
-                    }
-                }
-            }
-            editTextLayoutFrom.error = null
-        }
-        editTextTo.doOnTextChanged { text, start, before, count ->
-            text?.let {
-                var newText = it.toString()
-                if (before < count) {
-                    if (newText.length == 2 || newText.length == 5) {
-                        newText += '/'
-                        editTextTo.text = SpannableStringBuilder(newText)
-                        editTextTo.setSelection(newText.length)
-                    }
-                }
-            }
-            editTextLayoutFrom.error = null
-        }
+        editTextLayoutFrom.addLiveDateFormatter()
+        editTextLayoutTo.addLiveDateFormatter()
     }
 
     private fun DialogDashboardFiltersBinding.displayError(fieldError: FieldError) {
         when (fieldError.field) {
-            FieldType.FIELD_DATE_FROM ->
-                editTextLayoutFrom.error = fieldError.message
+            FieldType.FIELD_DATE_FROM -> editTextLayoutFrom.error = fieldError.message
             FieldType.FIELD_DATE_TO -> editTextLayoutTo.error = fieldError.message
             FieldType.FIELD_OTHER -> root.showSnackbar(fieldError.message)
         }

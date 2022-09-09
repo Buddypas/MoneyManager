@@ -211,6 +211,32 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun onClearClicked() = viewModelScope.launch {
+        updateCurrentUiStateWith {
+            FiltersUiState.Idle(FiltersUiModel())
+        }
+    }
+
+    fun onApplyClicked(fromDateString: String, toDateString: String) {
+        runCatching {
+            requireUiState().uiModel
+        }.map {
+            it.copy(
+                dateFrom = fromDateString.toLocalDate(),
+                dateTo = toDateString.toLocalDate()
+            )
+        }.map { newUiModel ->
+            updateCurrentUiStateWith {
+                FiltersUiState.Idle(newUiModel)
+            }
+            newUiModel to newUiModel.validateFilters()
+        }.onSuccess { (newUiModel, fieldError) ->
+            fieldError.handleError(newUiModel)
+        }.onFailure {
+            Timber.e("Failed to apply filters: $it")
+        }
+    }
+
     /**
      * Returns null if there is no error. Won't validate dates that are after today and will instead return no data
      */
@@ -241,32 +267,6 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
             }
         }
         return null
-    }
-
-    fun onClearClicked() = viewModelScope.launch {
-        updateCurrentUiStateWith {
-            FiltersUiState.Idle(FiltersUiModel())
-        }
-    }
-
-    fun onApplyClicked(fromDateString: String, toDateString: String) {
-        runCatching {
-            requireUiState().uiModel
-        }.map {
-            it.copy(
-                dateFrom = fromDateString.toLocalDate(),
-                dateTo = toDateString.toLocalDate()
-            )
-        }.map { newUiModel ->
-            updateCurrentUiStateWith {
-                FiltersUiState.Idle(newUiModel)
-            }
-            newUiModel to newUiModel.validateFilters()
-        }.onSuccess { (newUiModel, fieldError) ->
-            fieldError.handleError(newUiModel)
-        }.onFailure {
-            Timber.e("Failed to apply filters: $it")
-        }
     }
 
     private fun FieldError?.handleError(newUiModel: FiltersUiModel) {

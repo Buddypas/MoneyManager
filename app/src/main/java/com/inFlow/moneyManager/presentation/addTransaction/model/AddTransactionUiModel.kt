@@ -10,5 +10,7 @@ data class AddTransactionUiModel(
     val selectedCategory: Category? = null,
     val categoryErrorResId: Int? = null,
     val descriptionErrorResId: Int? = null,
-    val amountErrorResId: Int? = null
+    val amountErrorResId: Int? = null,
+    val dateErrorResId: Int? = null
+    // TODO: Use field error instead of 4 fields
 )

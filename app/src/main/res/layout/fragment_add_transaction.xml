@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/add_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="16dp"
@@ -13,44 +12,44 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type"
-        app:layout_constraintBottom_toBottomOf="@id/type_radio_group"
+        android:text="@string/type"
+        app:layout_constraintBottom_toBottomOf="@id/radioGroupType"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/type_radio_group" />
+        app:layout_constraintTop_toTopOf="@id/radioGroupType" />
 
     <RadioGroup
-        android:id="@+id/type_radio_group"
+        android:id="@+id/radioGroupType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/textTypeLabel"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/expense_btn"
+            android:id="@+id/buttonExpense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="Expense"
+            android:text="@string/expense"
             android:textAppearance="?attr/textAppearanceBody1" />
 
         <RadioButton
-            android:id="@+id/income_btn"
+            android:id="@+id/buttonIncome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Income"
+            android:text="@string/income"
             android:textAppearance="?attr/textAppearanceBody1" />
 
     </RadioGroup>
 
     <!--    TODO: Add autocomplete functionality-->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/category_layout"
+        android:id="@+id/editTextLayoutCategory"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,10 +58,10 @@
         app:endIconDrawable="@drawable/arrow_down"
         app:endIconMode="dropdown_menu"
         app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@id/type_radio_group">
+        app:layout_constraintTop_toBottomOf="@id/radioGroupType">
 
         <AutoCompleteTextView
-            android:id="@+id/category_dropdown"
+            android:id="@+id/dropdownCategory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="none"
@@ -73,21 +72,21 @@
 
     <!--    TODO: Add number of chars limit-->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/description_layout"
+        android:id="@+id/editTextLayoutDescription"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Description"
+        android:hint="@string/description"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
         app:errorEnabled="true"
         app:hintEnabled="true"
         app:hintTextAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintTop_toBottomOf="@id/category_layout">
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutCategory">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/description_input"
+            android:id="@+id/editTextDescription"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textCapSentences"
@@ -97,22 +96,23 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--    TODO: Extract field style-->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/amount_layout"
+        android:id="@+id/editTextLayoutAmount"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Amount"
+        android:hint="@string/amount"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
         app:errorEnabled="true"
         app:hintEnabled="true"
         app:hintTextAppearance="?attr/textAppearanceBody1"
-        app:layout_constraintTop_toBottomOf="@id/description_layout">
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutDescription">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/amount_input"
+            android:id="@+id/editTextAmount"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="numberDecimal"
@@ -122,16 +122,41 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editTextLayoutDate"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/date_template"
+        android:minWidth="144dp"
+        android:textColorHint="@color/gray"
+        app:errorEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextAppearance="?attr/textAppearanceBody1"
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutAmount">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="date"
+            android:maxLength="10"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/save_btn"
+        android:id="@+id/buttonSave"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Save"
+        android:text="@string/save"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_layout" />
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutDate" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonCancel"
@@ -139,10 +164,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:text="cancel"
+        android:text="@string/cancel"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="@id/save_btn"
-        app:layout_constraintEnd_toStartOf="@id/save_btn"
-        app:layout_constraintTop_toTopOf="@id/save_btn" />
+        app:layout_constraintBottom_toBottomOf="@id/buttonSave"
+        app:layout_constraintEnd_toStartOf="@id/buttonSave"
+        app:layout_constraintTop_toTopOf="@id/buttonSave" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
