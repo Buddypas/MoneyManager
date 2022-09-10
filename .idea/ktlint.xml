@@ -5,6 +5,7 @@
       <list>
         <option value="no-wildcard-imports" />
         <option value="multiline-if-else" />
+        <option value="filename" />
       </list>
     </disabledRules>
   </component>

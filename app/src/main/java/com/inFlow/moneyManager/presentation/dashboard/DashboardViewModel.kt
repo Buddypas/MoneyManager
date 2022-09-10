@@ -16,14 +16,12 @@ import javax.inject.Inject
 
 private const val QUERY_DEBOUNCE_DURATION = 1500L
 
-// TODO: Fetch entire balance data from db instead of incomes and expenses separately
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val getTransactionsUseCase: GetTransactionsUseCase,
     private val getExpensesAndIncomesUseCase: GetExpensesAndIncomesUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow<DashboardUiState>(DashboardUiState.Loading())
     private val stateFlow = _stateFlow.asStateFlow()
@@ -85,8 +83,8 @@ class DashboardViewModel @Inject constructor(
                 updateCurrentUiStateWith {
                     DashboardUiState.Idle(
                         it.copy(
-                            income = balanceData.second,
-                            expenses = balanceData.first,
+                            income = balanceData.incomes,
+                            expenses = balanceData.expenses,
                             transactionList = transactionList
                         )
                     )
@@ -98,7 +96,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.fetchBalanceDataAsync(): Deferred<Pair<Double, Double>> =
+    private fun CoroutineScope.fetchBalanceDataAsync(): Deferred<BalanceDataUiModel> =
         async { getExpensesAndIncomesUseCase.execute() }
 
     private fun CoroutineScope.fetchTransactionListAsync(): Deferred<List<Transaction>> =
@@ -116,7 +114,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    // TODO: Figure out way to not use requireUiState when updating
     private fun updateCurrentUiStateWith(uiStateProvider: (DashboardUiModel) -> DashboardUiState) {
         _stateFlow.value = uiStateProvider.invoke(requireUiState().uiModel)
     }

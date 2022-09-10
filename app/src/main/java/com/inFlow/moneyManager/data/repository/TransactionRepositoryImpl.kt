@@ -2,6 +2,7 @@ package com.inFlow.moneyManager.data.repository
 
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.mapper.TransactionDtoToTransactionMapper
+import com.inFlow.moneyManager.domain.transaction.model.BalanceData
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
@@ -16,7 +17,7 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO: Create filte model for each layer
+// TODO: Create filter model for each layer
 @Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val db: MoneyManagerDatabase,
@@ -60,17 +61,16 @@ class TransactionRepositoryImpl @Inject constructor(
             transactionDtoToTransactionMapper.mapList(it)
         }.getOrThrow()
 
-    // TODO: Create BalanceData data class
-    override suspend fun calculateExpensesAndIncomes(): Pair<Double, Double> =
+    override suspend fun calculateExpensesAndIncomes(): BalanceData =
         withContext(ioDispatcher) {
             runCatching {
                 val expensesDeferred = async { db.transactionsDao().getExpenses() }
                 val incomesDeferred = async { db.transactionsDao().getIncomes() }
                 expensesDeferred to incomesDeferred
             }.mapCatching { (expensesDeferred, incomesDeferred) ->
-                Pair(
-                    expensesDeferred.await().sumOf { -it.transactionAmount },
-                    incomesDeferred.await().sumOf { it.transactionAmount }
+                BalanceData(
+                    incomesDeferred.await().sumOf { it.transactionAmount },
+                    expensesDeferred.await().sumOf { -it.transactionAmount }
                 )
             }.getOrThrow()
         }

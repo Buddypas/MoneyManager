@@ -1,5 +1,6 @@
 package com.inFlow.moneyManager.domain.transaction.repository
 
+import com.inFlow.moneyManager.domain.transaction.model.BalanceData
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import java.util.*
@@ -13,5 +14,5 @@ interface TransactionRepository {
         endDate: Date
     ): List<Transaction>
     suspend fun getAllTransactions(): List<Transaction>
-    suspend fun calculateExpensesAndIncomes(): Pair<Double, Double>
+    suspend fun calculateExpensesAndIncomes(): BalanceData
 }
