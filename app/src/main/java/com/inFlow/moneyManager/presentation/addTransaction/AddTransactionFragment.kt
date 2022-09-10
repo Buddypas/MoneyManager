@@ -91,19 +91,6 @@ class AddTransactionFragment : BaseFragment() {
         buttonSave.setOnClickListener { onSaveClick() }
     }
 
-    private fun FragmentAddTransactionBinding.bindError(state: AddTransactionUiState.Error) {
-        state.uiModel.fieldError?.let { fieldError ->
-            val field = when (fieldError.fieldType) {
-                FieldType.CATEGORY -> editTextLayoutCategory
-                FieldType.DESCRIPTION -> editTextLayoutDescription
-                FieldType.AMOUNT -> editTextLayoutAmount
-                FieldType.DATE -> editTextLayoutDate
-                else -> null
-            }
-            field?.error = getString(fieldError.errorResId)
-        }
-    }
-
     private fun FragmentAddTransactionBinding.bindIdle(state: AddTransactionUiState.Idle) {
         state.uiModel.selectedCategory?.let {
             dropdownCategory.text = SpannableStringBuilder(it.name)
@@ -116,6 +103,27 @@ class AddTransactionFragment : BaseFragment() {
                 activeList.map { it.name }
             ).apply { dropdownCategory.setAdapter(this) }
         }
+    }
+
+    private fun FragmentAddTransactionBinding.bindError(state: AddTransactionUiState.Error) {
+        clearErrors()
+        state.uiModel.fieldError?.let { fieldError ->
+            val field = when (fieldError.fieldType) {
+                FieldType.CATEGORY -> editTextLayoutCategory
+                FieldType.DESCRIPTION -> editTextLayoutDescription
+                FieldType.AMOUNT -> editTextLayoutAmount
+                FieldType.DATE -> editTextLayoutDate
+                else -> null
+            }
+            field?.error = getString(fieldError.errorResId)
+        }
+    }
+
+    private fun FragmentAddTransactionBinding.clearErrors() {
+        editTextLayoutCategory.error = null
+        editTextLayoutDescription.error = null
+        editTextLayoutAmount.error = null
+        editTextLayoutDate.error = null
     }
 
     private fun onSaveClick() {

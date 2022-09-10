@@ -2,7 +2,6 @@ package com.inFlow.moneyManager.presentation.addTransaction
 
 import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.domain.category.model.Category
 import com.inFlow.moneyManager.domain.category.usecase.GetExpenseCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.GetIncomeCategoriesUseCase
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
@@ -85,40 +84,39 @@ class AddTransactionViewModel @Inject constructor(
         }
     }
 
-    // TODO: Remove !!, validate model instead of fields
     fun onSaveClick(description: String?, amount: Double?, date: LocalDate?) {
-        isTransactionValid(
-            requireUiState().uiModel.selectedCategory,
-            description,
-            amount,
-            date
-        )?.let { fieldError ->
+        updateCurrentUiStateWith {
+            requireUiState().updateWith(
+                it.copy(
+                    selectedDescription = description,
+                    selectedAmount = amount,
+                    selectedDate = date
+                )
+            )
+        }
+        // TODO: Handle state not being updated when error is the same as before
+        requireUiState().uiModel.isTransactionValid()?.let { fieldError ->
             updateCurrentUiStateWith {
                 AddTransactionUiState.Error(it.copy(fieldError = fieldError))
             }
-        } ?: saveTransaction(description!!, amount!!)
+        } ?: saveTransaction()
     }
 
     // TODO: Make mapper
-    private fun isTransactionValid(
-        selectedCategory: Category?,
-        description: String?,
-        amount: Double?,
-        date: LocalDate?
-    ): FieldError? = when {
+    private fun AddTransactionUiModel.isTransactionValid(): FieldError? = when {
         selectedCategory == null -> FieldError(
             FieldType.CATEGORY,
             R.string.error_category_not_selected
         )
-        description.isNullOrBlank() -> FieldError(
+        selectedDescription.isNullOrBlank() -> FieldError(
             FieldType.DESCRIPTION,
             R.string.error_empty_description
         )
-        amount == null || amount <= 0.0 -> FieldError(
+        selectedAmount == null || selectedAmount <= 0.0 -> FieldError(
             FieldType.AMOUNT,
             R.string.error_amount_must_be_positive
         )
-        date == null || date.isAfter(LocalDate.now()) -> FieldError(
+        selectedDate == null || selectedDate.isAfter(LocalDate.now()) -> FieldError(
             FieldType.DATE,
             R.string.error_invalid_date
         )
@@ -152,29 +150,39 @@ class AddTransactionViewModel @Inject constructor(
         return Categories(expenses.await(), incomes.await())
     }
 
-    private fun saveTransaction(desc: String, amount: Double) {
+    private fun saveTransaction() {
         viewModelScope.launch {
             runCatching {
                 requireUiState().uiModel
             }.mapCatching { uiModel ->
-                val realAmount =
-                    if (uiModel.categoryType == CategoryType.EXPENSE) -amount
-                    else amount
-                realAmount to requireNotNull(uiModel.selectedCategory?.id) { "categoryId must not be null" }
-            }.onSuccess { (amount, categoryId) ->
-                // TODO: Check if save successful
-                saveTransactionUseCase.execute(
-                    Transaction(
-                        amount = amount,
-                        description = desc,
-                        categoryId = categoryId
-                    )
+                Transaction(
+                    categoryId = requireNotNull(uiModel.selectedCategory?.id) { "categoryId must not be null" },
+                    amount = uiModel.selectedAmount.getRealAmount(uiModel.categoryType),
+                    description = uiModel.selectedDescription.orEmpty(),
+                    date = uiModel.selectedDate
                 )
+            }.onSuccess { transaction ->
+                // TODO: Check if save successful
+                saveTransactionUseCase.execute(transaction)
                 AddTransactionUiEvent.ShowSuccessMessage(R.string.transaction_added).emit()
                 AddTransactionUiEvent.NavigateUp.emit()
             }
         }
     }
+
+    // TODO: Move this to other layers
+    private fun Double?.getRealAmount(categoryType: CategoryType): Double =
+        runCatching {
+            requireNotNull(this) { "Amount cannot be null" }
+        }.mapCatching {
+            require(it > 0) { "Amount must be larger than 0" }
+            it
+        }.mapCatching { amount ->
+            val realAmount =
+                if (categoryType == CategoryType.EXPENSE) -amount
+                else amount
+            realAmount
+        }.getOrThrow()
 
     private fun AddTransactionUiEvent.emit() = viewModelScope.launch {
         eventChannel.send(this@emit)
