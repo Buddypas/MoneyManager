@@ -9,7 +9,7 @@ import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
 import com.inFlow.moneyManager.presentation.shared.FieldError
 import com.inFlow.moneyManager.shared.kotlin.FieldType
-import com.inFlow.moneyManager.shared.kotlin.toLocalDate
+import com.inFlow.moneyManager.shared.extension.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel

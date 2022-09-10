@@ -3,7 +3,7 @@ package com.inFlow.moneyManager.presentation.shared.extension
 import android.content.res.ColorStateList
 import android.widget.ImageView
 import com.inFlow.moneyManager.R
-import com.inFlow.moneyManager.shared.kotlin.getContextColor
+import com.inFlow.moneyManager.shared.extension.getContextColor
 
 fun ImageView.setIncome() = run {
     setImageResource(R.drawable.arrow_down_right)

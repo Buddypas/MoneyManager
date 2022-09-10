@@ -24,7 +24,12 @@ import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
 import com.inFlow.moneyManager.presentation.shared.FieldError
 import com.inFlow.moneyManager.presentation.shared.extension.clear
 import com.inFlow.moneyManager.presentation.shared.extension.setSpannable
-import com.inFlow.moneyManager.shared.kotlin.*
+import com.inFlow.moneyManager.shared.extension.addLiveDateFormatter
+import com.inFlow.moneyManager.shared.extension.showSnackbar
+import com.inFlow.moneyManager.shared.extension.toFormattedDate
+import com.inFlow.moneyManager.shared.kotlin.FieldType
+import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
+import com.inFlow.moneyManager.shared.kotlin.MONTHS
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -234,4 +239,14 @@ class DashboardFiltersDialog : DialogFragment() {
         if (period == PeriodMode.WHOLE_MONTH)
             selectWholeMonth()
         else selectCustomRange()
+
+    private fun setFullWidth() {
+        dialog?.window?.attributes?.let {
+            val params = it.apply {
+                width = ViewGroup.LayoutParams.MATCH_PARENT
+                height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            dialog?.window?.attributes = params
+        }
+    }
 }

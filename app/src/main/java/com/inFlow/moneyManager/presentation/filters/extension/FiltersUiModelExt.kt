@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.presentation.filters.extension
 
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
-import com.inFlow.moneyManager.shared.kotlin.toDate
+import com.inFlow.moneyManager.shared.extension.toDate
 import java.util.*
 
 // TODO: Remove !!

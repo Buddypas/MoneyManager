@@ -2,7 +2,7 @@ package com.inFlow.moneyManager.presentation.filters.extension
 
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogDashboardFiltersBinding
-import com.inFlow.moneyManager.shared.kotlin.getContextColor
+import com.inFlow.moneyManager.shared.extension.getContextColor
 
 fun DialogDashboardFiltersBinding.selectWholeMonth() {
     disableCustomRangeFields()

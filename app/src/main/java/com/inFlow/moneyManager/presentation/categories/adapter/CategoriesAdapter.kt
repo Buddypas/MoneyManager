@@ -1,19 +1,15 @@
 package com.inFlow.moneyManager.presentation.categories.adapter
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.ItemCategoryBinding
 import com.inFlow.moneyManager.domain.category.model.Category
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.presentation.shared.extension.setExpense
 import com.inFlow.moneyManager.presentation.shared.extension.setIncome
-import com.inFlow.moneyManager.shared.kotlin.getContextColor
 
 class CategoriesAdapter :
     ListAdapter<Category, CategoriesAdapter.CategoryViewHolder>(CategoryDiffCallback()) {

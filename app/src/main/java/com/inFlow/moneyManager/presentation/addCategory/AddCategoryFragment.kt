@@ -14,7 +14,7 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
-import com.inFlow.moneyManager.shared.kotlin.showSnackbar
+import com.inFlow.moneyManager.shared.extension.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
