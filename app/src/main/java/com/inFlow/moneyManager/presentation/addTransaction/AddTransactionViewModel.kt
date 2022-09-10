@@ -8,8 +8,6 @@ import com.inFlow.moneyManager.domain.category.usecase.GetIncomeCategoriesUseCas
 import com.inFlow.moneyManager.domain.transaction.model.Transaction
 import com.inFlow.moneyManager.domain.transaction.usecase.SaveTransactionUseCase
 import com.inFlow.moneyManager.presentation.addCategory.model.Categories
-import com.inFlow.moneyManager.presentation.addCategory.model.FieldError
-import com.inFlow.moneyManager.presentation.addCategory.model.FieldType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.inferCategoryType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.updateCategoryType
 import com.inFlow.moneyManager.presentation.addTransaction.extension.updateWith
@@ -17,6 +15,8 @@ import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionU
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiModel
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
+import com.inFlow.moneyManager.presentation.shared.FieldError
+import com.inFlow.moneyManager.shared.kotlin.FieldType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -94,7 +94,7 @@ class AddTransactionViewModel @Inject constructor(
             date
         )?.let { fieldError ->
             updateCurrentUiStateWith {
-                AddTransactionUiState.Error(fieldError.toErrorUiModel(it))
+                AddTransactionUiState.Error(it.copy(fieldError = fieldError))
             }
         } ?: saveTransaction(description!!, amount!!)
     }
@@ -185,12 +185,4 @@ class AddTransactionViewModel @Inject constructor(
     }
 
     private fun requireUiState(): AddTransactionUiState = stateFlow.value
-
-    private fun FieldError.toErrorUiModel(currentUiModel: AddTransactionUiModel) =
-        when (fieldType) {
-            FieldType.CATEGORY -> currentUiModel.copy(categoryErrorResId = errorResId)
-            FieldType.DESCRIPTION -> currentUiModel.copy(descriptionErrorResId = errorResId)
-            FieldType.AMOUNT -> currentUiModel.copy(amountErrorResId = errorResId)
-            FieldType.DATE -> currentUiModel.copy(amountErrorResId = errorResId)
-        }
 }

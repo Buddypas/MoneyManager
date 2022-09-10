@@ -15,13 +15,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.DialogDashboardFiltersBinding
-import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
 import com.inFlow.moneyManager.presentation.filters.extension.*
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiEvent
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
+import com.inFlow.moneyManager.presentation.shared.FieldError
 import com.inFlow.moneyManager.presentation.shared.extension.clear
 import com.inFlow.moneyManager.presentation.shared.extension.setSpannable
 import com.inFlow.moneyManager.shared.kotlin.*
@@ -222,10 +222,11 @@ class DashboardFiltersDialog : DialogFragment() {
     }
 
     private fun DialogDashboardFiltersBinding.displayError(fieldError: FieldError) {
-        when (fieldError.field) {
-            FieldType.FIELD_DATE_FROM -> editTextLayoutFrom.error = fieldError.message
-            FieldType.FIELD_DATE_TO -> editTextLayoutTo.error = fieldError.message
-            FieldType.FIELD_OTHER -> root.showSnackbar(fieldError.message)
+        when (fieldError.fieldType) {
+            FieldType.DATE_FROM -> editTextLayoutFrom.error = getString(fieldError.errorResId)
+            FieldType.DATE_TO -> editTextLayoutTo.error = getString(fieldError.errorResId)
+            FieldType.OTHER -> root.showSnackbar(getString(fieldError.errorResId))
+            else -> Unit
         }
     }
 

@@ -2,10 +2,12 @@ package com.inFlow.moneyManager.presentation.filters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiEvent
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiState
+import com.inFlow.moneyManager.presentation.shared.FieldError
 import com.inFlow.moneyManager.shared.kotlin.FieldType
 import com.inFlow.moneyManager.shared.kotlin.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -243,26 +245,26 @@ class FiltersViewModel @Inject constructor() : ViewModel() {
     private fun FiltersUiModel.validateFilters(): FieldError? {
         when {
             showTransactions == ShowTransactions.SHOW_NONE -> return FieldError(
-                "Incomes or expenses must be selected",
-                FieldType.FIELD_OTHER
+                FieldType.OTHER,
+                R.string.error_category_type_not_selected,
             )
             periodMode == PeriodMode.WHOLE_MONTH ->
                 yearMonth ?: return FieldError(
-                    "Month is not valid",
-                    FieldType.FIELD_OTHER
+                    FieldType.OTHER,
+                    R.string.error_invalid_month,
                 )
             else -> {
                 dateFrom ?: return FieldError(
-                    "Date is not valid",
-                    FieldType.FIELD_DATE_FROM
+                    FieldType.DATE_FROM,
+                    R.string.error_invalid_date,
                 )
                 dateTo ?: return FieldError(
-                    "Date is not valid",
-                    FieldType.FIELD_DATE_TO
+                    FieldType.DATE_TO,
+                    R.string.error_invalid_date,
                 )
                 if (dateFrom.isAfter(dateTo)) return FieldError(
-                    "Dates are not valid",
-                    FieldType.FIELD_OTHER
+                    FieldType.OTHER,
+                    R.string.error_invalid_dates,
                 )
             }
         }

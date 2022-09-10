@@ -1,6 +1,7 @@
 package com.inFlow.moneyManager.presentation.addTransaction.model
 
 import com.inFlow.moneyManager.domain.category.model.Category
+import com.inFlow.moneyManager.presentation.shared.FieldError
 
 data class AddTransactionUiModel(
     val categoryType: CategoryType = CategoryType.EXPENSE,
@@ -8,9 +9,5 @@ data class AddTransactionUiModel(
     val incomeList: List<Category>? = null,
     val activeCategoryList: List<Category>? = null,
     val selectedCategory: Category? = null,
-    val categoryErrorResId: Int? = null,
-    val descriptionErrorResId: Int? = null,
-    val amountErrorResId: Int? = null,
-    val dateErrorResId: Int? = null
-    // TODO: Use field error instead of 4 fields
+    val fieldError: FieldError? = null
 )

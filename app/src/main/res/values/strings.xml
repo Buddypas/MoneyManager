@@ -12,6 +12,9 @@
     <string name="error_empty_description">You must enter a description.</string>
     <string name="error_amount_must_be_positive">Amount must be larger than 0.</string>
     <string name="error_invalid_date">Date must be in dd/mm/yyyy format.</string>
+    <string name="error_invalid_dates">The end date cannot be before the start date.</string>
+    <string name="error_invalid_month">Month is not valid.</string>
+    <string name="error_category_type_not_selected">Incomes or expenses must be selected.</string>
     <string name="income">Income</string>
     <string name="balance">Balance</string>
     <string name="no_transactions">No transactions.</string>

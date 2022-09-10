@@ -92,17 +92,15 @@ class AddTransactionFragment : BaseFragment() {
     }
 
     private fun FragmentAddTransactionBinding.bindError(state: AddTransactionUiState.Error) {
-        state.uiModel.categoryErrorResId?.let {
-            editTextLayoutCategory.error = getString(it)
-        }
-        state.uiModel.descriptionErrorResId?.let {
-            editTextLayoutDescription.error = getString(it)
-        }
-        state.uiModel.amountErrorResId?.let {
-            editTextLayoutAmount.error = getString(it)
-        }
-        state.uiModel.dateErrorResId?.let {
-            editTextLayoutDate.error = getString(it)
+        state.uiModel.fieldError?.let { fieldError ->
+            val field = when (fieldError.fieldType) {
+                FieldType.CATEGORY -> editTextLayoutCategory
+                FieldType.DESCRIPTION -> editTextLayoutDescription
+                FieldType.AMOUNT -> editTextLayoutAmount
+                FieldType.DATE -> editTextLayoutDate
+                else -> null
+            }
+            field?.error = getString(fieldError.errorResId)
         }
     }
 

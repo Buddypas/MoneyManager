@@ -1,10 +1,10 @@
 package com.inFlow.moneyManager.presentation.filters.model
 
 import android.os.Parcelable
-import com.inFlow.moneyManager.presentation.dashboard.model.FieldError
 import com.inFlow.moneyManager.presentation.dashboard.model.PeriodMode
 import com.inFlow.moneyManager.presentation.dashboard.model.ShowTransactions
 import com.inFlow.moneyManager.presentation.dashboard.model.SortBy
+import com.inFlow.moneyManager.presentation.shared.FieldError
 import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.YearMonth
@@ -20,4 +20,4 @@ data class FiltersUiModel(
     val sortBy: SortBy = SortBy.SORT_BY_DATE,
     val isDescending: Boolean = true,
     val fieldError: FieldError? = null
-): Parcelable
+) : Parcelable
