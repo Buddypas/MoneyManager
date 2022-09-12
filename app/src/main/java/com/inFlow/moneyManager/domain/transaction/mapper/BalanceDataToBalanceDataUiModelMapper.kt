@@ -1,4 +1,4 @@
-package com.inFlow.moneyManager.domain.transaction
+package com.inFlow.moneyManager.domain.transaction.mapper
 
 import com.inFlow.moneyManager.domain.SuspendingMapper
 import com.inFlow.moneyManager.domain.transaction.model.BalanceData

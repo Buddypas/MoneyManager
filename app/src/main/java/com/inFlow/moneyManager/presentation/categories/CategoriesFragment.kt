@@ -13,13 +13,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.inFlow.moneyManager.databinding.FragmentCategoriesBinding
 import com.inFlow.moneyManager.presentation.categories.adapter.CategoriesAdapter
+import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiEvent
 import com.inFlow.moneyManager.presentation.categories.model.CategoriesUiState
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 // TODO: Add pagination
-// TODO: Add keyboard closing to main activity
 @AndroidEntryPoint
 class CategoriesFragment : BaseFragment() {
     private var _binding: FragmentCategoriesBinding? = null
@@ -39,9 +39,9 @@ class CategoriesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.setUpUi()
         handleState()
+        handleEvents()
     }
 
     override fun onResume() {
@@ -67,9 +67,23 @@ class CategoriesFragment : BaseFragment() {
         }
     }
 
+    private fun handleEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectEvents(this) { event ->
+                    when (event) {
+                        is CategoriesUiEvent.GoToCategory -> findNavController().navigate(
+                            CategoriesFragmentDirections.actionCategoriesToAddCategory(event.category)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun FragmentCategoriesBinding.setUpUi() {
         addBtn.setOnClickListener {
-            findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddCategory())
+            findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddCategory(null))
         }
     }
 
@@ -79,7 +93,7 @@ class CategoriesFragment : BaseFragment() {
 
     private fun FragmentCategoriesBinding.bindIdle(state: CategoriesUiState.Idle) {
         progressBar.isGone = true
-        CategoriesAdapter().also {
+        CategoriesAdapter { viewModel.onCategoryClick(it) }.also {
             categoriesRecycler.adapter = it
             it.submitList(state.uiModel.categoryList)
         }

@@ -63,7 +63,6 @@ class AddTransactionFragment : BaseFragment() {
     }
 
     private fun handleEvents() {
-        // TODO: Test coroutine collection
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectEvents(this) { event ->

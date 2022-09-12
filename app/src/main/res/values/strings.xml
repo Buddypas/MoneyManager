@@ -44,6 +44,7 @@
     <string name="clear">clear</string>
     <string name="amount">Amount</string>
     <string name="save">Save</string>
+    <string name="update">Update</string>
     <string name="type">Type</string>
     <string name="expense">Expense</string>
     <string name="description">Description</string>

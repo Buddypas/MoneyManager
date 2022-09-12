@@ -11,23 +11,28 @@ import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.presentation.shared.extension.setExpense
 import com.inFlow.moneyManager.presentation.shared.extension.setIncome
 
-class CategoriesAdapter :
-    ListAdapter<Category, CategoriesAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
+class CategoriesAdapter(
+    private val onCategoryClick: (Category) -> Unit
+) : ListAdapter<Category, CategoriesAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemCategoryBinding.inflate(inflater, parent, false)
-        return CategoryViewHolder(binding)
+        return CategoryViewHolder(binding, onCategoryClick)
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class CategoryViewHolder(private val binding: ItemCategoryBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class CategoryViewHolder(
+        private val binding: ItemCategoryBinding,
+        private val onCategoryClick: (Category) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(item: Category) {
             with(binding) {
+                root.setOnClickListener { onCategoryClick(item) }
                 nameTxt.text = item.name
                 typeImg.apply {
                     takeIf { item.type == CategoryType.INCOME }?.setIncome() ?: setExpense()

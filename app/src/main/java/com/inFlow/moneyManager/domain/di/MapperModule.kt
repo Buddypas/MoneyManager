@@ -1,6 +1,6 @@
 package com.inFlow.moneyManager.domain.di
 
-import com.inFlow.moneyManager.domain.transaction.BalanceDataToBalanceDataUiModelMapper
+import com.inFlow.moneyManager.domain.transaction.mapper.BalanceDataToBalanceDataUiModelMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

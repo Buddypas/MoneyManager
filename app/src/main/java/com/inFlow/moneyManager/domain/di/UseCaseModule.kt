@@ -5,7 +5,7 @@ import com.inFlow.moneyManager.domain.category.usecase.GetCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.GetExpenseCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.GetIncomeCategoriesUseCase
 import com.inFlow.moneyManager.domain.category.usecase.SaveCategoryUseCase
-import com.inFlow.moneyManager.domain.transaction.BalanceDataToBalanceDataUiModelMapper
+import com.inFlow.moneyManager.domain.transaction.mapper.BalanceDataToBalanceDataUiModelMapper
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.domain.transaction.usecase.GetExpensesAndIncomesUseCase
 import com.inFlow.moneyManager.domain.transaction.usecase.GetTransactionsUseCase

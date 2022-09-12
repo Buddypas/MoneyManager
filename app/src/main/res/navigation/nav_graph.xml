@@ -40,7 +40,12 @@
         android:id="@+id/addCategoryFragment"
         android:name="com.inFlow.moneyManager.presentation.addCategory.AddCategoryFragment"
         android:label="fragment_add_category"
-        tools:layout="@layout/fragment_add_category" />
+        tools:layout="@layout/fragment_add_category">
+        <argument
+            android:name="category"
+            app:argType="com.inFlow.moneyManager.domain.category.model.Category"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/addTransactionFragment"

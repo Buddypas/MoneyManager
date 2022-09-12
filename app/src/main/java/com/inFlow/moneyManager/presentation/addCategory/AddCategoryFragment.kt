@@ -9,6 +9,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
@@ -25,6 +27,7 @@ class AddCategoryFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AddCategoryViewModel by viewModels()
+    private val args: AddCategoryFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +80,9 @@ class AddCategoryFragment : BaseFragment() {
         buttonSave.setOnClickListener { onSaveClick() }
         expenseRadio.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onCategoryTypeChanged(isChecked)
+        }
+        args.category?.let {
+            buttonSave.text = getString(R.string.update)
         }
     }
 

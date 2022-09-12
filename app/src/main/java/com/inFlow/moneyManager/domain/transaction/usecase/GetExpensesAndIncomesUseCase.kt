@@ -1,7 +1,7 @@
 package com.inFlow.moneyManager.domain.transaction.usecase
 
 import com.inFlow.moneyManager.domain.SuspendingNonParameterUseCase
-import com.inFlow.moneyManager.domain.transaction.BalanceDataToBalanceDataUiModelMapper
+import com.inFlow.moneyManager.domain.transaction.mapper.BalanceDataToBalanceDataUiModelMapper
 import com.inFlow.moneyManager.domain.transaction.repository.TransactionRepository
 import com.inFlow.moneyManager.presentation.dashboard.model.BalanceDataUiModel
 import kotlinx.coroutines.CoroutineDispatcher
