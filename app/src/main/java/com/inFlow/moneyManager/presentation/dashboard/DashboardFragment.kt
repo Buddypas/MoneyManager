@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -22,7 +23,7 @@ import com.inFlow.moneyManager.presentation.dashboard.adapter.TransactionsAdapte
 import com.inFlow.moneyManager.presentation.dashboard.extensions.*
 import com.inFlow.moneyManager.presentation.dashboard.model.*
 import com.inFlow.moneyManager.presentation.filters.model.FiltersUiModel
-import com.inFlow.moneyManager.shared.base.BaseFragment
+import com.inFlow.moneyManager.shared.extension.safeNavigate
 import com.inFlow.moneyManager.shared.kotlin.KEY_FILTERS
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 @AndroidEntryPoint
-class DashboardFragment : BaseFragment() {
+class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
@@ -80,7 +81,7 @@ class DashboardFragment : BaseFragment() {
                                 DashboardFragmentDirections.actionDashboardToAddTransaction()
                             )
                         is DashboardUiEvent.OpenFilters ->
-                            navigateSafely(
+                            findNavController().safeNavigate(
                                 DashboardFragmentDirections.actionDashboardToFilters(event.filters)
                             )
                     }

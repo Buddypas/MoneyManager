@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +16,6 @@ import com.inFlow.moneyManager.databinding.FragmentAddCategoryBinding
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
-import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.extension.showSnackbar
 import com.inFlow.moneyManager.shared.extension.toSpannableStringBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 // TODO: Add loading states
 @AndroidEntryPoint
-class AddCategoryFragment : BaseFragment() {
+class AddCategoryFragment : Fragment() {
     private var _binding: FragmentAddCategoryBinding? = null
     private val binding get() = _binding!!
 
@@ -47,6 +47,11 @@ class AddCategoryFragment : BaseFragment() {
 
         handleState()
         handleEvents()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun handleEvents() {
@@ -101,10 +106,5 @@ class AddCategoryFragment : BaseFragment() {
 
     private fun onSaveClick() {
         viewModel.onSaveClick(binding.editTextName.text?.toString())
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

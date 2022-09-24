@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +17,6 @@ import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.databinding.FragmentAddTransactionBinding
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiEvent
 import com.inFlow.moneyManager.presentation.addTransaction.model.AddTransactionUiState
-import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.extension.addLiveDateFormatter
 import com.inFlow.moneyManager.shared.extension.showSnackbar
 import com.inFlow.moneyManager.shared.extension.toLocalDate
@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddTransactionFragment : BaseFragment() {
+class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
 
