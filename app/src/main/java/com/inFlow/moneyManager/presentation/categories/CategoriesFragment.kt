@@ -83,7 +83,11 @@ class CategoriesFragment : BaseFragment() {
 
     private fun FragmentCategoriesBinding.setUpUi() {
         addBtn.setOnClickListener {
-            findNavController().navigate(CategoriesFragmentDirections.actionCategoriesToAddCategory(null))
+            findNavController().navigate(
+                CategoriesFragmentDirections.actionCategoriesToAddCategory(
+                    null
+                )
+            )
         }
     }
 

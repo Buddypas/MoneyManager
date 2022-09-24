@@ -5,7 +5,6 @@ import androidx.room.Room
 import com.inFlow.moneyManager.data.db.MoneyManagerDatabase
 import com.inFlow.moneyManager.data.db.dao.CategoriesDao
 import com.inFlow.moneyManager.data.db.dao.TransactionsDao
-import com.inFlow.moneyManager.data.mapper.CategoryDtoToCategoryMapper
 import com.inFlow.moneyManager.data.mapper.TransactionDtoToTransactionMapper
 import com.inFlow.moneyManager.data.repository.CategoryRepositoryImpl
 import com.inFlow.moneyManager.data.repository.TransactionRepositoryImpl
@@ -47,18 +46,16 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideCategoryRepository(
-        database: MoneyManagerDatabase,
-        categoryDtoToCategoryMapper: CategoryDtoToCategoryMapper
-    ): CategoryRepository = CategoryRepositoryImpl(database, categoryDtoToCategoryMapper)
-
+    fun provideCategoryRepository(database: MoneyManagerDatabase): CategoryRepository =
+        CategoryRepositoryImpl(database)
 
     @Singleton
     @Provides
     fun provideTransactionRepository(
         database: MoneyManagerDatabase,
         transactionDtoToTransactionMapper: TransactionDtoToTransactionMapper
-    ): TransactionRepository = TransactionRepositoryImpl(database, transactionDtoToTransactionMapper)
+    ): TransactionRepository =
+        TransactionRepositoryImpl(database, transactionDtoToTransactionMapper)
 
     @ApplicationScope
     @Provides

@@ -2,7 +2,6 @@ package com.inFlow.moneyManager.data.db.dao
 
 import androidx.room.*
 import com.inFlow.moneyManager.data.db.entity.CategoryDto
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoriesDao {
@@ -16,7 +15,7 @@ interface CategoriesDao {
     suspend fun getAllIncomeCategories(): List<CategoryDto>
 
     @Query("SELECT * FROM categories WHERE categoryId=:id")
-    fun getById(id: Int): CategoryDto
+    fun getById(id: Int): CategoryDto?
 
     @Update
     fun updateCategories(vararg categories: CategoryDto)

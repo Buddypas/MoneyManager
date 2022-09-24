@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.domain.category.model.Category
 import com.inFlow.moneyManager.domain.category.usecase.SaveCategoryUseCase
+import com.inFlow.moneyManager.domain.category.usecase.UpdateCategoryUseCase
 import com.inFlow.moneyManager.presentation.addCategory.extension.updateWith
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
@@ -22,15 +23,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddCategoryViewModel @Inject constructor(
-    private val saveCategoryUseCase: SaveCategoryUseCase
+    private val saveCategoryUseCase: SaveCategoryUseCase,
+    private val updateCategoryUseCase: UpdateCategoryUseCase
 ) : ViewModel() {
-
     private val _stateFlow: MutableStateFlow<AddCategoryUiState> =
         MutableStateFlow(AddCategoryUiState.Idle())
     private val stateFlow = _stateFlow.asStateFlow()
 
     private val eventChannel = Channel<AddCategoryUiEvent>()
     private val eventFlow = eventChannel.receiveAsFlow()
+
+    fun init(category: Category?) {
+        category?.let { existingCategory ->
+            updateCurrentUiStateWith {
+                AddCategoryUiState.Idle(
+                    it.copy(
+                        categoryId = existingCategory.id,
+                        categoryType = existingCategory.type,
+                        categoryName = existingCategory.name
+                    )
+                )
+            }
+        }
+    }
 
     fun collectState(coroutineScope: CoroutineScope, callback: (AddCategoryUiState) -> Unit) {
         coroutineScope.launch {
@@ -57,22 +72,40 @@ class AddCategoryViewModel @Inject constructor(
     }
 
     fun onSaveClick(name: String?) {
-        isCategoryValid(name)?.let { errorResId ->
-            updateCurrentUiStateWith {
-                AddCategoryUiState.Error(it.copy(errorMessageResId = errorResId))
+        runCatching {
+            isCategoryValid(name)
+        }.mapCatching {
+            it?.let { errorResId ->
+                updateCurrentUiStateWith {
+                    AddCategoryUiState.Error(it.copy(errorMessageResId = errorResId))
+                }
+                return
             }
-        } ?: saveCategory(name!!)
+        }.mapCatching {
+            updateCurrentUiStateWith {
+                requireUiState().updateWith(it.copy(categoryName = requireNotNull(name) { "Category name cannot be null" }))
+            }
+        }.onSuccess {
+            if (requireUiState().uiModel.isUpdate())
+                updateCategory()
+            else saveCategory()
+        }.onFailure {
+            Timber.e("Failed to save form: $it")
+            AddCategoryUiEvent.ShowErrorMessage(R.string.error_adding_category).emit()
+        }
     }
 
     private fun isCategoryValid(name: String?) =
-        if (name.isNullOrBlank()) R.string.error_invalid_category_name else null
+        if (name.isNullOrBlank())
+            R.string.error_invalid_category_name
+        else null
 
-    private fun saveCategory(name: String) {
+    private fun saveCategory() {
         viewModelScope.launch {
             runCatching {
-                requireUiState().uiModel.categoryType
-            }.map { categoryType ->
-                Category(name = name, type = categoryType)
+                requireUiState().uiModel
+            }.map { uiModel ->
+                Category(name = uiModel.categoryName, type = uiModel.categoryType)
             }.mapCatching { category ->
                 saveCategoryUseCase.execute(category)
             }.onSuccess {
@@ -81,6 +114,29 @@ class AddCategoryViewModel @Inject constructor(
             }.onFailure {
                 Timber.e("Failed to add category: $it")
                 AddCategoryUiEvent.ShowErrorMessage(R.string.error_adding_category).emit()
+            }
+        }
+    }
+
+    private fun updateCategory() {
+        viewModelScope.launch {
+            runCatching {
+                requireUiState().uiModel
+            }.map { uiModel ->
+                // TODO: Create extension on uiModel
+                Category(
+                    id = uiModel.categoryId,
+                    name = uiModel.categoryName,
+                    type = uiModel.categoryType
+                )
+            }.mapCatching { category ->
+                updateCategoryUseCase.execute(category)
+            }.onSuccess {
+                AddCategoryUiEvent.ShowMessage(R.string.category_updated).emit()
+                AddCategoryUiEvent.NavigateUp.emit()
+            }.onFailure {
+                Timber.e("Failed to update category: $it")
+                AddCategoryUiEvent.ShowErrorMessage(R.string.error_updating_category).emit()
             }
         }
     }

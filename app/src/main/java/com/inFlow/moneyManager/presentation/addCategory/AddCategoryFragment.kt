@@ -17,6 +17,7 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
 import com.inFlow.moneyManager.shared.base.BaseFragment
 import com.inFlow.moneyManager.shared.extension.showSnackbar
+import com.inFlow.moneyManager.shared.extension.toSpannableStringBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,7 @@ class AddCategoryFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.setUpUi()
+        viewModel.init(args.category)
 
         handleState()
         handleEvents()
@@ -78,25 +80,27 @@ class AddCategoryFragment : BaseFragment() {
     private fun FragmentAddCategoryBinding.setUpUi() {
         buttonCancel.setOnClickListener { findNavController().navigateUp() }
         buttonSave.setOnClickListener { onSaveClick() }
-        expenseRadio.setOnCheckedChangeListener { _, isChecked ->
+        radioExpense.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onCategoryTypeChanged(isChecked)
-        }
-        args.category?.let {
-            buttonSave.text = getString(R.string.update)
         }
     }
 
     private fun FragmentAddCategoryBinding.bindIdle(state: AddCategoryUiState.Idle) {
-        expenseRadio.isChecked = state.uiModel.categoryType == CategoryType.EXPENSE
-        incomeRadio.isChecked = state.uiModel.categoryType == CategoryType.INCOME
+        with(state.uiModel) {
+            radioExpense.isChecked = categoryType == CategoryType.EXPENSE
+            radioIncome.isChecked = categoryType == CategoryType.INCOME
+            editTextName.text = categoryName.toSpannableStringBuilder()
+            if (isUpdate())
+                buttonSave.text = getString(R.string.update)
+        }
     }
 
     private fun FragmentAddCategoryBinding.bindError(state: AddCategoryUiState.Error) {
-        nameLayout.error = getString(state.uiModel.errorMessageResId)
+        editTextLayoutName.error = getString(state.uiModel.errorMessageResId)
     }
 
     private fun onSaveClick() {
-        viewModel.onSaveClick(binding.nameInput.text?.toString())
+        viewModel.onSaveClick(binding.editTextName.text?.toString())
     }
 
     override fun onDestroyView() {

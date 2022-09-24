@@ -12,7 +12,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type"
+        android:text="@string/type"
         app:layout_constraintBottom_toBottomOf="@id/radioGroupType"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/radioGroupType" />
@@ -29,32 +29,32 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/expense_radio"
+            android:id="@+id/radioExpense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="Expense"
+            android:text="@string/expense"
             android:textAppearance="?attr/textAppearanceBody1" />
 
         <RadioButton
-            android:id="@+id/income_radio"
+            android:id="@+id/radioIncome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Income"
+            android:text="@string/income"
             android:textAppearance="?attr/textAppearanceBody1" />
 
     </RadioGroup>
 
     <!--    TODO: Add number of chars limit-->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/name_layout"
+        android:id="@+id/editTextLayoutName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Category name"
+        android:hint="@string/category_name"
         android:minWidth="144dp"
         android:textColorHint="@color/gray"
         app:errorEnabled="true"
@@ -63,7 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/radioGroupType">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/name_input"
+            android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textCapSentences"
@@ -79,10 +79,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Save"
+        android:text="@string/save"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name_layout" />
+        app:layout_constraintTop_toBottomOf="@id/editTextLayoutName" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonCancel"
@@ -90,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:text="cancel"
+        android:text="@string/cancel"
         android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="@id/buttonSave"
         app:layout_constraintEnd_toStartOf="@id/buttonSave"

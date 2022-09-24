@@ -1,5 +1,6 @@
 package com.inFlow.moneyManager.shared.extension
 
+import android.text.SpannableStringBuilder
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -17,3 +18,5 @@ fun String?.toLocalDate(): LocalDate? =
     }.onFailure {
         Timber.e("Failed to parse string to LocalDate: $it")
     }.getOrNull()
+
+fun String.toSpannableStringBuilder() = SpannableStringBuilder(this)
