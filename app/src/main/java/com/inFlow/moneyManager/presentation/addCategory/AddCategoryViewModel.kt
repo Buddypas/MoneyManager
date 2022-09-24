@@ -1,6 +1,6 @@
 package com.inFlow.moneyManager.presentation.addCategory
 
-import androidx.lifecycle.*
+import androidx.lifecycle.viewModelScope
 import com.inFlow.moneyManager.R
 import com.inFlow.moneyManager.domain.category.model.Category
 import com.inFlow.moneyManager.domain.category.usecase.SaveCategoryUseCase
@@ -10,13 +10,8 @@ import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiEvent
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiModel
 import com.inFlow.moneyManager.presentation.addCategory.model.AddCategoryUiState
 import com.inFlow.moneyManager.presentation.addTransaction.model.CategoryType
+import com.inFlow.moneyManager.shared.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -25,13 +20,9 @@ import javax.inject.Inject
 class AddCategoryViewModel @Inject constructor(
     private val saveCategoryUseCase: SaveCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase
-) : ViewModel() {
-    private val _stateFlow: MutableStateFlow<AddCategoryUiState> =
-        MutableStateFlow(AddCategoryUiState.Idle())
-    private val stateFlow = _stateFlow.asStateFlow()
+) : BaseViewModel<AddCategoryUiModel, AddCategoryUiState, AddCategoryUiEvent>() {
 
-    private val eventChannel = Channel<AddCategoryUiEvent>()
-    private val eventFlow = eventChannel.receiveAsFlow()
+    override fun fetchInitialState(): AddCategoryUiState = AddCategoryUiState.Idle()
 
     fun init(category: Category?) {
         category?.let { existingCategory ->
@@ -44,18 +35,6 @@ class AddCategoryViewModel @Inject constructor(
                     )
                 )
             }
-        }
-    }
-
-    fun collectState(coroutineScope: CoroutineScope, callback: (AddCategoryUiState) -> Unit) {
-        coroutineScope.launch {
-            stateFlow.collectLatest { callback.invoke(it) }
-        }
-    }
-
-    fun collectEvents(coroutineScope: CoroutineScope, callback: (AddCategoryUiEvent) -> Unit) {
-        coroutineScope.launch {
-            eventFlow.collect { callback.invoke(it) }
         }
     }
 
@@ -103,9 +82,7 @@ class AddCategoryViewModel @Inject constructor(
     private fun saveCategory() {
         viewModelScope.launch {
             runCatching {
-                requireUiState().uiModel
-            }.map { uiModel ->
-                Category(name = uiModel.categoryName, type = uiModel.categoryType)
+                requireUiState().uiModel.toCategory()
             }.mapCatching { category ->
                 saveCategoryUseCase.execute(category)
             }.onSuccess {
@@ -121,14 +98,7 @@ class AddCategoryViewModel @Inject constructor(
     private fun updateCategory() {
         viewModelScope.launch {
             runCatching {
-                requireUiState().uiModel
-            }.map { uiModel ->
-                // TODO: Create extension on uiModel
-                Category(
-                    id = uiModel.categoryId,
-                    name = uiModel.categoryName,
-                    type = uiModel.categoryType
-                )
+                requireUiState().uiModel.toCategory()
             }.mapCatching { category ->
                 updateCategoryUseCase.execute(category)
             }.onSuccess {
@@ -141,13 +111,6 @@ class AddCategoryViewModel @Inject constructor(
         }
     }
 
-    private fun updateCurrentUiStateWith(uiStateProvider: (AddCategoryUiModel) -> AddCategoryUiState) {
-        _stateFlow.value = uiStateProvider.invoke(requireUiState().uiModel)
-    }
-
-    private fun AddCategoryUiEvent.emit() = viewModelScope.launch {
-        eventChannel.send(this@emit)
-    }
-
-    private fun requireUiState(): AddCategoryUiState = stateFlow.value
+    private fun AddCategoryUiModel.toCategory(): Category =
+        Category(categoryId, categoryName, categoryType)
 }

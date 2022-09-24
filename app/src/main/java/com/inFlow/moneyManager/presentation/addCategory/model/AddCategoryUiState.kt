@@ -1,9 +1,10 @@
 package com.inFlow.moneyManager.presentation.addCategory.model
 
-sealed class AddCategoryUiState {
-    abstract val uiModel: AddCategoryUiModel
+import com.inFlow.moneyManager.shared.base.UiState
 
+sealed class AddCategoryUiState : UiState<AddCategoryUiModel>() {
     data class Idle(override val uiModel: AddCategoryUiModel = AddCategoryUiModel()) :
         AddCategoryUiState()
+
     data class Error(override val uiModel: AddCategoryUiModel) : AddCategoryUiState()
 }
